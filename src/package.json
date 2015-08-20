@@ -1,0 +1,19 @@
+{
+  "name": "bokosan",
+  "description": "Bokosan - a reverse Sokoban for http://2015.js13kgames.com/",
+  "version": "0.0.1",
+  "author": "Gabor Heja (gheja)",
+  "homepage": "https://github.com/gheja/bokosan",
+  "main": "./server.js",
+  "dependencies" :
+  {
+    "socket.io": "~0.9.16"
+  },
+  "engines": {
+    "node": "*"
+  },
+  "keywords": [
+    "game"
+   ],
+  "devDependencies": {}
+}
