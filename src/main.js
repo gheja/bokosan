@@ -1,15 +1,5 @@
 'use strict';
 
-function deep_copy_object(obj)
-{
-	return JSON.parse(JSON.stringify(obj));
-}
-
-var gfx = (function()
-{
-	
-})();
-
 var G = (function()
 {
 	var o = {};
@@ -23,7 +13,6 @@ var G = (function()
 	o._asset = null;
 	o._assetLoaded = false;
 	o.objectStore = null;
-	o.animation = [];
 	
 	o.map = "" +
 	"...................." +
@@ -105,7 +94,6 @@ var G = (function()
 					continue;
 				}
 				
-				// c.drawImage(IMAGES, index * 7, 1, 7, 7, this.x, this.y, 7 * this.scale, 7 * this.scale);
 				c.drawImage(G._asset, index * 7, 0, 7, 10, this.pos.x + x * 8 * this.scale, this.pos.y + y * 10 * this.scale, 7 * this.scale, 10 * this.scale);
 				
 				x++;
@@ -165,8 +153,6 @@ var G = (function()
 		
 		o.draw = function(c)
 		{
-			// c.drawImage(G._asset, this.tile_number * 28, 11, 27, 25, this.pos.x, this.pos.y, 27, 25);
-			// this.drawImageAdvanced(G._asset, c, this.tile_number * 28, 11, 27, 25, this.pos.x, this.pos.y, 27, 25, this.rotated, this.mirrored);
 			this.drawImageAdvanced(G._asset, c, this.tile_number * 28 + 7, 11 + 7, 20, 18, this.pos.x + 7, this.pos.y + 7, 20, 18, this.rotated, this.mirrored);
 		}
 		o.tick = function()
@@ -345,7 +331,6 @@ var G = (function()
 		
 		this.objectStore.draw(this.ctx);
 		
-		// this.realCtx.drawImage(this.canvas, 0, 0, this.canvas.width, this.canvas.height, 0, 0, this.canvas.width, this.canvas.height);
 		this.realCtx.drawImage(this.canvas, 0, 0, this.canvas.width, this.canvas.height, 0, 0, this.canvas.width * this.pixelRatio * this.zoomLevel, this.canvas.height * this.pixelRatio * this.zoomLevel);
 	}
 	
@@ -396,8 +381,6 @@ var G = (function()
 		that.objectStore = new ObjectStore();
 		that.objectStore.add(new BigText(0, 0, "BOKOSAN"), 10);
 		that.objectStore.add(new SmallText(0,  20, "A REVERSE SOKOBAN FOR JS13KGAMES 2015"), 10);
-//		that.objectStore.add(new SmallText(116,  0, "A REVERSE SOKOBAN (WITH SOME EXTRAS)"), 10);
-//		that.objectStore.add(new SmallText(116, 10, "AN ENTRY FOR THE JS13KGAMES 2015"), 10);
 		that.objectStore.add(new SmallText(0, 40, "TOTAL TIME PLAYED"), 10);
 		that.objectStore.add(new BigText(0, 50, "  131:54:22"), 10);
 		that.objectStore.add(new SmallText(0, 80, "TOTAL MOVES"), 10);
@@ -414,8 +397,6 @@ var G = (function()
 		that.objectStore.add(new SmallText(220, 240, "ASD_FGH@I-JKL.MN   x"), 10);
 		that.objectStore.add(new SmallText(220, 250, "1*2-3+4=5 ISN'T \"AS-IS\""), 10);
 		that.objectStore.add(new SmallText(220, 260, "HTTP://BOKOSAN.NET/"), 10);
-		
-		// that.objectStore.add(new SmallText(0, 140, "LOREM IPSUM DOLOR SIT AMET TEMA TIS DOLOR IPSUM LOROM DOLORO SIT AMET SIT DOLORORLOL VON ULM", 40, 20), 10);
 		
 		that.objectStore.add(new LevelObj( 40, 164, 0));
 		that.objectStore.add(new LevelObj( 60, 164, 0));
@@ -468,7 +449,6 @@ var G = (function()
 		window.addEventListener('resize', that.onResize.bind(that));
 		
 		that.onResize();
-		
 		
 		window.setInterval(that.renderFrame.bind(that), 1000 / 6);
 	}
