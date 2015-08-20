@@ -1,2 +1,4 @@
-# bokosan
-Bokosan - a reverse Sokoban with some extras - an entry for js13kGames 2015
+bokosan
+=======
+
+A reverse Sokoban for [js13kGames 2015](http://2015.js13kgames.com/) gamedev competition.

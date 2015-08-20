@@ -1,6 +1,6 @@
 {
   "name": "bokosan",
-  "description": "Bokosan - a reverse Sokoban for http://2015.js13kgames.com/",
+  "description": "Bokosan - a reverse Sokoban for js13kGames 2015 gamedev competition",
   "version": "0.0.1",
   "author": "Gabor Heja (gheja)",
   "homepage": "https://github.com/gheja/bokosan",
