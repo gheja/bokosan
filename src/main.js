@@ -14,24 +14,6 @@ var G = (function()
 	o._assetLoaded = false;
 	o.objectStore = null;
 	
-	o.map = "" +
-	"...................." +
-	"........wwwwwww....." +
-	"...wwwwww.....w....." +
-	"...w////www...w....." +
-	"...w/XX/w.....w....." +
-	"...w/XX/w.....w....." +
-	"...w////www...w....." +
-	"...www//......w....." +
-	".....w//...S..w....." +
-	".....www......w....." +
-	".......wwwwwwww....." +
-	"...................." +
-	"...................." +
-	"...................." +
-	"...................." +
-	"....................";
-	
 	/** @constructor */
 	var Obj = function(_x, _y, _order)
 	{
@@ -404,72 +386,6 @@ var G = (function()
 		that._asset.src = "./tileset.png";
 		
 		that.objectStore = new ObjectStore();
-		that.objectStore.add(new BigText(0, 0, "BOKOSAN"), 10);
-		that.objectStore.add(new SmallText(0,  20, "A REVERSE SOKOBAN FOR JS13KGAMES 2015"), 10);
-		that.objectStore.add(new SmallText(0, 40, "TOTAL TIME PLAYED"), 10);
-		that.objectStore.add(new BigText(0, 50, "  131:54:22"), 10);
-		that.objectStore.add(new SmallText(0, 80, "TOTAL MOVES"), 10);
-		that.objectStore.add(new BigText(0, 90, "  9,612,334"), 10);
-		that.objectStore.add(new SmallText(0, 120, "TOTAL PULLS"), 10);
-		that.objectStore.add(new BigText(0, 130, "     84,414"), 10);
-		
-		that.objectStore.add(new SmallText(188,  40, "xBOB SANYI:\n  HI GUYS!\nxJOHN BELA:\n  SEJJ\n>xJACK DANIELS FINISHED L17 <\n> 0:17:45, 1278 M, 33 P     <\nxJACK DANIELS:\n  EEE-E LOREM IPSUM?\nxJOHN BELA:\n  ASDF GH JK LMNO\nxJOHN BELA:\n  THE QUICK BROWN FOX JUMPED \n  OVER THE LAZY BUKSI AND\n  SALLALA\n"), 10);
-		
-		that.objectStore.add(new SmallText(220, 190, "       u   UP "), 10);
-		that.objectStore.add(new SmallText(220, 200, "LEFT <   > RIGHT "), 10);
-		that.objectStore.add(new SmallText(220, 210, "       d   DOWN"), 10);
-		that.objectStore.add(new SmallText(220, 220, "r ROTATE SCREEN"), 10);
-		that.objectStore.add(new SmallText(220, 240, "ASD_FGH@I-JKL.MN   x"), 10);
-		that.objectStore.add(new SmallText(220, 250, "1*2-3+4=5 ISN'T \"AS-IS\""), 10);
-		that.objectStore.add(new SmallText(220, 260, "HTTP://BOKOSAN.NET/"), 10);
-		
-		that.objectStore.add(new LevelObj( 40, 164, 0));
-		that.objectStore.add(new LevelObj( 60, 164, 0));
-		that.objectStore.add(new LevelObj( 80, 164, 0));
-		that.objectStore.add(new LevelObj(100, 164, 2));
-		that.objectStore.add(new LevelObj(120, 164, 2));
-		that.objectStore.add(new LevelObj(140, 164, 2));
-		that.objectStore.add(new LevelObj(160, 164, 0));
-		
-		that.objectStore.add(new LevelObj( 40, 182, 0));
-		that.objectStore.add(new LevelObj( 60, 182, 0));
-		that.objectStore.add(new LevelObj( 80, 182, 3));
-		that.objectStore.add(new LevelObj( 80, 182, 1));
-		that.objectStore.add(new LevelObj(100, 182, 3));
-		that.objectStore.add(new LevelObj(120, 182, 2));
-		that.objectStore.add(new LevelObj(140, 182, 2));
-		that.objectStore.add(new LevelObj(160, 182, 0));
-		
-		that.objectStore.add(new LevelObj( 40, 200, 0));
-		that.objectStore.add(new LevelObj( 60, 200, 0));
-		that.objectStore.add(new LevelObj( 80, 200, 3));
-		that.objectStore.add(new LevelObj( 80, 200, 1));
-		that.objectStore.add(new LevelObj(100, 200, 3));
-		that.objectStore.add(new LevelObj(120, 200, 2));
-		that.objectStore.add(new LevelObj(140, 200, 4));
-		that.objectStore.add(new LevelObj(160, 200, 0));
-		
-		that.objectStore.add(new LevelObj( 40, 218, 0));
-		that.objectStore.add(new LevelObj( 60, 218, 0));
-		that.objectStore.add(new LevelObj( 80, 218, 3));
-		that.objectStore.add(new LevelObj( 80, 218, 1));
-		that.objectStore.add(new LevelObj(100, 218, 3));
-		that.objectStore.add(new LevelObj(100, 218, 1));
-		that.objectStore.add(new LevelObj(120, 218, 2));
-		that.objectStore.add(new LevelObj(140, 218, 2));
-		that.objectStore.add(new LevelObj(160, 218, 0));
-		
-		that.objectStore.add(new LevelObj( 40, 236, 0));
-		that.objectStore.add(new LevelObj( 60, 236, 0));
-		that.objectStore.add(new LevelObj( 80, 236, 0));
-		that.objectStore.add(new LevelObj(100, 236, 0));
-		that.objectStore.add(new LevelObj(120, 236, 0));
-		that.objectStore.add(new LevelObj(140, 236, 0));
-		that.objectStore.add(new LevelObj(160, 236, 0));
-		
-		that.objectStore.add(new PlayerObj(120, 200));
-		
-//		that.objectStore.add(new DialogBox(160, 254, 0));
 		
 		window.addEventListener('resize', that.onResize.bind(that));
 		
