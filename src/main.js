@@ -4,6 +4,10 @@ var G = (function()
 {
 	var o = {};
 	
+	/** @const */ o.FADE_MODE_NONE = 0;
+	/** @const */ o.FADE_MODE_IN = 1;
+	/** @const */ o.FADE_MODE_OUT = 2;
+	
 	o.realCanvas = null;
 	o.realCtx = null;
 	o.pixelRatio = 1;
@@ -16,6 +20,9 @@ var G = (function()
 	
 	// thx David @ http://stackoverflow.com/a/15439809
 	o.isTouchAvailable = ('ontouchstart' in window) || (navigator.msMaxTouchPoints > 0);
+	
+	o.fadeMode = o.FADE_MODE_NONE;
+	o.fadePercent = 0; // 0: faded/black ... 100: clear/game screen
 	
 	/** @constructor */
 	var Obj = function(_x, _y, _order)
@@ -329,6 +336,42 @@ var G = (function()
 		
 	}
 	
+	o.fadeTick = function()
+	{
+		if (this.fadeMode == this.FADE_MODE_NONE)
+		{
+			return;
+		}
+		
+		if (this.fadeMode == this.FADE_MODE_OUT && this.fadePercent == 0)
+		{
+			this.switchScreen(this.nextScreen);
+			this.fadeMode = this.FADE_MODE_IN;
+		}
+		
+		if (this.fadeMode == this.FADE_MODE_IN)
+		{
+			this.fadePercent += 33;
+		}
+		else if (this.fadeMode == this.FADE_MODE_OUT)
+		{
+			this.fadePercent -= 33;
+		}
+		
+		this.fadePercent = Math.min(Math.max(this.fadePercent, 0), 100);
+		
+		if (this.fadePercent == 100)
+		{
+			this.fadeMode = this.FADE_MODE_NONE;
+		}
+	}
+	
+	o.fadeApply = function(ctx, alpha)
+	{
+		this.ctx.fillStyle = "rgba(85, 85, 85, " + (1 - alpha / 100) + ")";
+		this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+	}
+	
 	o.redraw = function()
 	{
 		if (!this._assetLoaded)
@@ -336,10 +379,13 @@ var G = (function()
 			return;
 		}
 		
+		this.fadeTick();
+		
 		this.ctx.fillStyle = "#555";
 		this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 		
 		this.objectStore.draw(this.ctx);
+		this.fadeApply(this.ctx, this.fadePercent);
 		
 		this.realCtx.drawImage(this.canvas, 0, 0, this.canvas.width, this.canvas.height, 0, 0, this.canvas.width * this.pixelRatio * this.zoomLevel, this.canvas.height * this.pixelRatio * this.zoomLevel);
 	}
@@ -390,10 +436,11 @@ var G = (function()
 		
 		that.objectStore = new ObjectStore();
 		
+		that.fadeMode = that.FADE_MODE_IN;
+		that.fadePercent = 0;
+		
 		window.addEventListener('resize', that.onResize.bind(that));
-		
 		that.onResize();
-		
 		window.setInterval(that.renderFrame.bind(that), 1000 / 6);
 	}
 	
