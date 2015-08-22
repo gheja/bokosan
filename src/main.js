@@ -285,6 +285,18 @@ var G = (function()
 			}
 		}
 		
+		o.clear = function()
+		{
+			var i;
+			
+			for (i=this.objects.length - 1; i >= 0; i--)
+			{
+				delete(this.objects[i]);
+			}
+			
+			this.objects = [];
+		}
+		
 		return o;
 	}
 	
