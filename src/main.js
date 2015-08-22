@@ -4,6 +4,14 @@ var G = (function()
 {
 	var o = {};
 	
+	/** @const */ o.SCREEN_INTRO = 0;
+	/** @const */ o.SCREEN_MENU = 1;
+	/** @const */ o.SCREEN_HIGHSCORE = 2;
+	/** @const */ o.SCREEN_DIALOG_HELLO = 3;
+	/** @const */ o.SCREEN_DIALOG_FAIL1 = 4;
+	/** @const */ o.SCREEN_DIALOG_FAIL2 = 5;
+	/** @const */ o.SCREEN_GAME = 6;
+	
 	/** @const */ o.FADE_MODE_NONE = 0;
 	/** @const */ o.FADE_MODE_IN = 1;
 	/** @const */ o.FADE_MODE_OUT = 2;
@@ -20,6 +28,9 @@ var G = (function()
 	
 	// thx David @ http://stackoverflow.com/a/15439809
 	o.isTouchAvailable = ('ontouchstart' in window) || (navigator.msMaxTouchPoints > 0);
+	
+	o.currentScreen = o.SCREEN_INTRO;
+	o.currentScreenTicks = 0;
 	
 	o.fadeMode = o.FADE_MODE_NONE;
 	o.fadePercent = 0; // 0: faded/black ... 100: clear/game screen
@@ -348,6 +359,39 @@ var G = (function()
 		
 	}
 	
+	o.switchScreen = function(_new_screen)
+	{
+		var that = this;
+		
+		that.objectStore.clear();
+		
+		that.currentScreen = _new_screen;
+		that.currentScreenTicks = 0;
+		
+		// initialization of the new screen
+		switch (_new_screen)
+		{
+			case that.SCREEN_INTRO:
+				that.objectStore.add(new BigText(146, 80, "BOKOSAN"), 10);
+				that.objectStore.add(new SmallText(122, 100, "FOR JS13KGAMES 2015\n\n  WWW.BOKOSAN.NET"), 10);
+				if (that.isTouchAvailable)
+				{
+					that.objectStore.add(new SmallText(96, 200, "TOUCH ANYWHERE TO CONTINUE"), 10);
+				}
+				else
+				{
+					that.objectStore.add(new SmallText(104, 200, "PRESS A KEY TO CONTINUE"), 10);
+				}
+			break;
+			
+			case that.SCREEN_MENU:
+				that.objectStore.add(new BigText(0, 0, "BOKOSAN"), 10);
+				that.objectStore.add(new SmallText(0, 20, "A REVERSE SOKOBAN FOR JS13KGAMES 2015"), 10);
+				that.objectStore.add(new SmallText(0, 270, "GITHUB.COM/GHEJA/BOKOSAN - WWW.BOKOSAN.NET"), 10);
+			break;
+		}
+	}
+	
 	o.fadeTick = function()
 	{
 		if (this.fadeMode == this.FADE_MODE_NONE)
@@ -448,6 +492,7 @@ var G = (function()
 		
 		that.objectStore = new ObjectStore();
 		
+		that.switchScreen(that.SCREEN_INTRO);
 		that.fadeMode = that.FADE_MODE_IN;
 		that.fadePercent = 0;
 		
