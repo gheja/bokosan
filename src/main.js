@@ -263,6 +263,59 @@ var G = (function()
 	}
 	
 	/** @constructor */
+	var InputHandler = function(obj)
+	{
+		var o;
+		
+		o = {};
+		
+		o.keyPressed = false;
+		
+		o.onKeyDown = function(e)
+		{
+			this.keyPressed = true;
+		}
+		
+		o.onKeyUp = function(e)
+		{
+		}
+		
+		o.onTouchStart = function(e)
+		{
+			this.keyPressed = true;
+		}
+		
+		o.checkIfKeyPressedAndClear = function()
+		{
+			if (this.keyPressed)
+			{
+				this.keyPressed = false;
+				return true;
+			}
+			
+			return false;
+		}
+		
+		o.clear = function()
+		{
+			this.keyPressed = false;
+		}
+		
+		o.bind = function(w)
+		{
+			w.addEventListener('keydown', this.onKeyDown.bind(this));
+			w.addEventListener('keyup', this.onKeyUp.bind(this));
+			w.addEventListener('touchstart', this.onTouchStart.bind(this));
+			
+			this.clear();
+		}
+		
+		o.bind(obj);
+		
+		return o;
+	}
+	
+	/** @constructor */
 	var ObjectStore = function()
 	{
 		var o;
@@ -513,6 +566,8 @@ var G = (function()
 		that._asset = new Image();
 		that._asset.addEventListener('load', that.assetLoadFinished.bind(that));
 		that._asset.src = "./tileset.png";
+		
+		that.inputHandler = new InputHandler(window);
 		
 		that.objectStore = new ObjectStore();
 		
