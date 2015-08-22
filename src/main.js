@@ -25,6 +25,7 @@ var G = (function()
 	o._asset = null;
 	o._assetLoaded = false;
 	o.objectStore = null;
+	o.ticks = 0;
 	
 	// thx David @ http://stackoverflow.com/a/15439809
 	o.isTouchAvailable = ('ontouchstart' in window) || (navigator.msMaxTouchPoints > 0);
@@ -444,6 +445,9 @@ var G = (function()
 		{
 			return;
 		}
+		
+		this.ticks++;
+		this.currentScreenTicks++;
 		
 		this.fadeTick();
 		
