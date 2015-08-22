@@ -42,7 +42,11 @@ var G = (function()
 		
 		o = {};
 		o.pos = { x: _x, y: _y };
-		o.tick = function() {};
+		o.tickCount = 0;
+		o.tick = function()
+		{
+			this.tickCount++;
+		}
 		o.drawImageAdvanced = function(sctx, dctx, sx, sy, sw, sh, dx, dy, dw, dh, rotated, mirrored)
 		{
 			dctx.save();
