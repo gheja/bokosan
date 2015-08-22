@@ -298,12 +298,17 @@ var G = (function()
 			
 			for (i=0; i<this.objects.length; i++)
 			{
-				this.objects[i].tick();
+				this.objects[i].draw(c);
 			}
+		}
+		
+		o.tick = function(c)
+		{
+			var i;
 			
 			for (i=0; i<this.objects.length; i++)
 			{
-				this.objects[i].draw(c);
+				this.objects[i].tick();
 			}
 		}
 		
@@ -450,6 +455,11 @@ var G = (function()
 		this.currentScreenTicks++;
 		
 		this.fadeTick();
+		
+		if (this.fadeMode == this.FADE_MODE_NONE)
+		{
+			this.objectStore.tick();
+		}
 		
 		this.ctx.fillStyle = "#555";
 		this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
