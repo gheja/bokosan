@@ -68,7 +68,7 @@ var G = (function()
 	}
 	
 	/** @constructor */
-	var SmallText = function(_x, _y, _content, _width, _height)
+	var SmallText = function(_x, _y, _content, _width, _height, _blinking)
 	{
 		var o;
 		
@@ -78,10 +78,16 @@ var G = (function()
 		o.scale = 1;
 		o.width = _width ? _width : 1000; // characters
 		o.height = _height ? _height: 1000; // characters
+		o.blinking = !!_blinking;
 		
 		o.draw = function(c)
 		{
 			var i, x, y, index;
+			
+			if (this.blinking && Math.floor(this.tickCount / 3) % 2 == 0)
+			{
+				return;
+			}
 			
 			x = 0;
 			y = 0;
@@ -117,11 +123,11 @@ var G = (function()
 	}
 	
 	/** @constructor */
-	var BigText = function(_x, _y, _content, _width, _height)
+	var BigText = function(_x, _y, _content, _width, _height, _blinking)
 	{
 		var o;
 		
-		o = new SmallText(_x, _y, _content, _width, _height);
+		o = new SmallText(_x, _y, _content, _width, _height, _blinking);
 		o.scale = 2;
 		
 		return o;
@@ -380,11 +386,11 @@ var G = (function()
 				that.objectStore.add(new SmallText(122, 100, "FOR JS13KGAMES 2015\n\n  WWW.BOKOSAN.NET"), 10);
 				if (that.isTouchAvailable)
 				{
-					that.objectStore.add(new SmallText(96, 200, "TOUCH ANYWHERE TO CONTINUE"), 10);
+					that.objectStore.add(new SmallText(96, 200, "TOUCH ANYWHERE TO CONTINUE", null, null, true), 10);
 				}
 				else
 				{
-					that.objectStore.add(new SmallText(104, 200, "PRESS A KEY TO CONTINUE"), 10);
+					that.objectStore.add(new SmallText(104, 200, "PRESS A KEY TO CONTINUE", null, null, true), 10);
 				}
 			break;
 			
