@@ -14,6 +14,9 @@ var G = (function()
 	o._assetLoaded = false;
 	o.objectStore = null;
 	
+	// thx David @ http://stackoverflow.com/a/15439809
+	o.isTouchAvailable = ('ontouchstart' in window) || (navigator.msMaxTouchPoints > 0);
+	
 	/** @constructor */
 	var Obj = function(_x, _y, _order)
 	{
