@@ -495,6 +495,21 @@ var G = (function()
 		}
 	}
 	
+	o.tickScreen = function()
+	{
+		this.ticks++;
+		this.currentScreenTicks++;
+		
+		if (this.waitingForKeypress)
+		{
+			if (this.inputHandler.checkIfKeyPressedAndClear())
+			{
+				this.fadeMode = this.FADE_MODE_OUT;
+				this.waitingForKeypress = false;
+			}
+		}
+	}
+	
 	o.redraw = function()
 	{
 		if (!this._assetLoaded)
@@ -506,17 +521,7 @@ var G = (function()
 		
 		if (this.fadeMode == this.FADE_MODE_NONE)
 		{
-			this.ticks++;
-			this.currentScreenTicks++;
-			
-			if (this.waitingForKeypress)
-			{
-				if (this.inputHandler.checkIfKeyPressedAndClear())
-				{
-					this.fadeMode = this.FADE_MODE_OUT;
-					this.waitingForKeypress = false;
-				}
-			}
+			this.tickScreen();
 		}
 		
 		this.ctx.fillStyle = "#555";
