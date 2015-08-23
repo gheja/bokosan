@@ -498,10 +498,10 @@ var G = (function()
 		}
 	}
 	
-	o.fadeApply = function(ctx, alpha)
+	o.fadeApply = function(ctx, percent)
 	{
-		this.ctx.fillStyle = "rgba(85, 85, 85, " + (1 - alpha / 100) + ")";
-		this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+		ctx.fillStyle = "rgba(85, 85, 85, " + (1 - percent / 100) + ")";
+		ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 	}
 	
 	o.redraw = function()
