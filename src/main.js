@@ -483,11 +483,11 @@ var G = (function()
 		
 		if (this.fadeMode == this.FADE_MODE_IN)
 		{
-			this.fadePercent += 33;
+			this.fadePercent += 25;
 		}
 		else if (this.fadeMode == this.FADE_MODE_OUT)
 		{
-			this.fadePercent -= 33;
+			this.fadePercent -= 25;
 		}
 		
 		this.fadePercent = Math.min(Math.max(this.fadePercent, 0), 100);
