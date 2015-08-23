@@ -118,7 +118,7 @@ var G = (function()
 		}
 		else
 		{
-			this.drawImageAdvanced(this._asset, c, tileNumber * 28 + 7, 11 + 7, 20, 18, posX + 7, posY + 7, 20, 18, rotated, mirrored);
+			this.drawImageAdvanced(this._asset, this.ctx, tileNumber * 28 + 7, 11 + 7, 20, 18, posX + 7, posY + 7, 20, 18, rotated, mirrored);
 		}
 	}
 	
