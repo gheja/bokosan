@@ -26,6 +26,7 @@ var G = (function()
 	o._assetLoaded = false;
 	o.objectStore = null;
 	o.ticks = 0;
+	o.waitingForKeypress = false;
 	
 	// thx David @ http://stackoverflow.com/a/15439809
 	o.isTouchAvailable = ('ontouchstart' in window) || (navigator.msMaxTouchPoints > 0);
@@ -451,6 +452,9 @@ var G = (function()
 				{
 					that.objectStore.add(new SmallText(104, 200, "PRESS A KEY TO CONTINUE", null, null, true), 10);
 				}
+				
+				that.waitingForKeypress = true;
+				that.nextScreen = that.SCREEN_MENU;
 			break;
 			
 			case that.SCREEN_MENU:
@@ -459,6 +463,9 @@ var G = (function()
 				that.objectStore.add(new SmallText(0, 270, "GITHUB.COM/GHEJA/BOKOSAN - WWW.BOKOSAN.NET"), 10);
 			break;
 		}
+		
+		// clear all inputs captured during fade
+		that.inputHandler.clear();
 	}
 	
 	o.fadeTick = function()
@@ -512,6 +519,14 @@ var G = (function()
 		if (this.fadeMode == this.FADE_MODE_NONE)
 		{
 			this.objectStore.tick();
+			if (this.waitingForKeypress)
+			{
+				if (this.inputHandler.checkIfKeyPressedAndClear())
+				{
+					this.fadeMode = this.FADE_MODE_OUT;
+					this.waitingForKeypress = false;
+				}
+			}
 		}
 		
 		this.ctx.fillStyle = "#555";
