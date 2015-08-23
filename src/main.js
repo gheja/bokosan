@@ -29,6 +29,27 @@ var G = (function()
 	o.waitingForKeypress = false;
 	o.player = null;
 	
+	/** @const */ o.levels = [
+		// 0
+		[
+			0, 0,
+			""
+		],
+		// 1
+		[
+			// width, height, level data
+			9, 7,
+			"   wwwww " +
+			"wwww.P.w " +
+			"wBB/...ww" +
+			"wBB/....w" +
+			"wwww...ww" +
+			"   w...w " +
+			"   wwwww "
+		]
+		// 2
+	];
+	
 	// thx David @ http://stackoverflow.com/a/15439809
 	o.isTouchAvailable = ('ontouchstart' in window) || (navigator.msMaxTouchPoints > 0);
 	
@@ -316,9 +337,11 @@ var G = (function()
 		
 	}
 	
-	o.loadLevel = function(level)
+	o.loadLevel = function(index)
 	{
-		this.currentLevel = level;
+		this.currentLevelWidth = this.levels[index][0];
+		this.currentLevelHeight = this.levels[index][1];
+		this.currentLevel = this.levels[index][2];
 	}
 	
 	o.switchScreen = function(_new_screen)
@@ -342,17 +365,7 @@ var G = (function()
 			break;
 			
 			case that.SCREEN_GAME:
-				that.loadLevel(
-					"   wwwww " +
-					"wwww.P.w " +
-					"wBB/...w " +
-					"wBB/...w " +
-					"wwww...ww" +
-					"   w....w" +
-					"   wwwwww",
-					9,
-					7
-				)
+				that.loadLevel(1);
 			break;
 		}
 		
@@ -401,9 +414,6 @@ var G = (function()
 		var that;
 		var x, y, a, b, c, width, height;
 		
-		width = 9;
-		height = 7;
-		
 		that = this;
 		
 		switch (that.currentScreen)
@@ -429,11 +439,11 @@ var G = (function()
 			
 			case that.SCREEN_GAME:
 				
-				for (y=0; y<height; y++)
+				for (y=0; y<that.currentLevelHeight; y++)
 				{
-					for (x=0; x<width; x++)
+					for (x=0; x<that.currentLevelWidth; x++)
 					{
-						c = that.currentLevel[y * width + x];
+						c = that.currentLevel[y * that.currentLevelWidth + x];
 						a = x * 20;
 						b = y * 18;
 						
