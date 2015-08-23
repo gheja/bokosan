@@ -27,6 +27,7 @@ var G = (function()
 	o.objectStore = null;
 	o.ticks = 0;
 	o.waitingForKeypress = false;
+	o.player = null;
 	
 	// thx David @ http://stackoverflow.com/a/15439809
 	o.isTouchAvailable = ('ontouchstart' in window) || (navigator.msMaxTouchPoints > 0);
@@ -122,75 +123,97 @@ var G = (function()
 		}
 	}
 	
-/*
-	var PlayerObj = function(_x, _y)
+	/** @constructor */
+	var Player = function()
 	{
 		var o;
 		
-		// test stuff
-		var i, j, a;
+		o = {};
 		
-		o = new LevelObj(_x, _y);
-		o.tile_number = 6;
-		o.rotated = 0;
-		o.mirrored = 0;
+		/** @const */ o.NORTH = 0;
+		/** @const */ o.EAST = 1;
+		/** @const */ o.SOUTH = 2;
+		/** @const */ o.WEST = 3;
+		
+		/** @const */ o.STANDING = 0;
+		/** @const */ o.WALKING = 1;
+		/** @const */ o.GRAB = 2;
+		/** @const */ o.PULLING = 3;
+		/** @const */ o.FALLING = 4;
+		
+		o.orientation = o.NORTH;
+		o.status = o.STANDING;
+		o.x = 0;
+		o.y = 0;
 		o.tickCount = 0;
+		o.tileNumber = 0;
+		o.tileRotated = 0;
+		o.tileMirrored = 0;
 		
-		// test stuff
-		o.animation = [];
+		// [ 0: "rotated?", 1: [ 0: [ 0: "tile", 1: "mirrored?" ], 1: ... ]
+		o.animations = [
+			[ 0, [ [  6, 0 ]                                  ] ], //  0: north_standing:
+			[ 0, [ [  7, 0 ], [  6, 0 ], [  7, 1 ], [  6, 0 ] ] ], //  1: north_walking:
+			[ 0, [ [  8, 0 ]                                  ] ], //  2: north_grab:
+			[ 0, [ [ 12, 0 ], [  8, 1 ], [ 12, 0 ], [  8, 0 ] ] ], //  3: north_pulling:
+			
+			[ 1, [ [  9, 0 ]                                  ] ], //  4: east_standing:
+			[ 1, [ [ 10, 0 ], [  9, 0 ], [ 10, 1 ], [  9, 0 ] ] ], //  5: east_walking:
+			[ 1, [ [ 11, 0 ]                                  ] ], //  6: east_grab:
+			[ 1, [ [ 13, 0 ], [ 11, 1 ], [ 13, 0 ], [ 11, 0 ] ] ], //  7: east_pulling:
+			
+			[ 0, [ [  9, 0 ]                                  ] ], //  8: south_standing:
+			[ 0, [ [ 10, 0 ], [  9, 0 ], [ 10, 1 ], [  9, 0 ] ] ], //  9: south_walking:
+			[ 0, [ [ 11, 0 ]                                  ] ], // 10: south_grab:
+			[ 0, [ [ 13, 0 ], [ 11, 1 ], [ 13, 0 ], [ 11, 0 ] ] ], // 11: south_pulling:
+			
+			[ 1, [ [  6, 0 ]                                  ] ], // 12: west_standing:
+			[ 1, [ [  7, 0 ], [  6, 0 ], [  7, 1 ], [  6, 0 ] ] ], // 13: west_walking:
+			[ 1, [ [  8, 0 ]                                  ] ], // 14: west_grab:
+			[ 1, [ [ 12, 0 ], [  8, 1 ], [ 12, 0 ], [  8, 0 ] ] ], // 15: west_pulling:
+			
+			[ 0, []                                             ]  // 16: falling
+		];
+		o.animationFramesLeft = 0;
 		
-		o.draw = function(c)
+		o.draw = function(ctx, game)
 		{
-			this.drawImageAdvanced(G._asset, c, this.tile_number * 28 + 7, 11 + 7, 20, 18, this.pos.x + 7, this.pos.y + 7, 20, 18, this.rotated, this.mirrored);
+			game.drawTile(this.x, this.y, this.tileNumber, this.tileRotated, this.tileMirrored, true);
 		}
+		
+		o.setPosition = function(x, y)
+		{
+		}
+		
+		o.getPosition = function()
+		{
+			return [ this.x, this.y ];
+		}
+		
 		o.tick = function()
 		{
-			var i, a;
+			var a, b;
 			
 			this.tickCount++;
 			
-			// test stuff
-			a = this.animation[this.tickCount % this.animation.length];
-			
-			this.tile_number = a.tile;
-			this.rotated = a.rotated;
-			this.mirrored = a.mirrored;
-		}
-			// "animation name": "rotated?", [ [ "tile", "mirrored?" ], ... ]
-			//
-			// north_stand: 0, [ [  6, 0 ]                                  ]
-			// north_walk:  0, [ [  7, 0 ], [  6, 0 ], [  7, 1 ], [  6, 0 ] ]
-			// north_grab:  0, [ [  8, 0 ]                                  ]
-			// north_drag:  0, [ [ 12, 0 ], [  8, 1 ], [ 12, 0 ], [  8, 0 ] ]
-			//
-			// east_stand: 1, [ [  9, 0 ]                                  ]
-			// east_walk:  1, [ [ 10, 0 ], [  9, 0 ], [ 10, 1 ], [  9, 0 ] ]
-			// east_grab:  1, [ [ 11, 0 ]                                  ]
-			// east_drag:  1, [ [ 13, 0 ], [ 11, 1 ], [ 13, 0 ], [ 11, 0 ] ]
-			//
-			// south_stand: 0, [ [  9, 0 ]                                  ]
-			// south_walk:  0, [ [ 10, 0 ], [  9, 0 ], [ 10, 1 ], [  9, 0 ] ]
-			// south_grab:  0, [ [ 11, 0 ]                                  ]
-			// south_drag:  0, [ [ 13, 0 ], [ 11, 1 ], [ 13, 0 ], [ 11, 0 ] ]
-			//
-			// west_stand: 1, [ [  6, 0 ]                                  ]
-			// west_walk:  1, [ [  7, 0 ], [  6, 0 ], [  7, 1 ], [  6, 0 ] ]
-			// west_grab:  1, [ [  8, 0 ]                                  ]
-			// west_drag:  1, [ [ 12, 0 ], [  8, 1 ], [ 12, 0 ], [  8, 0 ] ]
-		];
-		
-		for (i=0; i<a.length; i++)
-		{
-			for (j=0; j<a[i][3]; j++)
+			if (this.status != this.FALLING)
 			{
-				o.animation.push({ tile: a[i][0], rotated: a[i][1], mirrored: a[i][2] });
+				a = this.orientation * 4 + this.status;
 			}
+			else
+			{
+				a = 16;
+			}
+			
+			b = this.tickCount % this.animations[a].length;
+			
+			this.tileNumber = this.animations[a][1][b][0];
+			this.tileRotated = this.animations[a][0];
+			this.tileMirrored = this.animations[a][1][b][1];
 		}
-		////
 		
 		return o;
 	}
-*/
 	
 	/** @constructor */
 	var InputHandler = function(obj)
@@ -527,6 +550,8 @@ var G = (function()
 		that._asset.src = "./tileset.png";
 		
 		that.inputHandler = new InputHandler(window);
+		
+		that.player = new Player();
 		
 		that.switchScreen(that.SCREEN_INTRO);
 		that.fadeMode = that.FADE_MODE_IN;
