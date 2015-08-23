@@ -150,6 +150,36 @@ var G = (function()
 		return o;
 	}
 	
+	var LevelObjWall = function(_x, _y)
+	{
+		return new LevelObj(_x, _y, 0);
+	}
+	
+	var LevelObjBox = function(_x, _y)
+	{
+		return new LevelObj(_x, _y, 1);
+	}
+	
+	var LevelObjFloor = function(_x, _y)
+	{
+		return new LevelObj(_x, _y, 2);
+	}
+	
+	var LevelObjFloorDiagonal = function(_x, _y)
+	{
+		return new LevelObj(_x, _y, 3);
+	}
+	
+	var LevelObjHole = function(_x, _y)
+	{
+		return new LevelObj(_x, _y, 4);
+	}
+	
+	var LevelObjSpikes = function(_x, _y)
+	{
+		return new LevelObj(_x, _y, 5);
+	}
+	
 	var PlayerObj = function(_x, _y)
 	{
 		var o;
@@ -429,6 +459,52 @@ var G = (function()
 		
 	}
 	
+	o.loadLevel = function(level, width, height)
+	{
+		var x, y, o, a, b, c;
+		
+		for (y=0; y<height; y++)
+		{
+			for (x=0; x<width; x++)
+			{
+				c = level[y * width + x];
+				a = x * 20;
+				b = y * 18;
+				
+				switch (c)
+				{
+					case "w":
+						o = new LevelObjWall(a, b);
+					break;
+					
+					case "P":
+						this.objectStore.add(new LevelObjFloor(a, b));
+						o = new PlayerObj(a, b);
+					break;
+					
+					case ".":
+						o = new LevelObjFloor(a, b);
+					break;
+					
+					case "B":
+						this.objectStore.add(new LevelObjFloorDiagonal(a, b));
+						o = new LevelObjBox(a, b);
+					break;
+					
+					case "/":
+						o = new LevelObjFloorDiagonal(a, b);
+					break;
+					
+					default:
+						continue;
+					break;
+				}
+				
+				this.objectStore.add(o);
+			}
+		}
+	}
+	
 	o.switchScreen = function(_new_screen)
 	{
 		var that = this;
@@ -461,6 +537,23 @@ var G = (function()
 				that.objectStore.add(new BigText(0, 0, "BOKOSAN"), 10);
 				that.objectStore.add(new SmallText(0, 20, "A REVERSE SOKOBAN FOR JS13KGAMES 2015"), 10);
 				that.objectStore.add(new SmallText(0, 270, "GITHUB.COM/GHEJA/BOKOSAN - WWW.BOKOSAN.NET"), 10);
+				
+				that.waitingForKeypress = true;
+				that.nextScreen = that.SCREEN_GAME;
+			break;
+			
+			case that.SCREEN_GAME:
+				that.loadLevel(
+					"   wwwww " +
+					"wwww.P.w " +
+					"wBB/...w " +
+					"wBB/...w " +
+					"wwww...ww" +
+					"   w....w" +
+					"   wwwwww",
+					9,
+					7
+				)
 			break;
 		}
 		
