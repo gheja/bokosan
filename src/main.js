@@ -34,152 +34,95 @@ var G = (function()
 	o.currentScreen = o.SCREEN_INTRO;
 	o.currentScreenTicks = 0;
 	
+	o.currentLevel = "";
+	
 	o.fadeMode = o.FADE_MODE_NONE;
 	o.fadePercent = 0; // 0: faded/black ... 100: clear/game screen
+	o.validTextCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 .,:!?()x<>udr@/-_+*=\"'";
 	
-	/** @constructor */
-	var Obj = function(_x, _y, _order)
+	o.drawImageAdvanced = function(sctx, dctx, sx, sy, sw, sh, dx, dy, dw, dh, rotated, mirrored)
 	{
-		var o;
-		
-		o = {};
-		o.pos = { x: _x, y: _y };
-		o.tickCount = 0;
-		o.tick = function()
+		dctx.save();
+		dctx.translate(dx, dy);
+		dctx.translate(dw / 2, dh / 2);
+		if (rotated)
 		{
-			this.tickCount++;
+			dctx.rotate(- Math.PI / 2);
 		}
-		o.drawImageAdvanced = function(sctx, dctx, sx, sy, sw, sh, dx, dy, dw, dh, rotated, mirrored)
+		if (mirrored)
 		{
-			dctx.save();
-			dctx.translate(dx, dy);
-			dctx.translate(dw / 2, dh / 2);
-			if (rotated)
-			{
-				dctx.rotate(- Math.PI / 2);
-			}
-			if (mirrored)
-			{
-				dctx.scale(-1, 1);
-			}
-			dctx.drawImage(sctx, sx, sy, sw, sh, - dw / 2, - dh / 2, dw, dh);
-			dctx.restore();
+			dctx.scale(-1, 1);
 		}
-		
-		return o
+		dctx.drawImage(sctx, sx, sy, sw, sh, - dw / 2, - dh / 2, dw, dh);
+		dctx.restore();
 	}
 	
-	/** @constructor */
-	var SmallText = function(_x, _y, _content, _width, _height, _blinking)
+	o.drawText = function(posX, posY, content, blinking, width, height, scale)
 	{
-		var o;
+		width = width ? width : 1000; // characters
+		height = height ? height: 1000; // characters
 		
-		o = new Obj(_x, _y);
-		o.characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 .,:!?()x<>udr@/-_+*=\"'";
-		o.content = _content;
-		o.scale = 1;
-		o.width = _width ? _width : 1000; // characters
-		o.height = _height ? _height: 1000; // characters
-		o.blinking = !!_blinking;
+		var i, x, y, index;
 		
-		o.draw = function(c)
+		if (blinking && Math.floor(this.currentScreenTicks / 3) % 2 == 0)
 		{
-			var i, x, y, index;
-			
-			if (this.blinking && Math.floor(this.tickCount / 3) % 2 == 0)
+			return;
+		}
+		
+		x = 0;
+		y = 0;
+		for (i=0; i<content.length; i++)
+		{
+			if (content[i] == "\n")
 			{
-				return;
+				x = 0;
+				y++;
+				continue;
 			}
 			
-			x = 0;
-			y = 0;
-			for (i=0; i<this.content.length; i++)
+			index = this.validTextCharacters.indexOf(content[i]);
+			
+			if (index === false)
 			{
-				if (this.content[i] == "\n")
-				{
-					x = 0;
-					y++;
-					continue;
-				}
-				
-				index = o.characters.indexOf(this.content[i]);
-				
-				if (index === false)
-				{
-					continue;
-				}
-				
-				c.drawImage(G._asset, index * 7, 0, 7, 10, this.pos.x + x * 8 * this.scale, this.pos.y + y * 10 * this.scale, 7 * this.scale, 10 * this.scale);
-				
-				x++;
-				
-				if (x > this.width)
-				{
-					x = 0;
-					y++;
-				}
+				continue;
+			}
+			
+			this.ctx.drawImage(this._asset, index * 7, 0, 7, 10, posX + x * 8 * scale, posY + y * 10 * scale, 7 * scale, 10 * scale);
+			
+			x++;
+			
+			if (x > width)
+			{
+				x = 0;
+				y++;
 			}
 		}
-		
-		return o;
 	}
 	
-	/** @constructor */
-	var BigText = function(_x, _y, _content, _width, _height, _blinking)
+	o.drawSmallText = function(posX, posY, content, blinking, width, height)
 	{
-		var o;
-		
-		o = new SmallText(_x, _y, _content, _width, _height, _blinking);
-		o.scale = 2;
-		
-		return o;
+		this.drawText(posX, posY, content, blinking, width, height, 1);
 	}
 	
-	/** @constructor */
-	var LevelObj = function(_x, _y, _tile_number)
+	o.drawBigText = function(posX, posY, content, blinking, width, height)
 	{
-		var o;
-		
-		o = new Obj(_x, _y);
-		o.tile_number = _tile_number;
-		o.draw = function(c)
+		this.drawText(posX, posY, content, blinking, width, height, 2);
+	}
+	
+	o.drawTile = function(posX, posY, tileNumber, rotated, mirrored, floorOnly)
+	{
+		if (!floorOnly)
 		{
-			c.drawImage(G._asset, this.tile_number * 28, 11, 27, 25, this.pos.x, this.pos.y, 27, 25);
+			// this.drawImageAdvanced(this._asset, c, tileNumber * 28, 11, 27, 25, posX, posY, 27, 25, rotated, mirrored);
+			this.ctx.drawImage(G._asset, tileNumber * 28, 11, 27, 25, posX, posY, 27, 25);
 		}
-		
-		return o;
+		else
+		{
+			this.drawImageAdvanced(this._asset, c, tileNumber * 28 + 7, 11 + 7, 20, 18, posX + 7, posY + 7, 20, 18, rotated, mirrored);
+		}
 	}
 	
-	var LevelObjWall = function(_x, _y)
-	{
-		return new LevelObj(_x, _y, 0);
-	}
-	
-	var LevelObjBox = function(_x, _y)
-	{
-		return new LevelObj(_x, _y, 1);
-	}
-	
-	var LevelObjFloor = function(_x, _y)
-	{
-		return new LevelObj(_x, _y, 2);
-	}
-	
-	var LevelObjFloorDiagonal = function(_x, _y)
-	{
-		return new LevelObj(_x, _y, 3);
-	}
-	
-	var LevelObjHole = function(_x, _y)
-	{
-		return new LevelObj(_x, _y, 4);
-	}
-	
-	var LevelObjSpikes = function(_x, _y)
-	{
-		return new LevelObj(_x, _y, 5);
-	}
-	
+/*
 	var PlayerObj = function(_x, _y)
 	{
 		var o;
@@ -213,72 +156,27 @@ var G = (function()
 			this.rotated = a.rotated;
 			this.mirrored = a.mirrored;
 		}
-		
-		//// test stuffs
-		a = [
-			//// north
-			// stand
-			[ 6, 0, 0, 5 ],
-			// walk
-			[ 7, 0, 0, 1 ], [ 6, 0, 0, 1 ], [ 7, 0, 1, 1 ], [ 6, 0, 0, 1 ], /* repeat */
-			[ 7, 0, 0, 1 ], [ 6, 0, 0, 1 ], [ 7, 0, 1, 1 ], [ 6, 0, 0, 1 ],
-			[ 7, 0, 0, 1 ], [ 6, 0, 0, 1 ], [ 7, 0, 1, 1 ], [ 6, 0, 0, 1 ],
-			[ 7, 0, 0, 1 ], [ 6, 0, 0, 1 ], [ 7, 0, 1, 1 ], [ 6, 0, 0, 1 ],
-			 // grab
-			[ 8, 0, 0, 5 ],
-			// drag
-			[ 12, 0, 0, 1 ], [ 8, 0, 1, 1 ], [ 12, 0, 0, 1 ], [ 8, 0, 0, 1 ], /* repeat */
-			[ 12, 0, 0, 1 ], [ 8, 0, 1, 1 ], [ 12, 0, 0, 1 ], [ 8, 0, 0, 1 ],
-			[ 12, 0, 0, 1 ], [ 8, 0, 1, 1 ], [ 12, 0, 0, 1 ], [ 8, 0, 0, 1 ],
-			[ 12, 0, 0, 1 ], [ 8, 0, 1, 1 ], [ 12, 0, 0, 1 ], [ 8, 0, 0, 1 ],
-			
-			//// east
-			// stand
-			[ 9, 1, 0, 5 ],
-			// walk
-			[ 10, 1, 0, 1 ], [ 9, 1, 0, 1 ], [ 10, 1, 1, 1 ], [ 9, 1, 0, 1 ], /* repeat */
-			[ 10, 1, 0, 1 ], [ 9, 1, 0, 1 ], [ 10, 1, 1, 1 ], [ 9, 1, 0, 1 ],
-			[ 10, 1, 0, 1 ], [ 9, 1, 0, 1 ], [ 10, 1, 1, 1 ], [ 9, 1, 0, 1 ],
-			[ 10, 1, 0, 1 ], [ 9, 1, 0, 1 ], [ 10, 1, 1, 1 ], [ 9, 1, 0, 1 ],
-			 // grab
-			[ 11, 1, 0, 5 ],
-			// drag
-			[ 13, 1, 0, 1 ], [ 11, 1, 1, 1 ], [ 13, 1, 0, 1 ], [ 11, 1, 0, 1 ], /* repeat */
-			[ 13, 1, 0, 1 ], [ 11, 1, 1, 1 ], [ 13, 1, 0, 1 ], [ 11, 1, 0, 1 ],
-			[ 13, 1, 0, 1 ], [ 11, 1, 1, 1 ], [ 13, 1, 0, 1 ], [ 11, 1, 0, 1 ],
-			[ 13, 1, 0, 1 ], [ 11, 1, 1, 1 ], [ 13, 1, 0, 1 ], [ 11, 1, 0, 1 ],
-			
-			//// south
-			// stand
-			[ 9, 0, 0, 5 ],
-			// walk
-			[ 10, 0, 0, 1 ], [ 9, 0, 0, 1 ], [ 10, 0, 1, 1 ], [ 9, 0, 0, 1 ], /* repeat */
-			[ 10, 0, 0, 1 ], [ 9, 0, 0, 1 ], [ 10, 0, 1, 1 ], [ 9, 0, 0, 1 ],
-			[ 10, 0, 0, 1 ], [ 9, 0, 0, 1 ], [ 10, 0, 1, 1 ], [ 9, 0, 0, 1 ],
-			[ 10, 0, 0, 1 ], [ 9, 0, 0, 1 ], [ 10, 0, 1, 1 ], [ 9, 0, 0, 1 ],
-			 // grab
-			[ 11, 0, 0, 5 ],
-			// drag
-			[ 13, 0, 0, 1 ], [ 11, 0, 1, 1 ], [ 13, 0, 0, 1 ], [ 11, 0, 0, 1 ], /* repeat */
-			[ 13, 0, 0, 1 ], [ 11, 0, 1, 1 ], [ 13, 0, 0, 1 ], [ 11, 0, 0, 1 ],
-			[ 13, 0, 0, 1 ], [ 11, 0, 1, 1 ], [ 13, 0, 0, 1 ], [ 11, 0, 0, 1 ],
-			[ 13, 0, 0, 1 ], [ 11, 0, 1, 1 ], [ 13, 0, 0, 1 ], [ 11, 0, 0, 1 ],
-			
-			//// west
-			// stand
-			[ 6, 1, 0, 5 ],
-			// walk
-			[ 7, 1, 0, 1 ], [ 6, 1, 0, 1 ], [ 7, 1, 1, 1 ], [ 6, 1, 0, 1 ], /* repeat */
-			[ 7, 1, 0, 1 ], [ 6, 1, 0, 1 ], [ 7, 1, 1, 1 ], [ 6, 1, 0, 1 ],
-			[ 7, 1, 0, 1 ], [ 6, 1, 0, 1 ], [ 7, 1, 1, 1 ], [ 6, 1, 0, 1 ],
-			[ 7, 1, 0, 1 ], [ 6, 1, 0, 1 ], [ 7, 1, 1, 1 ], [ 6, 1, 0, 1 ],
-			 // grab
-			[ 8, 1, 0, 5 ],
-			// drag
-			[ 12, 1, 0, 1 ], [ 8, 1, 1, 1 ], [ 12, 1, 0, 1 ], [ 8, 1, 0, 1 ], /* repeat */
-			[ 12, 1, 0, 1 ], [ 8, 1, 1, 1 ], [ 12, 1, 0, 1 ], [ 8, 1, 0, 1 ],
-			[ 12, 1, 0, 1 ], [ 8, 1, 1, 1 ], [ 12, 1, 0, 1 ], [ 8, 1, 0, 1 ],
-			[ 12, 1, 0, 1 ], [ 8, 1, 1, 1 ], [ 12, 1, 0, 1 ], [ 8, 1, 0, 1 ]
+			// "animation name": "rotated?", [ [ "tile", "mirrored?" ], ... ]
+			//
+			// north_stand: 0, [ [  6, 0 ]                                  ]
+			// north_walk:  0, [ [  7, 0 ], [  6, 0 ], [  7, 1 ], [  6, 0 ] ]
+			// north_grab:  0, [ [  8, 0 ]                                  ]
+			// north_drag:  0, [ [ 12, 0 ], [  8, 1 ], [ 12, 0 ], [  8, 0 ] ]
+			//
+			// east_stand: 1, [ [  9, 0 ]                                  ]
+			// east_walk:  1, [ [ 10, 0 ], [  9, 0 ], [ 10, 1 ], [  9, 0 ] ]
+			// east_grab:  1, [ [ 11, 0 ]                                  ]
+			// east_drag:  1, [ [ 13, 0 ], [ 11, 1 ], [ 13, 0 ], [ 11, 0 ] ]
+			//
+			// south_stand: 0, [ [  9, 0 ]                                  ]
+			// south_walk:  0, [ [ 10, 0 ], [  9, 0 ], [ 10, 1 ], [  9, 0 ] ]
+			// south_grab:  0, [ [ 11, 0 ]                                  ]
+			// south_drag:  0, [ [ 13, 0 ], [ 11, 1 ], [ 13, 0 ], [ 11, 0 ] ]
+			//
+			// west_stand: 1, [ [  6, 0 ]                                  ]
+			// west_walk:  1, [ [  7, 0 ], [  6, 0 ], [  7, 1 ], [  6, 0 ] ]
+			// west_grab:  1, [ [  8, 0 ]                                  ]
+			// west_drag:  1, [ [ 12, 0 ], [  8, 1 ], [ 12, 0 ], [  8, 0 ] ]
 		];
 		
 		for (i=0; i<a.length; i++)
@@ -292,6 +190,7 @@ var G = (function()
 		
 		return o;
 	}
+*/
 	
 	/** @constructor */
 	var InputHandler = function(obj)
@@ -346,71 +245,6 @@ var G = (function()
 		return o;
 	}
 	
-	/** @constructor */
-	var ObjectStore = function()
-	{
-		var o;
-		
-		o = {};
-		o.objects = [];
-		o.dirty = false;
-		
-		o.add = function(obj, _order)
-		{
-			obj.order = _order;
-			
-			this.objects.push(obj);
-			
-			this.dirty = true;
-			
-			return obj;
-		}
-		
-		o.reorder = function()
-		{
-			o.dirty = false;
-		}
-		
-		o.draw = function(c)
-		{
-			var i;
-			
-			if (this.dirty)
-			{
-				this.reorder();
-			}
-			
-			for (i=0; i<this.objects.length; i++)
-			{
-				this.objects[i].draw(c);
-			}
-		}
-		
-		o.tick = function(c)
-		{
-			var i;
-			
-			for (i=0; i<this.objects.length; i++)
-			{
-				this.objects[i].tick();
-			}
-		}
-		
-		o.clear = function()
-		{
-			var i;
-			
-			for (i=this.objects.length - 1; i >= 0; i--)
-			{
-				delete(this.objects[i]);
-			}
-			
-			this.objects = [];
-		}
-		
-		return o;
-	}
-	
 	o.onResize = function()
 	{
 		var scale, that, w, h, tmp;
@@ -459,57 +293,14 @@ var G = (function()
 		
 	}
 	
-	o.loadLevel = function(level, width, height)
+	o.loadLevel = function(level)
 	{
-		var x, y, o, a, b, c;
-		
-		for (y=0; y<height; y++)
-		{
-			for (x=0; x<width; x++)
-			{
-				c = level[y * width + x];
-				a = x * 20;
-				b = y * 18;
-				
-				switch (c)
-				{
-					case "w":
-						o = new LevelObjWall(a, b);
-					break;
-					
-					case "P":
-						this.objectStore.add(new LevelObjFloor(a, b));
-						o = new PlayerObj(a, b);
-					break;
-					
-					case ".":
-						o = new LevelObjFloor(a, b);
-					break;
-					
-					case "B":
-						this.objectStore.add(new LevelObjFloorDiagonal(a, b));
-						o = new LevelObjBox(a, b);
-					break;
-					
-					case "/":
-						o = new LevelObjFloorDiagonal(a, b);
-					break;
-					
-					default:
-						continue;
-					break;
-				}
-				
-				this.objectStore.add(o);
-			}
-		}
+		this.currentLevel = level;
 	}
 	
 	o.switchScreen = function(_new_screen)
 	{
 		var that = this;
-		
-		that.objectStore.clear();
 		
 		that.currentScreen = _new_screen;
 		that.currentScreenTicks = 0;
@@ -518,26 +309,11 @@ var G = (function()
 		switch (_new_screen)
 		{
 			case that.SCREEN_INTRO:
-				that.objectStore.add(new BigText(146, 80, "BOKOSAN"), 10);
-				that.objectStore.add(new SmallText(122, 100, "FOR JS13KGAMES 2015\n\n  WWW.BOKOSAN.NET"), 10);
-				if (that.isTouchAvailable)
-				{
-					that.objectStore.add(new SmallText(96, 200, "TOUCH ANYWHERE TO CONTINUE", null, null, true), 10);
-				}
-				else
-				{
-					that.objectStore.add(new SmallText(104, 200, "PRESS A KEY TO CONTINUE", null, null, true), 10);
-				}
-				
 				that.waitingForKeypress = true;
 				that.nextScreen = that.SCREEN_MENU;
 			break;
 			
 			case that.SCREEN_MENU:
-				that.objectStore.add(new BigText(0, 0, "BOKOSAN"), 10);
-				that.objectStore.add(new SmallText(0, 20, "A REVERSE SOKOBAN FOR JS13KGAMES 2015"), 10);
-				that.objectStore.add(new SmallText(0, 270, "GITHUB.COM/GHEJA/BOKOSAN - WWW.BOKOSAN.NET"), 10);
-				
 				that.waitingForKeypress = true;
 				that.nextScreen = that.SCREEN_GAME;
 			break;
@@ -597,6 +373,81 @@ var G = (function()
 		ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 	}
 	
+	o.drawScreen = function()
+	{
+		var that;
+		var x, y, a, b, c, width, height;
+		
+		width = 9;
+		height = 7;
+		
+		that = this;
+		
+		switch (that.currentScreen)
+		{
+			case that.SCREEN_INTRO:
+				that.drawBigText(146, 80, "BOKOSAN");
+				that.drawSmallText(122, 100, "FOR JS13KGAMES 2015\n\n  WWW.BOKOSAN.NET");
+				if (that.isTouchAvailable)
+				{
+					that.drawSmallText(96, 200, "TOUCH ANYWHERE TO CONTINUE", true);
+				}
+				else
+				{
+					that.drawSmallText(104, 200, "PRESS A KEY TO CONTINUE", true);
+				}
+			break;
+			
+			case that.SCREEN_MENU:
+				that.drawBigText(0, 0, "BOKOSAN");
+				that.drawSmallText(0, 20, "A REVERSE SOKOBAN FOR JS13KGAMES 2015");
+				that.drawSmallText(0, 270, "GITHUB.COM/GHEJA/BOKOSAN - WWW.BOKOSAN.NET");
+			break;
+			
+			case that.SCREEN_GAME:
+				
+				for (y=0; y<height; y++)
+				{
+					for (x=0; x<width; x++)
+					{
+						c = that.currentLevel[y * width + x];
+						a = x * 20;
+						b = y * 18;
+						
+						switch (c)
+						{
+							case "w": // wall
+								this.drawTile(a, b, 0)
+							break;
+							
+							case "P": // floor and player
+								this.drawTile(a, b, 2);
+								this.drawTile(a, b, 4);
+							break;
+							
+							case ".":
+								this.drawTile(a, b, 2);
+							break;
+							
+							case "B":
+								this.drawTile(a, b, 3);
+								this.drawTile(a, b, 1);
+							break;
+							
+							case "/":
+								this.drawTile(a, b, 3);
+							break;
+							
+							default:
+								continue;
+							break;
+						}
+					}
+				}
+			break;
+		}
+	}
+	
 	o.redraw = function()
 	{
 		if (!this._assetLoaded)
@@ -604,14 +455,13 @@ var G = (function()
 			return;
 		}
 		
-		this.ticks++;
-		this.currentScreenTicks++;
-		
 		this.fadeTick();
 		
 		if (this.fadeMode == this.FADE_MODE_NONE)
 		{
-			this.objectStore.tick();
+			this.ticks++;
+			this.currentScreenTicks++;
+			
 			if (this.waitingForKeypress)
 			{
 				if (this.inputHandler.checkIfKeyPressedAndClear())
@@ -625,7 +475,8 @@ var G = (function()
 		this.ctx.fillStyle = "#555";
 		this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 		
-		this.objectStore.draw(this.ctx);
+		this.drawScreen();
+		
 		this.fadeApply(this.ctx, this.fadePercent);
 		
 		this.realCtx.drawImage(this.canvas, 0, 0, this.canvas.width, this.canvas.height, 0, 0, this.canvas.width * this.pixelRatio * this.zoomLevel, this.canvas.height * this.pixelRatio * this.zoomLevel);
@@ -676,8 +527,6 @@ var G = (function()
 		that._asset.src = "./tileset.png";
 		
 		that.inputHandler = new InputHandler(window);
-		
-		that.objectStore = new ObjectStore();
 		
 		that.switchScreen(that.SCREEN_INTRO);
 		that.fadeMode = that.FADE_MODE_IN;
