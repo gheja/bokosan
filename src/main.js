@@ -409,7 +409,7 @@ var G = (function()
 		ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 	}
 	
-	o.drawScreen = function()
+	o.screenDraw = function()
 	{
 		var that;
 		var x, y, a, b, c, width, height;
@@ -495,7 +495,7 @@ var G = (function()
 		}
 	}
 	
-	o.tickScreen = function()
+	o.screenTick = function()
 	{
 		this.ticks++;
 		this.currentScreenTicks++;
@@ -521,13 +521,13 @@ var G = (function()
 		
 		if (this.fadeMode == this.FADE_MODE_NONE)
 		{
-			this.tickScreen();
+			this.screenTick();
 		}
 		
 		this.ctx.fillStyle = "#555";
 		this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 		
-		this.drawScreen();
+		this.screenDraw();
 		
 		this.fadeApply(this.ctx, this.fadePercent);
 		
