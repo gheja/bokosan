@@ -433,7 +433,21 @@ var G = (function()
 			
 			case that.SCREEN_MENU:
 				that.drawBigText(0, 0, "BOKOSAN");
-				that.drawSmallText(0, 20, "A REVERSE SOKOBAN FOR JS13KGAMES 2015");
+				that.drawSmallText(0, 20, "JS13KGAMES 2015");
+				
+				that.drawSmallText(0, 50, "TOTAL TIME PLAYED");
+				that.drawBigText(0, 60, "  131:54:22");
+				that.drawSmallText(0, 90, "TOTAL MOVES");
+				that.drawBigText(0, 100, "  9,612,334");
+				that.drawSmallText(0, 130, "TOTAL PULLS");
+				that.drawBigText(0, 140, "     84,414");
+				
+				that.drawSmallText(220, 50, "PLAY");
+				that.drawSmallText(220, 70, "CUSTOMIZE");
+				that.drawSmallText(220, 90, "HOW TO PLAY");
+				
+				that.drawSmallText(204, 50, ">", true);
+				
 				that.drawSmallText(0, 270, "GITHUB.COM/GHEJA/BOKOSAN - WWW.BOKOSAN.NET");
 			break;
 			
