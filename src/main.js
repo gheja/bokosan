@@ -323,6 +323,47 @@ var G = (function()
 			this.tileMirrored = this.animations[a][1][b][1];
 		}
 		
+		o.tryWalk = function(orientation)
+		{
+			if (this.moveStepLeft != 0)
+			{
+				return;
+			}
+			
+			switch (orientation)
+			{
+				case this.NORTH:
+					this.moveStepX = 0;
+					this.moveStepY = -2;
+					this.moveStepLeft = 9;
+				break;
+				
+				case this.EAST:
+					this.moveStepX = 2;
+					this.moveStepY = 0;
+					this.moveStepLeft = 10;
+				break;
+				
+				case this.SOUTH:
+					this.moveStepX = 0;
+					this.moveStepY = 2;
+					this.moveStepLeft = 9;
+				break;
+				
+				case this.WEST:
+					this.moveStepX = -2;
+					this.moveStepY = 0;
+					this.moveStepLeft = 10;
+				break;
+			}
+			
+			if (this.status == this.STANDING)
+			{
+				this.orientation = orientation;
+				this.status = this.WALKING;
+			}
+		}
+		
 		return o;
 	}
 	
@@ -735,6 +776,32 @@ var G = (function()
 			
 			this.inputHandler.clearKeys();
 			// this.inputHandler.clearReleasedKeys();
+		}
+		else if (this.currentScreen == this.SCREEN_GAME)
+		{
+			if (this.inputHandler.keys.up.status != this.inputHandler.KEY_RESET)
+			{
+				this.player.tryWalk(this.player.NORTH);
+			}
+			else if (this.inputHandler.keys.right.status != this.inputHandler.KEY_RESET)
+			{
+				this.player.tryWalk(this.player.EAST);
+			}
+			else if (this.inputHandler.keys.down.status != this.inputHandler.KEY_RESET)
+			{
+				this.player.tryWalk(this.player.SOUTH);
+			}
+			else if (this.inputHandler.keys.left.status != this.inputHandler.KEY_RESET)
+			{
+				this.player.tryWalk(this.player.WEST);
+			}
+			
+//			if (this.inputHandler.keys.action.status)
+//			{
+//				this.player.tryGrab();
+//			}
+			
+			this.inputHandler.clearReleasedKeys();
 		}
 		
 		for (i=0; i<this.objects.length; i++)
