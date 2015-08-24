@@ -155,9 +155,23 @@ var G = (function()
 		
 		o = {};
 		
+		/** @const */ o.NORTH = 0;
+		/** @const */ o.EAST = 1;
+		/** @const */ o.SOUTH = 2;
+		/** @const */ o.WEST = 3;
+		
+		/** @const */ o.STANDING = 0;
+		/** @const */ o.WALKING = 1;
+		/** @const */ o.GRAB = 2;
+		/** @const */ o.PULLING = 3;
+		/** @const */ o.FALLING = 4;
+		
 		o.game = game;
 		o.x = x;
 		o.y = y;
+		o.moveStepX = 0;
+		o.moveStepY = 0;
+		o.moveStepLeft = 0;
 		o.renderNeeded = false;
 		o.renderOrder = 0;
 		o.tickCount = 0;
@@ -165,6 +179,8 @@ var G = (function()
 		o.tileRotated = 0;
 		o.tileMirrored = 0;
 		o.floorOnly = false;
+		o.orientation = o.NORTH;
+		o.status = o.STANDING;
 		
 		o.draw = function()
 		{
@@ -203,9 +219,28 @@ var G = (function()
 			return this.renderOrder;
 		}
 		
+		o.moveIfNeeded = function()
+		{
+			if (this.moveStepLeft > 0)
+			{
+				this.x += this.moveStepX;
+				this.y += this.moveStepY;
+				
+				this.moveStepLeft--;
+				
+				if (this.moveStepLeft == 0)
+				{
+					this.moveStepX = 0;
+					this.moveStepY = 0;
+					this.status = this.STANDING;
+				}
+			}
+		}
+		
 		o.tick = function()
 		{
 			this.tickCount++;
+			this.moveIfNeeded();
 		}
 		
 		return o;
@@ -235,19 +270,6 @@ var G = (function()
 		
 		o = new Obj(game, x, y);
 		
-		/** @const */ o.NORTH = 0;
-		/** @const */ o.EAST = 1;
-		/** @const */ o.SOUTH = 2;
-		/** @const */ o.WEST = 3;
-		
-		/** @const */ o.STANDING = 0;
-		/** @const */ o.WALKING = 1;
-		/** @const */ o.GRAB = 2;
-		/** @const */ o.PULLING = 3;
-		/** @const */ o.FALLING = 4;
-		
-		o.orientation = o.NORTH;
-		o.status = o.STANDING;
 		o.tileNumber = 6;
 		o.floorOnly = true;
 		
@@ -282,6 +304,7 @@ var G = (function()
 			var a, b;
 			
 			this.tickCount++;
+			this.moveIfNeeded();
 			
 			if (this.status != this.FALLING)
 			{
