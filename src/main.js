@@ -606,7 +606,7 @@ var G = (function()
 	
 	o.screenDraw = function()
 	{
-		var that, x, y, a, b, c, width, height, i, p, q;
+		var that, x, y, a, b, c, width, height, i, a1, b1, a2, b2, p;
 		
 		that = this;
 		
@@ -675,16 +675,23 @@ var G = (function()
 								this.drawTile(a, b, 3);
 							break;
 						}
-					}
-					
-					p = y * 18 * that.WIDTH;
-					q = (y + 1) * 18 * that.WIDTH;
-					
-					for (i=0; i<that.objects.length; i++)
-					{
-						if (that.objects[i].getRenderNeeded() == true && that.objects[i].getRenderOrder() > p && that.objects[i].getRenderOrder() <= q)
+						
+						
+						a1 = (x - 1) * 20;
+						b1 = (y - 1) * 18;
+						a2 = x * 20;
+						b2 = y * 18;
+						
+						for (i=0; i<that.objects.length; i++)
 						{
-							that.objects[i].draw();
+							if (that.objects[i].getRenderNeeded())
+							{
+								p = that.objects[i].getPosition();
+								if (p[0] > a1 && p[0] <= a2 && p[1] > b1 && p[1] <= b2)
+								{
+									that.objects[i].draw();
+								}
+							}
 						}
 					}
 				}
