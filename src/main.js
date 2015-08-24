@@ -243,15 +243,71 @@ var G = (function()
 		
 		o = {};
 		
+		/** @const */ o.KEY_RESET = 0;
+		/** @const */ o.KEY_PRESSED = 1;
+		/** @const */ o.KEY_RELEASED = 2;
+		
 		o.keyPressed = false;
+		o.keys = {
+			up: { keyCodes: [ 38, 87 ], status: o.KEY_RESET },
+			down: { keyCodes: [ 40, 83 ], status: o.KEY_RESET },
+			left: { keyCodes: [ 37, 65 ], status: o.KEY_RESET },
+			right:  { keyCodes: [ 39, 68 ], status: o.KEY_RESET },
+			action: { keyCodes: [ 16, 32, 13 ], status: o.KEY_RESET },
+			back: { keyCodes: [ 27 ], status: o.KEY_RESET }
+		};
+		
+		o.setKeyStatus = function(keyCode, statusFrom, statusTo)
+		{
+			var i, j;
+			
+			// if keyCode == -1 then set status for all keys
+			
+			for (i in  this.keys)
+			{
+				for (j=0; j<this.keys[i].keyCodes.length; j++)
+				{
+					if (this.keys[i].keyCodes[j] == keyCode || keyCode == -1)
+					{
+						if (this.keys[i].status == statusFrom || statusFrom == -1)
+						{
+							this.keys[i].status = statusTo;
+						}
+						
+						// no return here as the case keyCode == -1 needs to update all keys
+						break;
+					}
+				}
+			}
+/*
+			var s;
+			s = "";
+			for (i in  this.keys)
+			{
+				s += "[" + i + ": " + this.keys[i].status + "] ";
+			}
+			console.log(s);
+*/
+		}
 		
 		o.onKeyDown = function(e)
 		{
+			var keyCode;
+			
+			keyCode = event.which ? event.which : event.keyCode;
+			
+			this.setKeyStatus(keyCode, -1, this.KEY_PRESSED);
+			
 			this.keyPressed = true;
 		}
 		
 		o.onKeyUp = function(e)
 		{
+			var keyCode;
+			
+			keyCode = event.which ? event.which : event.keyCode;
+			
+			this.setKeyStatus(keyCode, this.KEY_PRESSED, this.KEY_RELEASED);
 		}
 		
 		o.onTouchStart = function(e)
@@ -270,9 +326,15 @@ var G = (function()
 			return false;
 		}
 		
-		o.clear = function()
+		o.clearKeys = function()
 		{
 			this.keyPressed = false;
+			this.setKeyStatus(-1, -1, this.KEY_RESET);
+		}
+		
+		o.clearReleasedKeys = function()
+		{
+			this.setKeyStatus(-1, this.KEY_RELEASED, this.KEY_RESET);
 		}
 		
 		o.bind = function(w)
@@ -281,7 +343,7 @@ var G = (function()
 			w.addEventListener('keyup', this.onKeyUp.bind(this));
 			w.addEventListener('touchstart', this.onTouchStart.bind(this));
 			
-			this.clear();
+			this.clearKeys();
 		}
 		
 		o.bind(obj);
@@ -370,7 +432,7 @@ var G = (function()
 		}
 		
 		// clear all inputs captured during fade
-		that.inputHandler.clear();
+		that.inputHandler.clearKeys();
 	}
 	
 	o.fadeTick = function()
