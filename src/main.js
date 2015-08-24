@@ -92,7 +92,7 @@ var G = (function()
 		
 		var i, x, y, index;
 		
-		if (blinking && Math.floor(this.currentScreenTicks / 3) % 2 == 0)
+		if (blinking && Math.floor(this.currentScreenTicks / 6) % 2 == 0)
 		{
 			return;
 		}
@@ -819,7 +819,7 @@ var G = (function()
 		
 		window.addEventListener('resize', that.onResize.bind(that));
 		that.onResize();
-		window.setInterval(that.renderFrame.bind(that), 1000 / 6);
+		window.setInterval(that.renderFrame.bind(that), 1000 / 12);
 	}
 	
 	return o;
