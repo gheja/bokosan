@@ -332,6 +332,20 @@ var G = (function()
 			this.tileMirrored = this.animations[a][1][b][1];
 		}
 		
+		o.checkCollisionAndGo = function(dx, dy, stepX, stepY, steps)
+		{
+			if (this.checkNeighbourTile(dx, dy, 'w') || this.checkNeighbourTile(dx, dy, 'B'))
+			{
+				return;
+			}
+			
+			this.moveStepX = stepX;
+			this.moveStepY = stepY;
+			this.moveStepLeft = steps;
+			
+			this.status = this.WALKING;
+		}
+		
 		o.tryWalk = function(orientation)
 		{
 			if (this.moveStepLeft != 0)
@@ -339,37 +353,25 @@ var G = (function()
 				return;
 			}
 			
+			this.orientation = orientation;
+			
 			switch (orientation)
 			{
 				case this.NORTH:
-					this.moveStepX = 0;
-					this.moveStepY = -2;
-					this.moveStepLeft = 9;
+					this.checkCollisionAndGo(0, -1, 0, -2, 9);
 				break;
 				
 				case this.EAST:
-					this.moveStepX = 2;
-					this.moveStepY = 0;
-					this.moveStepLeft = 10;
+					this.checkCollisionAndGo(1, 0, 2, 0, 10);
 				break;
 				
 				case this.SOUTH:
-					this.moveStepX = 0;
-					this.moveStepY = 2;
-					this.moveStepLeft = 9;
+					this.checkCollisionAndGo(0, 1, 0, 2, 9);
 				break;
 				
 				case this.WEST:
-					this.moveStepX = -2;
-					this.moveStepY = 0;
-					this.moveStepLeft = 10;
+					this.checkCollisionAndGo(-1, 0, -2, 0, 10);
 				break;
-			}
-			
-			if (this.status == this.STANDING)
-			{
-				this.orientation = orientation;
-				this.status = this.WALKING;
 			}
 		}
 		
