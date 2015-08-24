@@ -387,31 +387,58 @@ var G = (function()
 				return;
 			}
 			
-			this.orientation = orientation;
+			// when a box is grabbed the player can only move backwards
+			if (this.grabbedBox !== null && orientation != this.oppositeOrientations[this.orientation])
+			{
+				return;
+			}
+			
+			// the orientation can only be changed if no box is grabbed
+			if (this.grabbedBox === null)
+			{
+				this.orientation = orientation;
+			}
 			
 			switch (orientation)
 			{
 				case this.NORTH:
-					this.checkCollisionAndGo(0, -1, 0, -2, 9);
+					this.checkCollisionAndGo(0, -1, 9);
 				break;
 				
 				case this.EAST:
-					this.checkCollisionAndGo(1, 0, 2, 0, 10);
+					this.checkCollisionAndGo(1, 0, 10);
 				break;
 				
 				case this.SOUTH:
-					this.checkCollisionAndGo(0, 1, 0, 2, 9);
+					this.checkCollisionAndGo(0, 1, 9);
 				break;
 				
 				case this.WEST:
-					this.checkCollisionAndGo(-1, 0, -2, 0, 10);
+					this.checkCollisionAndGo(-1, 0, 10);
 				break;
+			}
+		}
+		
+		o.tryStop = function()
+		{
+			if (this.grabbedBox == null)
+			{
+				this.status = this.STANDING;
+			}
+			else
+			{
+				this.status = this.GRAB;
 			}
 		}
 		
 		o.tryGrab = function()
 		{
 			var box;
+			
+			if (this.grabbedBox !== null)
+			{
+				return;
+			}
 			
 			switch (this.orientation)
 			{
