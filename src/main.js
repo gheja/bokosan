@@ -29,6 +29,8 @@ var G = (function()
 	o.waitingForKeypress = false;
 	o.player = null;
 	
+	o.menu = null;
+	
 	/** @const */ o.levels = [
 		// 0
 		[
@@ -406,6 +408,12 @@ var G = (function()
 		this.currentLevel = this.levels[index][2];
 	}
 	
+	o.screenFadeAndSwitch = function(_new_screen)
+	{
+		this.nextScreen = _new_screen;
+		this.fadeMode = this.FADE_MODE_OUT;
+	}
+	
 	o.switchScreen = function(_new_screen)
 	{
 		var that = this;
@@ -422,8 +430,17 @@ var G = (function()
 			break;
 			
 			case that.SCREEN_MENU:
-				that.waitingForKeypress = true;
-				that.nextScreen = that.SCREEN_GAME;
+				that.menu = {
+					selection: 0,
+					items: [
+						{ title: "PLAY", callback: that.screenFadeAndSwitch.bind(that, that.SCREEN_GAME) },
+						{ title: "CUSTOMIZE", callback: that.screenFadeAndSwitch.bind(that, that.SCREEN_MENU) },
+						{ title: "HOW TO PLAY", callback: that.screenFadeAndSwitch.bind(that, that.SCREEN_MENU) }
+					]
+				};
+				
+				// that.waitingForKeypress = true;
+				// that.nextScreen = that.SCREEN_GAME;
 			break;
 			
 			case that.SCREEN_GAME:
@@ -474,7 +491,7 @@ var G = (function()
 	o.screenDraw = function()
 	{
 		var that;
-		var x, y, a, b, c, width, height;
+		var x, y, a, b, c, width, height, i;
 		
 		that = this;
 		
@@ -504,11 +521,10 @@ var G = (function()
 				that.drawSmallText(0, 130, "TOTAL PULLS");
 				that.drawBigText(0, 140, "     84,414");
 				
-				that.drawSmallText(220, 50, "PLAY");
-				that.drawSmallText(220, 70, "CUSTOMIZE");
-				that.drawSmallText(220, 90, "HOW TO PLAY");
-				
-				that.drawSmallText(204, 50, ">", true);
+				for (i=0; i<that.menu.items.length; i++)
+				{
+					that.drawSmallText(200, 50 + i * 20, (that.menu.selection == i ? "> " : "  ") + that.menu.items[i].title);
+				}
 				
 				that.drawSmallText(0, 270, "GITHUB.COM/GHEJA/BOKOSAN - WWW.BOKOSAN.NET");
 			break;
@@ -569,6 +585,28 @@ var G = (function()
 				this.fadeMode = this.FADE_MODE_OUT;
 				this.waitingForKeypress = false;
 			}
+		}
+		
+		if (this.currentScreen == this.SCREEN_MENU)
+		{
+			if (this.inputHandler.keys.up.status != this.inputHandler.KEY_RESET)
+			{
+				this.menu.selection--;
+			}
+			else if (this.inputHandler.keys.down.status != this.inputHandler.KEY_RESET)
+			{
+				this.menu.selection++;
+			}
+			else if (this.inputHandler.keys.action.status != this.inputHandler.KEY_RESET || this.inputHandler.keys.right.status != this.inputHandler.KEY_RESET)
+			{
+				this.menu.items[this.menu.selection].callback();
+			}
+			
+			// ensure that the selection is valid, roll over if necessary
+			this.menu.selection = (this.menu.selection + 3) % 3;
+			
+			this.inputHandler.clearKeys();
+			// this.inputHandler.clearReleasedKeys();
 		}
 	}
 	
