@@ -164,10 +164,11 @@ var G = (function()
 		o.tileNumber = 0;
 		o.tileRotated = 0;
 		o.tileMirrored = 0;
+		o.floorOnly = false;
 		
 		o.draw = function()
 		{
-			this.game.drawTile(this.x, this.y, this.tileNumber, this.tileRotated, this.tileMirrored, true);
+			this.game.drawTile(this.x, this.y, this.tileNumber, this.tileRotated, this.tileMirrored, this.floorOnly);
 			this.renderNeeded = false;
 		}
 		
@@ -248,6 +249,7 @@ var G = (function()
 		o.orientation = o.NORTH;
 		o.status = o.STANDING;
 		o.tileNumber = 6;
+		o.floorOnly = true;
 		
 		// [ 0: "rotated?", 1: [ 0: [ 0: "tile", 1: "mirrored?" ], 1: ... ]
 		o.animations = [
@@ -578,8 +580,7 @@ var G = (function()
 	
 	o.screenDraw = function()
 	{
-		var that;
-		var x, y, a, b, c, width, height, i, p;
+		var that, x, y, a, b, c, width, height, i, p, q;
 		
 		that = this;
 		
@@ -631,7 +632,6 @@ var G = (function()
 						c = that.currentLevel[y * that.currentLevelWidth + x];
 						a = x * 20;
 						b = y * 18;
-						p = b * that.WIDTH + a;
 						
 						switch (c)
 						{
@@ -649,13 +649,16 @@ var G = (function()
 								this.drawTile(a, b, 3);
 							break;
 						}
-						
-						for (i=0; i<that.objects.length; i++)
+					}
+					
+					p = y * 18 * that.WIDTH;
+					q = (y + 1) * 18 * that.WIDTH;
+					
+					for (i=0; i<that.objects.length; i++)
+					{
+						if (that.objects[i].getRenderNeeded() == true && that.objects[i].getRenderOrder() > p && that.objects[i].getRenderOrder() <= q)
 						{
-							if (that.objects[i].getRenderNeeded() == true && that.objects[i].getRenderOrder() < p)
-							{
-								that.objects[i].draw();
-							}
+							that.objects[i].draw();
 						}
 					}
 				}
