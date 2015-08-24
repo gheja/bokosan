@@ -220,6 +220,15 @@ var G = (function()
 			return this.renderOrder;
 		}
 		
+		o.checkNeighbourTile = function(dx, dy, char)
+		{
+			var p;
+			
+			p = (Math.floor(this.y / 18) + dy) * this.game.currentLevelWidth + (Math.floor(this.x / 20) + dx);
+			
+			return this.game.currentLevel[p] == char;
+		}
+		
 		o.moveIfNeeded = function()
 		{
 			if (this.moveStepLeft > 0)
