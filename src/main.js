@@ -167,6 +167,9 @@ var G = (function()
 		/** @const */ o.PULLING = 3;
 		/** @const */ o.FALLING = 4;
 		
+		// notice: must be ordered from 0..3
+		o.oppositeOrientations = [ o.SOUTH, o.WEST, o.NORTH, o.EAST ];
+		
 		o.game = game;
 		o.x = x;
 		o.y = y;
