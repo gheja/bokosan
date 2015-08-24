@@ -512,7 +512,7 @@ var G = (function()
 			
 			case that.SCREEN_MENU:
 				that.drawBigText(0, 0, "BOKOSAN");
-				that.drawSmallText(0, 20, "JS13KGAMES 2015");
+				that.drawSmallText(0, 20, "FOR JS13KGAMES 2015");
 				
 				that.drawSmallText(0, 50, "TOTAL TIME PLAYED");
 				that.drawBigText(0, 60, "  131:54:22");
