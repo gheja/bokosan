@@ -300,6 +300,7 @@ var G = (function()
 		
 		o.tileNumber = 6;
 		o.floorOnly = true;
+		o.grabbedBox = null;
 		
 		// [ 0: "rotated?", 1: [ 0: [ 0: "tile", 1: "mirrored?" ], 1: ... ]
 		o.animations = [
@@ -391,6 +392,44 @@ var G = (function()
 					this.checkCollisionAndGo(-1, 0, -2, 0, 10);
 				break;
 			}
+		}
+		
+		o.tryGrab = function()
+		{
+			var box;
+			
+			switch (this.orientation)
+			{
+				case this.NORTH:
+					box = this.getNeighbourBox(0, -1);
+				break;
+				
+				case this.EAST:
+					box = this.getNeighbourBox(1, 0);
+				break;
+				
+				case this.SOUTH:
+					box = this.getNeighbourBox(0, 1);
+				break;
+				
+				case this.WEST:
+					box = this.getNeighbourBox(-1, 0);
+				break;
+			}
+			
+			if (box == null)
+			{
+				return;
+			}
+			
+			this.grabbedBox = box;
+			this.status = this.GRAB;
+		}
+		
+		o.tryRelease = function()
+		{
+			this.status = this.STANDING;
+			this.grabbedBox = null;
 		}
 		
 		return o;
@@ -825,10 +864,14 @@ var G = (function()
 				this.player.tryWalk(this.player.WEST);
 			}
 			
-//			if (this.inputHandler.keys.action.status)
-//			{
-//				this.player.tryGrab();
-//			}
+			if (this.inputHandler.keys.action.status == this.inputHandler.KEY_PRESSED)
+			{
+				this.player.tryGrab();
+			}
+			else if (this.inputHandler.keys.action.status == this.inputHandler.KEY_RELEASED)
+			{
+				this.player.tryRelease();
+			}
 			
 			this.inputHandler.clearReleasedKeys();
 		}
