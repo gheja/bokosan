@@ -30,7 +30,7 @@ var G = (function()
 	o.objectStore = null;
 	o.ticks = 0;
 	o.waitingForKeypress = false;
-	o.player = null;
+	o.objects = [];
 	
 	o.menu = null;
 	
@@ -148,13 +148,91 @@ var G = (function()
 			this.drawImageAdvanced(this._asset, this.ctx, tileNumber * 28 + 7, 11 + 7, 20, 18, posX + 7, posY + 7, 20, 18, rotated, mirrored);
 		}
 	}
-	
 	/** @constructor */
-	var Player = function()
+	var Obj = function(game, x, y)
 	{
 		var o;
 		
 		o = {};
+		
+		o.game = game;
+		o.x = x;
+		o.y = y;
+		o.renderNeeded = false;
+		o.renderOrder = 0;
+		o.tickCount = 0;
+		o.tileNumber = 0;
+		o.tileRotated = 0;
+		o.tileMirrored = 0;
+		
+		o.draw = function()
+		{
+			this.game.drawTile(this.x, this.y, this.tileNumber, this.tileRotated, this.tileMirrored, true);
+			this.renderNeeded = false;
+		}
+		
+		o.setPosition = function(x, y)
+		{
+			this.x = x;
+			this.y = y;
+		}
+		
+		o.getPosition = function()
+		{
+			return [ this.x, this.y ];
+		}
+		
+		o.setRenderNeeded = function(value)
+		{
+			this.renderNeeded = value;
+		}
+		
+		o.getRenderNeeded = function()
+		{
+			return this.renderNeeded;
+		}
+		
+		o.updateRenderOrder = function()
+		{
+			this.renderOrder = this.y * this.game.WIDTH + this.x;
+		}
+		
+		o.getRenderOrder = function()
+		{
+			return this.renderOrder;
+		}
+		
+		o.tick = function()
+		{
+			this.tickCount++;
+		}
+		
+		return o;
+	}
+	
+	/** @constructor */
+	var BoxObj = function(game, x, y)
+	{
+		var o;
+		
+		o = new Obj(game, x, y);
+		
+		o.tileNumber = 1;
+		
+		o.tick = function()
+		{
+			this.tickCount++;
+		}
+		
+		return o;
+	}
+	
+	/** @constructor */
+	var PlayerObj = function(game, x, y)
+	{
+		var o;
+		
+		o = new Obj(game, x, y);
 		
 		/** @const */ o.NORTH = 0;
 		/** @const */ o.EAST = 1;
@@ -169,12 +247,7 @@ var G = (function()
 		
 		o.orientation = o.NORTH;
 		o.status = o.STANDING;
-		o.x = 0;
-		o.y = 0;
-		o.tickCount = 0;
-		o.tileNumber = 0;
-		o.tileRotated = 0;
-		o.tileMirrored = 0;
+		o.tileNumber = 6;
 		
 		// [ 0: "rotated?", 1: [ 0: [ 0: "tile", 1: "mirrored?" ], 1: ... ]
 		o.animations = [
@@ -202,20 +275,6 @@ var G = (function()
 		];
 		o.animationFramesLeft = 0;
 		
-		o.draw = function(ctx, game)
-		{
-			game.drawTile(this.x, this.y, this.tileNumber, this.tileRotated, this.tileMirrored, true);
-		}
-		
-		o.setPosition = function(x, y)
-		{
-		}
-		
-		o.getPosition = function()
-		{
-			return [ this.x, this.y ];
-		}
-		
 		o.tick = function()
 		{
 			var a, b;
@@ -231,7 +290,7 @@ var G = (function()
 				a = 16;
 			}
 			
-			b = this.tickCount % this.animations[a].length;
+			b = this.tickCount % this.animations[a][1].length;
 			
 			this.tileNumber = this.animations[a][1][b][0];
 			this.tileRotated = this.animations[a][0];
@@ -421,7 +480,9 @@ var G = (function()
 	
 	o.switchScreen = function(_new_screen)
 	{
-		var that = this;
+		var that, x, y, a, b;
+		
+		that = this;
 		
 		that.currentScreen = _new_screen;
 		that.currentScreenTicks = 0;
@@ -450,6 +511,28 @@ var G = (function()
 			
 			case that.SCREEN_GAME:
 				that.loadLevel(1);
+				
+				that.objects.length = 0;
+				
+				for (y=0; y<that.currentLevelHeight; y++)
+				{
+					for (x=0; x<that.currentLevelWidth; x++)
+					{
+						a = x * 20;
+						b = y * 18;
+						
+						switch (that.currentLevel[y * that.currentLevelWidth + x])
+						{
+							case "P": // the player
+								that.objects.push(new PlayerObj(that, a, b));
+							break;
+							
+							case "B": // a box
+								that.objects.push(new BoxObj(that, a, b));
+							break;
+						}
+					}
+				}
 			break;
 		}
 		
@@ -472,11 +555,11 @@ var G = (function()
 		
 		if (this.fadeMode == this.FADE_MODE_IN)
 		{
-			this.fadePercent += 25;
+			this.fadePercent += 34;
 		}
 		else if (this.fadeMode == this.FADE_MODE_OUT)
 		{
-			this.fadePercent -= 25;
+			this.fadePercent -= 34;
 		}
 		
 		this.fadePercent = Math.min(Math.max(this.fadePercent, 0), 100);
@@ -496,7 +579,7 @@ var G = (function()
 	o.screenDraw = function()
 	{
 		var that;
-		var x, y, a, b, c, width, height, i;
+		var x, y, a, b, c, width, height, i, p;
 		
 		that = this;
 		
@@ -535,6 +618,12 @@ var G = (function()
 			break;
 			
 			case that.SCREEN_GAME:
+				for (i=0; i<that.objects.length; i++)
+				{
+					that.objects[i].updateRenderOrder();
+					that.objects[i].setRenderNeeded(true);
+				}
+				
 				for (y=0; y<that.currentLevelHeight; y++)
 				{
 					for (x=0; x<that.currentLevelWidth; x++)
@@ -542,6 +631,7 @@ var G = (function()
 						c = that.currentLevel[y * that.currentLevelWidth + x];
 						a = x * 20;
 						b = y * 18;
+						p = b * that.WIDTH + a;
 						
 						switch (c)
 						{
@@ -559,6 +649,14 @@ var G = (function()
 								this.drawTile(a, b, 3);
 							break;
 						}
+						
+						for (i=0; i<that.objects.length; i++)
+						{
+							if (that.objects[i].getRenderNeeded() == true && that.objects[i].getRenderOrder() < p)
+							{
+								that.objects[i].draw();
+							}
+						}
 					}
 				}
 			break;
@@ -567,6 +665,8 @@ var G = (function()
 	
 	o.screenTick = function()
 	{
+		var i;
+		
 		this.ticks++;
 		this.currentScreenTicks++;
 		
@@ -599,6 +699,11 @@ var G = (function()
 			
 			this.inputHandler.clearKeys();
 			// this.inputHandler.clearReleasedKeys();
+		}
+		
+		for (i=0; i<this.objects.length; i++)
+		{
+			this.objects[i].tick();
 		}
 	}
 	
@@ -671,8 +776,6 @@ var G = (function()
 		that._asset.src = "./tileset.png";
 		
 		that.inputHandler = new InputHandler(window);
-		
-		that.player = new Player();
 		
 		that.switchScreen(that.SCREEN_INTRO);
 		that.fadeMode = that.FADE_MODE_IN;
