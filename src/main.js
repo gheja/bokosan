@@ -31,6 +31,7 @@ var G = (function()
 	o.ticks = 0;
 	o.waitingForKeypress = false;
 	o.objects = [];
+	o.player = null;
 	
 	o.menu = null;
 	
@@ -538,6 +539,7 @@ var G = (function()
 				that.loadLevel(1);
 				
 				that.objects.length = 0;
+				that.player = null;
 				
 				for (y=0; y<that.currentLevelHeight; y++)
 				{
@@ -549,7 +551,8 @@ var G = (function()
 						switch (that.currentLevel[y * that.currentLevelWidth + x])
 						{
 							case "P": // the player
-								that.objects.push(new PlayerObj(that, a, b));
+								that.player = new PlayerObj(that, a, b);
+								that.objects.push(that.player);
 							break;
 							
 							case "B": // a box
