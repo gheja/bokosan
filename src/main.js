@@ -182,6 +182,7 @@ var G = (function()
 		o.floorOnly = false;
 		o.orientation = o.NORTH;
 		o.status = o.STANDING;
+		o.isBox = false; // instanceof?...
 		
 		o.draw = function()
 		{
@@ -229,6 +230,22 @@ var G = (function()
 			return this.game.currentLevel[p] == character;
 		}
 		
+		o.getNeighbourBox = function(dx, dy)
+		{
+			var i;
+			
+			for (i in this.game.objects)
+			{
+				// instanceof not working
+				if (this.game.objects[i].isBox && this.game.objects[i].x == this.x + dx * 20 && this.game.objects[i].y == this.y + dy * 18)
+				{
+					return this.game.objects[i];
+				}
+			}
+			
+			return null;
+		}
+		
 		o.moveIfNeeded = function()
 		{
 			if (this.moveStepLeft > 0)
@@ -264,6 +281,7 @@ var G = (function()
 		o = new Obj(game, x, y);
 		
 		o.tileNumber = 1;
+		o.isBox = true;
 		
 		o.tick = function()
 		{
@@ -334,7 +352,7 @@ var G = (function()
 		
 		o.checkCollisionAndGo = function(dx, dy, stepX, stepY, steps)
 		{
-			if (this.checkNeighbourTile(dx, dy, 'w') || this.checkNeighbourTile(dx, dy, 'B'))
+			if (this.checkNeighbourTile(dx, dy, 'w') || this.getNeighbourBox(dx, dy) !== null)
 			{
 				return;
 			}
