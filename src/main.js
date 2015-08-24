@@ -224,6 +224,11 @@ var G = (function()
 			return this.renderOrder;
 		}
 		
+		o.tryStop = function()
+		{
+			this.status = this.STANDING;
+		}
+		
 		o.checkNeighbourTile = function(dx, dy, character)
 		{
 			var p;
@@ -262,7 +267,7 @@ var G = (function()
 				{
 					this.moveStepX = 0;
 					this.moveStepY = 0;
-					this.status = this.STANDING;
+					this.tryStop();
 				}
 			}
 		}
@@ -349,18 +354,30 @@ var G = (function()
 			this.tileMirrored = this.animations[a][1][b][1];
 		}
 		
-		o.checkCollisionAndGo = function(dx, dy, stepX, stepY, steps)
+		o.checkCollisionAndGo = function(dx, dy, steps)
 		{
 			if (this.checkNeighbourTile(dx, dy, 'w') || this.getNeighbourBox(dx, dy) !== null)
 			{
 				return;
 			}
 			
-			this.moveStepX = stepX;
-			this.moveStepY = stepY;
+			this.moveStepX = dx * 2;
+			this.moveStepY = dy * 2;
 			this.moveStepLeft = steps;
 			
-			this.status = this.WALKING;
+			if (this.status == this.GRAB)
+			{
+				// copy the movement to the box
+				this.grabbedBox.moveStepX = this.moveStepX;
+				this.grabbedBox.moveStepY = this.moveStepY;
+				this.grabbedBox.moveStepLeft = this.moveStepLeft;
+				
+				this.status = this.PULLING;
+			}
+			else
+			{
+				this.status = this.WALKING;
+			}
 		}
 		
 		o.tryWalk = function(orientation)
