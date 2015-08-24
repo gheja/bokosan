@@ -283,11 +283,6 @@ var G = (function()
 		o.tileNumber = 1;
 		o.isBox = true;
 		
-		o.tick = function()
-		{
-			this.tickCount++;
-		}
-		
 		return o;
 	}
 	
