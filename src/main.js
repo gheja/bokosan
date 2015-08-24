@@ -4,6 +4,9 @@ var G = (function()
 {
 	var o = {};
 	
+	/** @const */ o.WIDTH = 420;
+	/** @const */ o.HEIGHT = 280;
+	
 	/** @const */ o.SCREEN_INTRO = 0;
 	/** @const */ o.SCREEN_MENU = 1;
 	/** @const */ o.SCREEN_HIGHSCORE = 2;
@@ -361,7 +364,7 @@ var G = (function()
 		
 		tmp = that.zoomLevel;
 		
-		that.zoomLevel = Math.max(Math.min(Math.floor(window.innerWidth / 420), Math.floor(window.innerHeight / 280)), 0.5);
+		that.zoomLevel = Math.max(Math.min(Math.floor(window.innerWidth / that.WIDTH), Math.floor(window.innerHeight / that.HEIGHT)), 0.5);
 		
 		
 		if (that.zoomLevel * that.pixelRatio < 1)
@@ -371,13 +374,15 @@ var G = (function()
 			// warn the user about viewport clipping
 		}
 		
+/*
 		if (that.zoomLevel < 2 && window.innerWidth < window.innerHeight)
 		{
 			// suggest the use of landscape mode
 		}
+*/
 		
-		w = 420 * that.zoomLevel;
-		h = 280 * that.zoomLevel;
+		w = that.WIDTH * that.zoomLevel;
+		h = that.HEIGHT * that.zoomLevel;
 		
 		// this check does not work on mobile. what.
 		// if (tmp != that.zoomLevel)
@@ -652,8 +657,8 @@ var G = (function()
 		that.pixelRatio = dpr / bsr;
 		
 		that.canvas = document.createElement('canvas');
-		that.canvas.width = 420;
-		that.canvas.height = 280;
+		that.canvas.width = that.WIDTH;
+		that.canvas.height = that.HEIGHT;
 		
 		that.ctx = that.canvas.getContext("2d");
 		that.ctx.imageSmoothingEnabled = false;
