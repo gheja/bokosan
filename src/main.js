@@ -530,7 +530,6 @@ var G = (function()
 			break;
 			
 			case that.SCREEN_GAME:
-				
 				for (y=0; y<that.currentLevelHeight; y++)
 				{
 					for (x=0; x<that.currentLevelWidth; x++)
@@ -545,26 +544,14 @@ var G = (function()
 								this.drawTile(a, b, 0)
 							break;
 							
-							case "P": // floor and player
-								this.drawTile(a, b, 2);
-								this.drawTile(a, b, 4);
-							break;
-							
-							case ".":
+							case ".": // floor
+							case "P": // floor (below the player)
 								this.drawTile(a, b, 2);
 							break;
 							
-							case "B":
+							case "/": // keep-clear floor
+							case "B": // keep-clear floor (below the box)
 								this.drawTile(a, b, 3);
-								this.drawTile(a, b, 1);
-							break;
-							
-							case "/":
-								this.drawTile(a, b, 3);
-							break;
-							
-							default:
-								continue;
 							break;
 						}
 					}
