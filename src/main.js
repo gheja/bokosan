@@ -924,30 +924,54 @@ var G = (function()
 		}
 		else if (this.currentScreen == this.SCREEN_GAME)
 		{
-			if (this.inputHandler.keys.up.status != this.inputHandler.KEY_RESET)
+			if (this.isLevelFinished())
 			{
-				this.player.tryWalk(this.player.NORTH);
+				// congratulate the user, update highscores, etc.
+				// yes, the player can win even if stuck
+				this.screenFadeAndSwitch(this.SCREEN_MENU);
 			}
-			else if (this.inputHandler.keys.right.status != this.inputHandler.KEY_RESET)
+			else if (this.player.isStuck())
 			{
-				this.player.tryWalk(this.player.EAST);
+				// show a dialog about this unfortunate incident...
+				this.screenFadeAndSwitch(this.SCREEN_MENU);
 			}
-			else if (this.inputHandler.keys.down.status != this.inputHandler.KEY_RESET)
+			else
 			{
-				this.player.tryWalk(this.player.SOUTH);
-			}
-			else if (this.inputHandler.keys.left.status != this.inputHandler.KEY_RESET)
-			{
-				this.player.tryWalk(this.player.WEST);
-			}
-			
-			if (this.inputHandler.keys.action.status == this.inputHandler.KEY_PRESSED)
-			{
-				this.player.tryGrab();
-			}
-			else if (this.inputHandler.keys.action.status == this.inputHandler.KEY_RELEASED)
-			{
-				this.player.tryRelease();
+				if (this.inputHandler.keys.action.status == this.inputHandler.KEY_RELEASED)
+				{
+					this.player.tryRelease();
+				}
+				
+				if (this.inputHandler.keys.action.status == this.inputHandler.KEY_PRESSED)
+				{
+					this.player.tryGrab();
+				}
+				
+				if (this.inputHandler.keys.back.status != this.inputHandler.KEY_RESET)
+				{
+					// pause
+					this.screenFadeAndSwitch(this.SCREEN_MENU);
+				}
+				
+				if (this.inputHandler.keys.up.status != this.inputHandler.KEY_RESET)
+				{
+					this.player.tryWalk(this.player.NORTH);
+				}
+				
+				if (this.inputHandler.keys.right.status != this.inputHandler.KEY_RESET)
+				{
+					this.player.tryWalk(this.player.EAST);
+				}
+				
+				if (this.inputHandler.keys.down.status != this.inputHandler.KEY_RESET)
+				{
+					this.player.tryWalk(this.player.SOUTH);
+				}
+				
+				if (this.inputHandler.keys.left.status != this.inputHandler.KEY_RESET)
+				{
+					this.player.tryWalk(this.player.WEST);
+				}
 			}
 			
 			this.inputHandler.clearReleasedKeys();
