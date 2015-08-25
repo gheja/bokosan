@@ -2,22 +2,42 @@
 
 var G = (function()
 {
-	var o = {};
+	/** @const @type {number} */ var WIDTH = 420;
+	/** @const @type {number} */ var HEIGHT = 280;
 	
-	/** @const */ o.WIDTH = 420;
-	/** @const */ o.HEIGHT = 280;
+	/** @const @type {number} */ var FADE_MODE_NONE = 0;
+	/** @const @type {number} */ var FADE_MODE_IN = 1;
+	/** @const @type {number} */ var FADE_MODE_OUT = 2;
 	
-	/** @const */ o.SCREEN_INTRO = 0;
-	/** @const */ o.SCREEN_MENU = 1;
-	/** @const */ o.SCREEN_HIGHSCORE = 2;
-	/** @const */ o.SCREEN_DIALOG_HELLO = 3;
-	/** @const */ o.SCREEN_DIALOG_FAIL1 = 4;
-	/** @const */ o.SCREEN_DIALOG_FAIL2 = 5;
-	/** @const */ o.SCREEN_GAME = 6;
+	/** @const @type {number} */ var SCREEN_INTRO = 0;
+	/** @const @type {number} */ var SCREEN_MENU = 1;
+	/** @const @type {number} */ var SCREEN_HIGHSCORE = 2;
+	/** @const @type {number} */ var SCREEN_DIALOG_HELLO = 3;
+	/** @const @type {number} */ var SCREEN_DIALOG_FAIL1 = 4;
+	/** @const @type {number} */ var SCREEN_DIALOG_FAIL2 = 5;
+	/** @const @type {number} */ var SCREEN_GAME = 6;
 	
-	/** @const */ o.FADE_MODE_NONE = 0;
-	/** @const */ o.FADE_MODE_IN = 1;
-	/** @const */ o.FADE_MODE_OUT = 2;
+	// Obj orientations
+	/** @const @type {number} */ var NORTH = 0;
+	/** @const @type {number} */ var EAST = 1;
+	/** @const @type {number} */ var SOUTH = 2;
+	/** @const @type {number} */ var WEST = 3;
+	
+	// Obj animation state
+	/** @const @type {number} */ var STANDING = 0;
+	/** @const @type {number} */ var WALKING = 1;
+	/** @const @type {number} */ var GRAB = 2;
+	/** @const @type {number} */ var PULLING = 3;
+	/** @const @type {number} */ var FALLING = 4;
+	
+	// InputHandler
+	/** @const @type {number} */ var KEY_RESET = 0;
+	/** @const @type {number} */ var KEY_PRESSED = 1;
+	/** @const @type {number} */ var KEY_RELEASED = 2;
+	
+	var o;
+	
+	o = {};
 	
 	o.realCanvas = null;
 	o.realCtx = null;
@@ -30,12 +50,12 @@ var G = (function()
 	o.objectStore = null;
 	o.ticks = 0;
 	o.waitingForKeypress = false;
-	o.objects = [];
-	o.player = null;
-	
 	o.menu = null;
 	
-	/** @const */ o.levels = [
+	/** @type {Array<Obj>} */ o.objects = [];
+	/** @type {PlayerObj} */ o.player = null;
+	
+	/** @type {Array} */ o.levels = [
 		// 0
 		[
 			0, 0,
@@ -59,12 +79,12 @@ var G = (function()
 	// thx David @ http://stackoverflow.com/a/15439809
 	o.isTouchAvailable = ('ontouchstart' in window) || (navigator.msMaxTouchPoints > 0);
 	
-	o.currentScreen = o.SCREEN_INTRO;
+	o.currentScreen = SCREEN_INTRO;
 	o.currentScreenTicks = 0;
 	
 	o.currentLevel = "";
 	
-	o.fadeMode = o.FADE_MODE_NONE;
+	o.fadeMode = FADE_MODE_NONE;
 	o.fadePercent = 0; // 0: faded/black ... 100: clear/game screen
 	o.validTextCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 .,:!?()x<>udr@/-_+*=\"'";
 	
@@ -149,6 +169,7 @@ var G = (function()
 			this.drawImageAdvanced(this._asset, this.ctx, tileNumber * 28 + 7, 11 + 7, 20, 18, posX + 7, posY + 7, 20, 18, rotated, mirrored);
 		}
 	}
+	
 	/** @constructor */
 	var Obj = function(game, x, y)
 	{
@@ -156,19 +177,8 @@ var G = (function()
 		
 		o = {};
 		
-		/** @const */ o.NORTH = 0;
-		/** @const */ o.EAST = 1;
-		/** @const */ o.SOUTH = 2;
-		/** @const */ o.WEST = 3;
-		
-		/** @const */ o.STANDING = 0;
-		/** @const */ o.WALKING = 1;
-		/** @const */ o.GRAB = 2;
-		/** @const */ o.PULLING = 3;
-		/** @const */ o.FALLING = 4;
-		
 		// notice: must be ordered from 0..3
-		o.oppositeOrientations = [ o.SOUTH, o.WEST, o.NORTH, o.EAST ];
+		o.oppositeOrientations = [ SOUTH, WEST, NORTH, EAST ];
 		
 		o.game = game;
 		o.x = x;
@@ -183,8 +193,8 @@ var G = (function()
 		o.tileRotated = 0;
 		o.tileMirrored = 0;
 		o.floorOnly = false;
-		o.orientation = o.NORTH;
-		o.status = o.STANDING;
+		o.orientation = NORTH;
+		o.status = STANDING;
 		o.isBox = false; // instanceof?...
 		
 		o.draw = function()
@@ -216,7 +226,7 @@ var G = (function()
 		
 		o.updateRenderOrder = function()
 		{
-			this.renderOrder = this.y * this.game.WIDTH + this.x;
+			this.renderOrder = this.y * WIDTH + this.x;
 		}
 		
 		o.getRenderOrder = function()
@@ -226,7 +236,7 @@ var G = (function()
 		
 		o.tryStop = function()
 		{
-			this.status = this.STANDING;
+			this.status = STANDING;
 		}
 		
 		o.getNeighbourTile = function(dx, dy)
@@ -281,7 +291,13 @@ var G = (function()
 		return o;
 	}
 	
-	/** @constructor */
+	/**
+	 * @constructor
+	 * @extends {Obj}
+	 * @param {G} game
+	 * @param {number} x
+	 * @param {number} y
+	 */
 	var BoxObj = function(game, x, y)
 	{
 		var o;
@@ -294,7 +310,13 @@ var G = (function()
 		return o;
 	}
 	
-	/** @constructor */
+	/**
+	 * @constructor
+	 * @extends {Obj}
+	 * @param {G} game
+	 * @param {number} x
+	 * @param {number} y
+	 */
 	var PlayerObj = function(game, x, y)
 	{
 		var o;
@@ -338,7 +360,7 @@ var G = (function()
 			this.tickCount++;
 			this.moveIfNeeded();
 			
-			if (this.status != this.FALLING)
+			if (this.status != FALLING)
 			{
 				a = this.orientation * 4 + this.status;
 			}
@@ -365,18 +387,18 @@ var G = (function()
 			this.moveStepY = dy * 2;
 			this.moveStepLeft = steps;
 			
-			if (this.status == this.GRAB)
+			if (this.status == GRAB)
 			{
 				// copy the movement to the box
 				this.grabbedBox.moveStepX = this.moveStepX;
 				this.grabbedBox.moveStepY = this.moveStepY;
 				this.grabbedBox.moveStepLeft = this.moveStepLeft;
 				
-				this.status = this.PULLING;
+				this.status = PULLING;
 			}
 			else
 			{
-				this.status = this.WALKING;
+				this.status = WALKING;
 			}
 		}
 		
@@ -401,19 +423,19 @@ var G = (function()
 			
 			switch (orientation)
 			{
-				case this.NORTH:
+				case NORTH:
 					this.checkCollisionAndGo(0, -1, 9);
 				break;
 				
-				case this.EAST:
+				case EAST:
 					this.checkCollisionAndGo(1, 0, 10);
 				break;
 				
-				case this.SOUTH:
+				case SOUTH:
 					this.checkCollisionAndGo(0, 1, 9);
 				break;
 				
-				case this.WEST:
+				case WEST:
 					this.checkCollisionAndGo(-1, 0, 10);
 				break;
 			}
@@ -423,11 +445,11 @@ var G = (function()
 		{
 			if (this.grabbedBox == null)
 			{
-				this.status = this.STANDING;
+				this.status = STANDING;
 			}
 			else
 			{
-				this.status = this.GRAB;
+				this.status = GRAB;
 			}
 		}
 		
@@ -442,19 +464,19 @@ var G = (function()
 			
 			switch (this.orientation)
 			{
-				case this.NORTH:
+				case NORTH:
 					box = this.getNeighbourBox(0, -1);
 				break;
 				
-				case this.EAST:
+				case EAST:
 					box = this.getNeighbourBox(1, 0);
 				break;
 				
-				case this.SOUTH:
+				case SOUTH:
 					box = this.getNeighbourBox(0, 1);
 				break;
 				
-				case this.WEST:
+				case WEST:
 					box = this.getNeighbourBox(-1, 0);
 				break;
 			}
@@ -465,12 +487,12 @@ var G = (function()
 			}
 			
 			this.grabbedBox = box;
-			this.status = this.GRAB;
+			this.status = GRAB;
 		}
 		
 		o.tryRelease = function()
 		{
-			this.status = this.STANDING;
+			this.status = STANDING;
 			this.grabbedBox = null;
 		}
 		
@@ -492,25 +514,23 @@ var G = (function()
 		return o;
 	}
 	
-	/** @constructor */
+	/**
+	 * @constructor
+	 */
 	var InputHandler = function(obj)
 	{
 		var o;
 		
 		o = {};
 		
-		/** @const */ o.KEY_RESET = 0;
-		/** @const */ o.KEY_PRESSED = 1;
-		/** @const */ o.KEY_RELEASED = 2;
-		
 		o.keyPressed = false;
 		o.keys = {
-			up: { keyCodes: [ 38, 87 ], status: o.KEY_RESET },
-			down: { keyCodes: [ 40, 83 ], status: o.KEY_RESET },
-			left: { keyCodes: [ 37, 65 ], status: o.KEY_RESET },
-			right:  { keyCodes: [ 39, 68 ], status: o.KEY_RESET },
-			action: { keyCodes: [ 16, 32, 13 ], status: o.KEY_RESET },
-			back: { keyCodes: [ 27 ], status: o.KEY_RESET }
+			up: { keyCodes: [ 38, 87 ], status: KEY_RESET },
+			down: { keyCodes: [ 40, 83 ], status: KEY_RESET },
+			left: { keyCodes: [ 37, 65 ], status: KEY_RESET },
+			right:  { keyCodes: [ 39, 68 ], status: KEY_RESET },
+			action: { keyCodes: [ 16, 32, 13 ], status: KEY_RESET },
+			back: { keyCodes: [ 27 ], status: KEY_RESET }
 		};
 		
 		o.setKeyStatus = function(keyCode, statusFrom, statusTo)
@@ -550,9 +570,9 @@ var G = (function()
 		{
 			var keyCode;
 			
-			keyCode = event.which ? event.which : event.keyCode;
+			keyCode = e.which ? e.which : e.keyCode;
 			
-			this.setKeyStatus(keyCode, -1, this.KEY_PRESSED);
+			this.setKeyStatus(keyCode, -1, KEY_PRESSED);
 			
 			this.keyPressed = true;
 		}
@@ -561,9 +581,9 @@ var G = (function()
 		{
 			var keyCode;
 			
-			keyCode = event.which ? event.which : event.keyCode;
+			keyCode = e.which ? e.which : e.keyCode;
 			
-			this.setKeyStatus(keyCode, this.KEY_PRESSED, this.KEY_RELEASED);
+			this.setKeyStatus(keyCode, KEY_PRESSED, KEY_RELEASED);
 		}
 		
 		o.onTouchStart = function(e)
@@ -585,12 +605,12 @@ var G = (function()
 		o.clearKeys = function()
 		{
 			this.keyPressed = false;
-			this.setKeyStatus(-1, -1, this.KEY_RESET);
+			this.setKeyStatus(-1, -1, KEY_RESET);
 		}
 		
 		o.clearReleasedKeys = function()
 		{
-			this.setKeyStatus(-1, this.KEY_RELEASED, this.KEY_RESET);
+			this.setKeyStatus(-1, KEY_RELEASED, KEY_RESET);
 		}
 		
 		o.bind = function(w)
@@ -615,7 +635,7 @@ var G = (function()
 		
 		tmp = that.zoomLevel;
 		
-		that.zoomLevel = Math.max(Math.min(Math.floor(window.innerWidth / that.WIDTH), Math.floor(window.innerHeight / that.HEIGHT)), 0.5);
+		that.zoomLevel = Math.max(Math.min(Math.floor(window.innerWidth / WIDTH), Math.floor(window.innerHeight / HEIGHT)), 0.5);
 		
 		
 		if (that.zoomLevel * that.pixelRatio < 1)
@@ -632,8 +652,8 @@ var G = (function()
 		}
 */
 		
-		w = that.WIDTH * that.zoomLevel;
-		h = that.HEIGHT * that.zoomLevel;
+		w = WIDTH * that.zoomLevel;
+		h = HEIGHT * that.zoomLevel;
 		
 		// this check does not work on mobile. what.
 		// if (tmp != that.zoomLevel)
@@ -687,7 +707,7 @@ var G = (function()
 	o.screenFadeAndSwitch = function(_new_screen)
 	{
 		this.nextScreen = _new_screen;
-		this.fadeMode = this.FADE_MODE_OUT;
+		this.fadeMode = FADE_MODE_OUT;
 	}
 	
 	o.switchScreen = function(_new_screen)
@@ -702,18 +722,18 @@ var G = (function()
 		// initialization of the new screen
 		switch (_new_screen)
 		{
-			case that.SCREEN_INTRO:
+			case SCREEN_INTRO:
 				that.waitingForKeypress = true;
-				that.nextScreen = that.SCREEN_MENU;
+				that.nextScreen = SCREEN_MENU;
 			break;
 			
-			case that.SCREEN_MENU:
+			case SCREEN_MENU:
 				that.menu = {
 					selection: 0,
 					items: [
-						{ title: "PLAY", callback: that.screenFadeAndSwitch.bind(that, that.SCREEN_GAME) },
-						{ title: "CUSTOMIZE", callback: that.screenFadeAndSwitch.bind(that, that.SCREEN_MENU) },
-						{ title: "HOW TO PLAY", callback: that.screenFadeAndSwitch.bind(that, that.SCREEN_MENU) }
+						{ title: "PLAY", callback: that.screenFadeAndSwitch.bind(that, SCREEN_GAME) },
+						{ title: "CUSTOMIZE", callback: that.screenFadeAndSwitch.bind(that, SCREEN_MENU) },
+						{ title: "HOW TO PLAY", callback: that.screenFadeAndSwitch.bind(that, SCREEN_MENU) }
 					]
 				};
 				
@@ -721,7 +741,7 @@ var G = (function()
 				// that.nextScreen = that.SCREEN_GAME;
 			break;
 			
-			case that.SCREEN_GAME:
+			case SCREEN_GAME:
 				that.loadLevel(1);
 				
 				that.objects.length = 0;
@@ -756,22 +776,22 @@ var G = (function()
 	
 	o.fadeTick = function()
 	{
-		if (this.fadeMode == this.FADE_MODE_NONE)
+		if (this.fadeMode == FADE_MODE_NONE)
 		{
 			return;
 		}
 		
-		if (this.fadeMode == this.FADE_MODE_OUT && this.fadePercent == 0)
+		if (this.fadeMode == FADE_MODE_OUT && this.fadePercent == 0)
 		{
 			this.switchScreen(this.nextScreen);
-			this.fadeMode = this.FADE_MODE_IN;
+			this.fadeMode = FADE_MODE_IN;
 		}
 		
-		if (this.fadeMode == this.FADE_MODE_IN)
+		if (this.fadeMode == FADE_MODE_IN)
 		{
 			this.fadePercent += 34;
 		}
-		else if (this.fadeMode == this.FADE_MODE_OUT)
+		else if (this.fadeMode == FADE_MODE_OUT)
 		{
 			this.fadePercent -= 34;
 		}
@@ -780,7 +800,7 @@ var G = (function()
 		
 		if (this.fadePercent == 100)
 		{
-			this.fadeMode = this.FADE_MODE_NONE;
+			this.fadeMode = FADE_MODE_NONE;
 		}
 	}
 	
@@ -798,7 +818,7 @@ var G = (function()
 		
 		switch (that.currentScreen)
 		{
-			case that.SCREEN_INTRO:
+			case SCREEN_INTRO:
 				that.drawBigText(146, 80, "BOKOSAN");
 				that.drawSmallText(122, 100, "FOR JS13KGAMES 2015\n\n  WWW.BOKOSAN.NET");
 				if (that.isTouchAvailable)
@@ -811,7 +831,7 @@ var G = (function()
 				}
 			break;
 			
-			case that.SCREEN_MENU:
+			case SCREEN_MENU:
 				that.drawBigText(0, 0, "BOKOSAN");
 				that.drawSmallText(0, 20, "FOR JS13KGAMES 2015");
 				
@@ -830,7 +850,7 @@ var G = (function()
 				that.drawSmallText(0, 270, "GITHUB.COM/GHEJA/BOKOSAN - WWW.BOKOSAN.NET");
 			break;
 			
-			case that.SCREEN_GAME:
+			case SCREEN_GAME:
 				for (i=0; i<that.objects.length; i++)
 				{
 					that.objects[i].updateRenderOrder();
@@ -896,22 +916,22 @@ var G = (function()
 		{
 			if (this.inputHandler.checkIfKeyPressedAndClear())
 			{
-				this.fadeMode = this.FADE_MODE_OUT;
+				this.fadeMode = FADE_MODE_OUT;
 				this.waitingForKeypress = false;
 			}
 		}
 		
-		if (this.currentScreen == this.SCREEN_MENU)
+		if (this.currentScreen == SCREEN_MENU)
 		{
-			if (this.inputHandler.keys.up.status != this.inputHandler.KEY_RESET)
+			if (this.inputHandler.keys.up.status != KEY_RESET)
 			{
 				this.menu.selection--;
 			}
-			else if (this.inputHandler.keys.down.status != this.inputHandler.KEY_RESET)
+			else if (this.inputHandler.keys.down.status != KEY_RESET)
 			{
 				this.menu.selection++;
 			}
-			else if (this.inputHandler.keys.action.status != this.inputHandler.KEY_RESET || this.inputHandler.keys.right.status != this.inputHandler.KEY_RESET)
+			else if (this.inputHandler.keys.action.status != KEY_RESET || this.inputHandler.keys.right.status != KEY_RESET)
 			{
 				this.menu.items[this.menu.selection].callback();
 			}
@@ -922,55 +942,55 @@ var G = (function()
 			this.inputHandler.clearKeys();
 			// this.inputHandler.clearReleasedKeys();
 		}
-		else if (this.currentScreen == this.SCREEN_GAME)
+		else if (this.currentScreen == SCREEN_GAME)
 		{
 			if (this.isLevelFinished())
 			{
 				// congratulate the user, update highscores, etc.
 				// yes, the player can win even if stuck
-				this.screenFadeAndSwitch(this.SCREEN_MENU);
+				this.screenFadeAndSwitch(SCREEN_MENU);
 			}
 			else if (this.player.isStuck())
 			{
 				// show a dialog about this unfortunate incident...
-				this.screenFadeAndSwitch(this.SCREEN_MENU);
+				this.screenFadeAndSwitch(SCREEN_MENU);
 			}
 			else
 			{
-				if (this.inputHandler.keys.action.status == this.inputHandler.KEY_RELEASED)
+				if (this.inputHandler.keys.action.status == KEY_RELEASED)
 				{
 					this.player.tryRelease();
 				}
 				
-				if (this.inputHandler.keys.action.status == this.inputHandler.KEY_PRESSED)
+				if (this.inputHandler.keys.action.status == KEY_PRESSED)
 				{
 					this.player.tryGrab();
 				}
 				
-				if (this.inputHandler.keys.back.status != this.inputHandler.KEY_RESET)
+				if (this.inputHandler.keys.back.status != KEY_RESET)
 				{
 					// pause
-					this.screenFadeAndSwitch(this.SCREEN_MENU);
+					this.screenFadeAndSwitch(SCREEN_MENU);
 				}
 				
-				if (this.inputHandler.keys.up.status != this.inputHandler.KEY_RESET)
+				if (this.inputHandler.keys.up.status != KEY_RESET)
 				{
-					this.player.tryWalk(this.player.NORTH);
+					this.player.tryWalk(NORTH);
 				}
 				
-				if (this.inputHandler.keys.right.status != this.inputHandler.KEY_RESET)
+				if (this.inputHandler.keys.right.status != KEY_RESET)
 				{
-					this.player.tryWalk(this.player.EAST);
+					this.player.tryWalk(EAST);
 				}
 				
-				if (this.inputHandler.keys.down.status != this.inputHandler.KEY_RESET)
+				if (this.inputHandler.keys.down.status != KEY_RESET)
 				{
-					this.player.tryWalk(this.player.SOUTH);
+					this.player.tryWalk(SOUTH);
 				}
 				
-				if (this.inputHandler.keys.left.status != this.inputHandler.KEY_RESET)
+				if (this.inputHandler.keys.left.status != KEY_RESET)
 				{
-					this.player.tryWalk(this.player.WEST);
+					this.player.tryWalk(WEST);
 				}
 			}
 			
@@ -992,19 +1012,19 @@ var G = (function()
 		
 		this.fadeTick();
 		
-		if (this.fadeMode == this.FADE_MODE_NONE)
+		if (this.fadeMode == FADE_MODE_NONE)
 		{
 			this.screenTick();
 		}
 		
 		this.ctx.fillStyle = "#555";
-		this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+		this.ctx.fillRect(0, 0, WIDTH, HEIGHT);
 		
 		this.screenDraw();
 		
 		this.fadeApply(this.ctx, this.fadePercent);
 		
-		this.realCtx.drawImage(this.canvas, 0, 0, this.canvas.width, this.canvas.height, 0, 0, this.canvas.width * this.pixelRatio * this.zoomLevel, this.canvas.height * this.pixelRatio * this.zoomLevel);
+		this.realCtx.drawImage(this.canvas, 0, 0, WIDTH, HEIGHT, 0, 0, WIDTH * this.pixelRatio * this.zoomLevel, HEIGHT * this.pixelRatio * this.zoomLevel);
 	}
 	
 	o.assetLoadFinished = function()
@@ -1038,8 +1058,8 @@ var G = (function()
 		that.pixelRatio = dpr / bsr;
 		
 		that.canvas = document.createElement('canvas');
-		that.canvas.width = that.WIDTH;
-		that.canvas.height = that.HEIGHT;
+		that.canvas.width = WIDTH;
+		that.canvas.height = HEIGHT;
 		
 		that.ctx = that.canvas.getContext("2d");
 		that.ctx.imageSmoothingEnabled = false;
@@ -1053,8 +1073,8 @@ var G = (function()
 		
 		that.inputHandler = new InputHandler(window);
 		
-		that.switchScreen(that.SCREEN_INTRO);
-		that.fadeMode = that.FADE_MODE_IN;
+		that.switchScreen(SCREEN_INTRO);
+		that.fadeMode = FADE_MODE_IN;
 		that.fadePercent = 0;
 		
 		window.addEventListener('resize', that.onResize.bind(that));
