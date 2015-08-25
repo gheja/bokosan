@@ -474,6 +474,21 @@ var G = (function()
 			this.grabbedBox = null;
 		}
 		
+		o.isStuck = function()
+		{
+			if (this.moveStepLeft != 0 ||
+				(this.getNeighbourTile( 0, -1) != 'w' && this.getNeighbourBox( 0, -1) === null) ||
+				(this.getNeighbourTile( 1,  0) != 'w' && this.getNeighbourBox( 1,  0) === null) ||
+				(this.getNeighbourTile( 0,  1) != 'w' && this.getNeighbourBox( 0,  1) === null) ||
+				(this.getNeighbourTile(-1,  0) != 'w' && this.getNeighbourBox(-1,  0) === null)
+			)
+			{
+				return false;
+			}
+			
+			return true;
+		}
+		
 		return o;
 	}
 	
