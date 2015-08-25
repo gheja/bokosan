@@ -664,6 +664,26 @@ var G = (function()
 		this.currentLevel = this.levels[index][2];
 	}
 	
+	o.isLevelFinished = function()
+	{
+		var i;
+		
+		if (this.player.moveStepLeft != 0)
+		{
+			return false;
+		}
+		
+		for (i in this.objects)
+		{
+			if (this.objects[i].isBox && this.objects[i].getNeighbourTile(0, 0) != '.')
+			{
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
 	o.screenFadeAndSwitch = function(_new_screen)
 	{
 		this.nextScreen = _new_screen;
