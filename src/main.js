@@ -229,13 +229,13 @@ var G = (function()
 			this.status = this.STANDING;
 		}
 		
-		o.checkNeighbourTile = function(dx, dy, character)
+		o.getNeighbourTile = function(dx, dy)
 		{
 			var p;
 			
 			p = (Math.floor(this.y / 18) + dy) * this.game.currentLevelWidth + (Math.floor(this.x / 20) + dx);
 			
-			return this.game.currentLevel[p] == character;
+			return this.game.currentLevel[p];
 		}
 		
 		o.getNeighbourBox = function(dx, dy)
@@ -356,7 +356,7 @@ var G = (function()
 		
 		o.checkCollisionAndGo = function(dx, dy, steps)
 		{
-			if (this.checkNeighbourTile(dx, dy, 'w') || this.getNeighbourBox(dx, dy) !== null)
+			if (this.getNeighbourTile(dx, dy) == 'w' || this.getNeighbourBox(dx, dy) !== null)
 			{
 				return;
 			}
