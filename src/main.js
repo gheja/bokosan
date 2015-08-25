@@ -18,22 +18,22 @@ var G = (function()
 	/** @const @type {number} */ var SCREEN_GAME = 6;
 	
 	// Obj orientations
-	/** @const @type {number} */ var NORTH = 0;
-	/** @const @type {number} */ var EAST = 1;
-	/** @const @type {number} */ var SOUTH = 2;
-	/** @const @type {number} */ var WEST = 3;
+	/** @const @type {number} */ var OBJ_ORIENTATION_NORTH = 0;
+	/** @const @type {number} */ var OBJ_ORIENTATION_EAST = 1;
+	/** @const @type {number} */ var OBJ_ORIENTATION_SOUTH = 2;
+	/** @const @type {number} */ var OBJ_ORIENTATION_WEST = 3;
 	
 	// Obj animation state
-	/** @const @type {number} */ var STANDING = 0;
-	/** @const @type {number} */ var WALKING = 1;
-	/** @const @type {number} */ var GRAB = 2;
-	/** @const @type {number} */ var PULLING = 3;
-	/** @const @type {number} */ var FALLING = 4;
+	/** @const @type {number} */ var OBJ_STATUS_STANDING = 0;
+	/** @const @type {number} */ var OBJ_STATUS_WALKING = 1;
+	/** @const @type {number} */ var OBJ_STATUS_GRAB = 2;
+	/** @const @type {number} */ var OBJ_STATUS_PULLING = 3;
+	/** @const @type {number} */ var OBJ_STATUS_FALLING = 4;
 	
 	// InputHandler
-	/** @const @type {number} */ var KEY_RESET = 0;
-	/** @const @type {number} */ var KEY_PRESSED = 1;
-	/** @const @type {number} */ var KEY_RELEASED = 2;
+	/** @const @type {number} */ var IH_KEY_STAUTS_RESET = 0;
+	/** @const @type {number} */ var IH_KEY_STAUTS_PRESSED = 1;
+	/** @const @type {number} */ var IH_KEY_STAUTS_RELEASED = 2;
 	
 	var o;
 	
@@ -175,7 +175,7 @@ var G = (function()
 	{
 		return {
 		// notice: must be ordered from 0..3
-		oppositeOrientations: [ SOUTH, WEST, NORTH, EAST ],
+		oppositeOrientations: [ OBJ_ORIENTATION_SOUTH, OBJ_ORIENTATION_WEST, OBJ_ORIENTATION_NORTH, OBJ_ORIENTATION_EAST ],
 		
 		game: game,
 		x: x,
@@ -190,8 +190,8 @@ var G = (function()
 		tileRotated: 0,
 		tileMirrored: 0,
 		floorOnly: false,
-		orientation: NORTH,
-		status: STANDING,
+		orientation: OBJ_ORIENTATION_NORTH,
+		status: OBJ_STATUS_STANDING,
 		isBox: false,// instanceof?...
 		
 		draw: function()
@@ -233,7 +233,7 @@ var G = (function()
 		
 		tryStop: function()
 		{
-			this.status = STANDING;
+			this.status = OBJ_STATUS_STANDING;
 		},
 		
 		getNeighbourTile: function(dx, dy)
@@ -356,7 +356,7 @@ var G = (function()
 			this.tickCount++;
 			this.moveIfNeeded();
 			
-			if (this.status != FALLING)
+			if (this.status != OBJ_STATUS_FALLING)
 			{
 				a = this.orientation * 4 + this.status;
 			}
@@ -383,18 +383,18 @@ var G = (function()
 			this.moveStepY = dy * 2;
 			this.moveStepLeft = steps;
 			
-			if (this.status == GRAB)
+			if (this.status == OBJ_STATUS_GRAB)
 			{
 				// copy the movement to the box
 				this.grabbedBox.moveStepX = this.moveStepX;
 				this.grabbedBox.moveStepY = this.moveStepY;
 				this.grabbedBox.moveStepLeft = this.moveStepLeft;
 				
-				this.status = PULLING;
+				this.status = OBJ_STATUS_PULLING;
 			}
 			else
 			{
-				this.status = WALKING;
+				this.status = OBJ_STATUS_WALKING;
 			}
 		}
 		
@@ -419,19 +419,19 @@ var G = (function()
 			
 			switch (orientation)
 			{
-				case NORTH:
+				case OBJ_ORIENTATION_NORTH:
 					this.checkCollisionAndGo(0, -1, 9);
 				break;
 				
-				case EAST:
+				case OBJ_ORIENTATION_EAST:
 					this.checkCollisionAndGo(1, 0, 10);
 				break;
 				
-				case SOUTH:
+				case OBJ_ORIENTATION_SOUTH:
 					this.checkCollisionAndGo(0, 1, 9);
 				break;
 				
-				case WEST:
+				case OBJ_ORIENTATION_WEST:
 					this.checkCollisionAndGo(-1, 0, 10);
 				break;
 			}
@@ -441,11 +441,11 @@ var G = (function()
 		{
 			if (this.grabbedBox == null)
 			{
-				this.status = STANDING;
+				this.status = OBJ_STATUS_STANDING;
 			}
 			else
 			{
-				this.status = GRAB;
+				this.status = OBJ_STATUS_GRAB;
 			}
 		}
 		
@@ -460,19 +460,19 @@ var G = (function()
 			
 			switch (this.orientation)
 			{
-				case NORTH:
+				case OBJ_ORIENTATION_NORTH:
 					box = this.getNeighbourBox(0, -1);
 				break;
 				
-				case EAST:
+				case OBJ_ORIENTATION_EAST:
 					box = this.getNeighbourBox(1, 0);
 				break;
 				
-				case SOUTH:
+				case OBJ_ORIENTATION_SOUTH:
 					box = this.getNeighbourBox(0, 1);
 				break;
 				
-				case WEST:
+				case OBJ_ORIENTATION_WEST:
 					box = this.getNeighbourBox(-1, 0);
 				break;
 			}
@@ -483,12 +483,12 @@ var G = (function()
 			}
 			
 			this.grabbedBox = box;
-			this.status = GRAB;
+			this.status = OBJ_STATUS_GRAB;
 		}
 		
 		o.tryRelease = function()
 		{
-			this.status = STANDING;
+			this.status = OBJ_STATUS_STANDING;
 			this.grabbedBox = null;
 		}
 		
@@ -521,12 +521,12 @@ var G = (function()
 		
 		o.keyPressed = false;
 		o.keys = {
-			up: { keyCodes: [ 38, 87 ], status: KEY_RESET },
-			down: { keyCodes: [ 40, 83 ], status: KEY_RESET },
-			left: { keyCodes: [ 37, 65 ], status: KEY_RESET },
-			right:  { keyCodes: [ 39, 68 ], status: KEY_RESET },
-			action: { keyCodes: [ 16, 32, 13 ], status: KEY_RESET },
-			back: { keyCodes: [ 27 ], status: KEY_RESET }
+			up: { keyCodes: [ 38, 87 ], status: IH_KEY_STAUTS_RESET },
+			down: { keyCodes: [ 40, 83 ], status: IH_KEY_STAUTS_RESET },
+			left: { keyCodes: [ 37, 65 ], status: IH_KEY_STAUTS_RESET },
+			right:  { keyCodes: [ 39, 68 ], status: IH_KEY_STAUTS_RESET },
+			action: { keyCodes: [ 16, 32, 13 ], status: IH_KEY_STAUTS_RESET },
+			back: { keyCodes: [ 27 ], status: IH_KEY_STAUTS_RESET }
 		};
 		
 		o.setKeyStatus = function(keyCode, statusFrom, statusTo)
@@ -568,7 +568,7 @@ var G = (function()
 			
 			keyCode = e.which ? e.which : e.keyCode;
 			
-			this.setKeyStatus(keyCode, -1, KEY_PRESSED);
+			this.setKeyStatus(keyCode, -1, IH_KEY_STAUTS_PRESSED);
 			
 			this.keyPressed = true;
 		}
@@ -579,7 +579,7 @@ var G = (function()
 			
 			keyCode = e.which ? e.which : e.keyCode;
 			
-			this.setKeyStatus(keyCode, KEY_PRESSED, KEY_RELEASED);
+			this.setKeyStatus(keyCode, IH_KEY_STAUTS_PRESSED, IH_KEY_STAUTS_RELEASED);
 		}
 		
 		o.onTouchStart = function(e)
@@ -601,12 +601,12 @@ var G = (function()
 		o.clearKeys = function()
 		{
 			this.keyPressed = false;
-			this.setKeyStatus(-1, -1, KEY_RESET);
+			this.setKeyStatus(-1, -1, IH_KEY_STAUTS_RESET);
 		}
 		
 		o.clearReleasedKeys = function()
 		{
-			this.setKeyStatus(-1, KEY_RELEASED, KEY_RESET);
+			this.setKeyStatus(-1, IH_KEY_STAUTS_RELEASED, IH_KEY_STAUTS_RESET);
 		}
 		
 		o.bind = function(w)
@@ -919,15 +919,15 @@ var G = (function()
 		
 		if (this.currentScreen == SCREEN_MENU)
 		{
-			if (this.inputHandler.keys.up.status != KEY_RESET)
+			if (this.inputHandler.keys.up.status != IH_KEY_STAUTS_RESET)
 			{
 				this.menu.selection--;
 			}
-			else if (this.inputHandler.keys.down.status != KEY_RESET)
+			else if (this.inputHandler.keys.down.status != IH_KEY_STAUTS_RESET)
 			{
 				this.menu.selection++;
 			}
-			else if (this.inputHandler.keys.action.status != KEY_RESET || this.inputHandler.keys.right.status != KEY_RESET)
+			else if (this.inputHandler.keys.action.status != IH_KEY_STAUTS_RESET || this.inputHandler.keys.right.status != IH_KEY_STAUTS_RESET)
 			{
 				this.menu.items[this.menu.selection].callback();
 			}
@@ -953,40 +953,40 @@ var G = (function()
 			}
 			else
 			{
-				if (this.inputHandler.keys.action.status == KEY_RELEASED)
+				if (this.inputHandler.keys.action.status == IH_KEY_STAUTS_RELEASED)
 				{
 					this.player.tryRelease();
 				}
 				
-				if (this.inputHandler.keys.action.status == KEY_PRESSED)
+				if (this.inputHandler.keys.action.status == IH_KEY_STAUTS_PRESSED)
 				{
 					this.player.tryGrab();
 				}
 				
-				if (this.inputHandler.keys.back.status != KEY_RESET)
+				if (this.inputHandler.keys.back.status != IH_KEY_STAUTS_RESET)
 				{
 					// pause
 					this.screenFadeAndSwitch(SCREEN_MENU);
 				}
 				
-				if (this.inputHandler.keys.up.status != KEY_RESET)
+				if (this.inputHandler.keys.up.status != IH_KEY_STAUTS_RESET)
 				{
-					this.player.tryWalk(NORTH);
+					this.player.tryWalk(OBJ_ORIENTATION_NORTH);
 				}
 				
-				if (this.inputHandler.keys.right.status != KEY_RESET)
+				if (this.inputHandler.keys.right.status != IH_KEY_STAUTS_RESET)
 				{
-					this.player.tryWalk(EAST);
+					this.player.tryWalk(OBJ_ORIENTATION_EAST);
 				}
 				
-				if (this.inputHandler.keys.down.status != KEY_RESET)
+				if (this.inputHandler.keys.down.status != IH_KEY_STAUTS_RESET)
 				{
-					this.player.tryWalk(SOUTH);
+					this.player.tryWalk(OBJ_ORIENTATION_SOUTH);
 				}
 				
-				if (this.inputHandler.keys.left.status != KEY_RESET)
+				if (this.inputHandler.keys.left.status != IH_KEY_STAUTS_RESET)
 				{
-					this.player.tryWalk(WEST);
+					this.player.tryWalk(OBJ_ORIENTATION_WEST);
 				}
 			}
 			
