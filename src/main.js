@@ -173,82 +173,79 @@ var G = (function()
 	/** @constructor */
 	var Obj = function(game, x, y)
 	{
-		var o;
-		
-		o = {};
-		
+		return {
 		// notice: must be ordered from 0..3
-		o.oppositeOrientations = [ SOUTH, WEST, NORTH, EAST ];
+		oppositeOrientations: [ SOUTH, WEST, NORTH, EAST ],
 		
-		o.game = game;
-		o.x = x;
-		o.y = y;
-		o.moveStepX = 0;
-		o.moveStepY = 0;
-		o.moveStepLeft = 0;
-		o.renderNeeded = false;
-		o.renderOrder = 0;
-		o.tickCount = 0;
-		o.tileNumber = 0;
-		o.tileRotated = 0;
-		o.tileMirrored = 0;
-		o.floorOnly = false;
-		o.orientation = NORTH;
-		o.status = STANDING;
-		o.isBox = false; // instanceof?...
+		game: game,
+		x: x,
+		y: y,
+		moveStepX: 0,
+		moveStepY: 0,
+		moveStepLeft: 0,
+		renderNeeded: false,
+		renderOrder: 0,
+		tickCount: 0,
+		tileNumber: 0,
+		tileRotated: 0,
+		tileMirrored: 0,
+		floorOnly: false,
+		orientation: NORTH,
+		status: STANDING,
+		isBox: false,// instanceof?...
 		
-		o.draw = function()
+		draw: function()
 		{
 			this.game.drawTile(this.x, this.y, this.tileNumber, this.tileRotated, this.tileMirrored, this.floorOnly);
 			this.renderNeeded = false;
-		}
+		},
 		
-		o.setPosition = function(x, y)
+		setPosition: function(x, y)
 		{
 			this.x = x;
 			this.y = y;
-		}
+		},
 		
-		o.getPosition = function()
+		getPosition: function()
 		{
 			return [ this.x, this.y ];
-		}
+		},
 		
-		o.setRenderNeeded = function(value)
+		setRenderNeeded: function(value)
 		{
 			this.renderNeeded = value;
-		}
+		},
 		
-		o.getRenderNeeded = function()
+		getRenderNeeded: function()
 		{
 			return this.renderNeeded;
-		}
+		},
 		
-		o.updateRenderOrder = function()
+		updateRenderOrder: function()
 		{
 			this.renderOrder = this.y * WIDTH + this.x;
-		}
+		},
 		
-		o.getRenderOrder = function()
+		getRenderOrder: function()
 		{
 			return this.renderOrder;
-		}
+		},
 		
-		o.tryStop = function()
+		tryStop: function()
 		{
 			this.status = STANDING;
-		}
+		},
 		
-		o.getNeighbourTile = function(dx, dy)
+		getNeighbourTile: function(dx, dy)
 		{
 			var p;
 			
 			p = (Math.floor(this.y / 18) + dy) * this.game.currentLevelWidth + (Math.floor(this.x / 20) + dx);
 			
 			return this.game.currentLevel[p];
-		}
+		},
 		
-		o.getNeighbourBox = function(dx, dy)
+		getNeighbourBox: function(dx, dy)
 		{
 			var i;
 			
@@ -262,9 +259,9 @@ var G = (function()
 			}
 			
 			return null;
-		}
+		},
 		
-		o.moveIfNeeded = function()
+		moveIfNeeded: function()
 		{
 			if (this.moveStepLeft > 0)
 			{
@@ -280,15 +277,14 @@ var G = (function()
 					this.tryStop();
 				}
 			}
-		}
+		},
 		
-		o.tick = function()
+		tick: function()
 		{
 			this.tickCount++;
 			this.moveIfNeeded();
 		}
-		
-		return o;
+	};
 	}
 	
 	/**
