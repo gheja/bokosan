@@ -1,6 +1,7 @@
 'use strict';
 
-var G = (function()
+/** @constructor */
+var Game = function()
 {
 	/** @const @type {number} */ var WIDTH = 420;
 	/** @const @type {number} */ var HEIGHT = 280;
@@ -162,7 +163,7 @@ var G = (function()
 		if (!floorOnly)
 		{
 			// this.drawImageAdvanced(this._asset, c, tileNumber * 28, 11, 27, 25, posX, posY, 27, 25, rotated, mirrored);
-			this.ctx.drawImage(G._asset, tileNumber * 28, 11, 27, 25, posX, posY, 27, 25);
+			this.ctx.drawImage(this._asset, tileNumber * 28, 11, 27, 25, posX, posY, 27, 25);
 		}
 		else
 		{
@@ -290,7 +291,7 @@ var G = (function()
 	/**
 	 * @constructor
 	 * @extends {Obj}
-	 * @param {G} game
+	 * @param {Game} game
 	 * @param {number} x
 	 * @param {number} y
 	 */
@@ -309,7 +310,7 @@ var G = (function()
 	/**
 	 * @constructor
 	 * @extends {Obj}
-	 * @param {G} game
+	 * @param {Game} game
 	 * @param {number} x
 	 * @param {number} y
 	 */
@@ -1079,6 +1080,8 @@ var G = (function()
 	}
 	
 	return o;
-})();
+}
 
-window.addEventListener('load', G.init.bind(G));
+var game = new Game();
+
+window.addEventListener('load', game.init.bind(game));
