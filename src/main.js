@@ -626,51 +626,49 @@ var Game = function()
 	
 	o.onResize = function()
 	{
-		var scale, that, w, h, tmp;
+		var scale, w, h, tmp;
 		
-		that = this;
+		tmp = this.zoomLevel;
 		
-		tmp = that.zoomLevel;
-		
-		that.zoomLevel = Math.max(Math.min(Math.floor(window.innerWidth / WIDTH), Math.floor(window.innerHeight / HEIGHT)), 0.5);
+		this.zoomLevel = Math.max(Math.min(Math.floor(window.innerWidth / WIDTH), Math.floor(window.innerHeight / HEIGHT)), 0.5);
 		
 		
-		if (that.zoomLevel * that.pixelRatio < 1)
+		if (this.zoomLevel * this.pixelRatio < 1)
 		{
-			that.zoomLevel = 1;
+			this.zoomLevel = 1;
 			
 			// warn the user about viewport clipping
 		}
 		
 /*
-		if (that.zoomLevel < 2 && window.innerWidth < window.innerHeight)
+		if (this.zoomLevel < 2 && window.innerWidth < window.innerHeight)
 		{
 			// suggest the use of landscape mode
 		}
 */
 		
-		w = WIDTH * that.zoomLevel;
-		h = HEIGHT * that.zoomLevel;
+		w = WIDTH * this.zoomLevel;
+		h = HEIGHT * this.zoomLevel;
 		
 		// this check does not work on mobile. what.
-		// if (tmp != that.zoomLevel)
+		// if (tmp != this.zoomLevel)
 		{
 			// I just _really_ love the hiDPI display hacks...
-			that.realCanvas.width = w * that.pixelRatio;
-			that.realCanvas.height = h * that.pixelRatio;
+			this.realCanvas.width = w * this.pixelRatio;
+			this.realCanvas.height = h * this.pixelRatio;
 			
 			// these are reset to true on resize
-			that.realCtx.imageSmoothingEnabled = false;
-			that.realCtx.mozImageSmoothingEnabled = false;
-			that.realCtx.webkitImageSmoothingEnabled = false;
-			that.realCtx.msImageSmoothingEnabled = false;
+			this.realCtx.imageSmoothingEnabled = false;
+			this.realCtx.mozImageSmoothingEnabled = false;
+			this.realCtx.webkitImageSmoothingEnabled = false;
+			this.realCtx.msImageSmoothingEnabled = false;
 			
-			that.realCanvas.style.width = w;
-			that.realCanvas.style.height = h;
+			this.realCanvas.style.width = w;
+			this.realCanvas.style.height = h;
 		}
 		
-		that.realCanvas.style.left = (window.innerWidth - w) / 2;
-		that.realCanvas.style.top = (window.innerHeight - h) / 2;
+		this.realCanvas.style.left = (window.innerWidth - w) / 2;
+		this.realCanvas.style.top = (window.innerHeight - h) / 2;
 		
 	}
 	
@@ -709,57 +707,55 @@ var Game = function()
 	
 	o.switchScreen = function(_new_screen)
 	{
-		var that, x, y, a, b;
+		var x, y, a, b;
 		
-		that = this;
-		
-		that.currentScreen = _new_screen;
-		that.currentScreenTicks = 0;
+		this.currentScreen = _new_screen;
+		this.currentScreenTicks = 0;
 		
 		// initialization of the new screen
 		switch (_new_screen)
 		{
 			case SCREEN_INTRO:
-				that.waitingForKeypress = true;
-				that.nextScreen = SCREEN_MENU;
+				this.waitingForKeypress = true;
+				this.nextScreen = SCREEN_MENU;
 			break;
 			
 			case SCREEN_MENU:
-				that.menu = {
+				this.menu = {
 					selection: 0,
 					items: [
-						{ title: "PLAY", callback: that.screenFadeAndSwitch.bind(that, SCREEN_GAME) },
-						{ title: "CUSTOMIZE", callback: that.screenFadeAndSwitch.bind(that, SCREEN_MENU) },
-						{ title: "HOW TO PLAY", callback: that.screenFadeAndSwitch.bind(that, SCREEN_MENU) }
+						{ title: "PLAY", callback: this.screenFadeAndSwitch.bind(this, SCREEN_GAME) },
+						{ title: "CUSTOMIZE", callback: this.screenFadeAndSwitch.bind(this, SCREEN_MENU) },
+						{ title: "HOW TO PLAY", callback: this.screenFadeAndSwitch.bind(this, SCREEN_MENU) }
 					]
 				};
 				
-				// that.waitingForKeypress = true;
-				// that.nextScreen = that.SCREEN_GAME;
+				// this.waitingForKeypress = true;
+				// this.nextScreen = this.SCREEN_GAME;
 			break;
 			
 			case SCREEN_GAME:
-				that.loadLevel(1);
+				this.loadLevel(1);
 				
-				that.objects.length = 0;
-				that.player = null;
+				this.objects.length = 0;
+				this.player = null;
 				
-				for (y=0; y<that.currentLevelHeight; y++)
+				for (y=0; y<this.currentLevelHeight; y++)
 				{
-					for (x=0; x<that.currentLevelWidth; x++)
+					for (x=0; x<this.currentLevelWidth; x++)
 					{
 						a = x * 20;
 						b = y * 18;
 						
-						switch (that.currentLevel[y * that.currentLevelWidth + x])
+						switch (this.currentLevel[y * this.currentLevelWidth + x])
 						{
 							case "P": // the player
-								that.player = new PlayerObj(that, a, b);
-								that.objects.push(that.player);
+								this.player = new PlayerObj(this, a, b);
+								this.objects.push(this.player);
 							break;
 							
 							case "B": // a box
-								that.objects.push(new BoxObj(that, a, b));
+								this.objects.push(new BoxObj(this, a, b));
 							break;
 						}
 					}
@@ -768,7 +764,7 @@ var Game = function()
 		}
 		
 		// clear all inputs captured during fade
-		that.inputHandler.clearKeys();
+		this.inputHandler.clearKeys();
 	}
 	
 	o.fadeTick = function()
@@ -809,56 +805,54 @@ var Game = function()
 	
 	o.screenDraw = function()
 	{
-		var that, x, y, a, b, c, width, height, i, a1, b1, a2, b2, p;
+		var x, y, a, b, c, width, height, i, a1, b1, a2, b2, p;
 		
-		that = this;
-		
-		switch (that.currentScreen)
+		switch (this.currentScreen)
 		{
 			case SCREEN_INTRO:
-				that.drawBigText(146, 80, "BOKOSAN");
-				that.drawSmallText(122, 100, "FOR JS13KGAMES 2015\n\n  WWW.BOKOSAN.NET");
-				if (that.isTouchAvailable)
+				this.drawBigText(146, 80, "BOKOSAN");
+				this.drawSmallText(122, 100, "FOR JS13KGAMES 2015\n\n  WWW.BOKOSAN.NET");
+				if (this.isTouchAvailable)
 				{
-					that.drawSmallText(96, 200, "TOUCH ANYWHERE TO CONTINUE", true);
+					this.drawSmallText(96, 200, "TOUCH ANYWHERE TO CONTINUE", true);
 				}
 				else
 				{
-					that.drawSmallText(104, 200, "PRESS A KEY TO CONTINUE", true);
+					this.drawSmallText(104, 200, "PRESS A KEY TO CONTINUE", true);
 				}
 			break;
 			
 			case SCREEN_MENU:
-				that.drawBigText(0, 0, "BOKOSAN");
-				that.drawSmallText(0, 20, "FOR JS13KGAMES 2015");
+				this.drawBigText(0, 0, "BOKOSAN");
+				this.drawSmallText(0, 20, "FOR JS13KGAMES 2015");
 				
-				that.drawSmallText(0, 50, "TOTAL TIME PLAYED");
-				that.drawBigText(0, 60, "  131:54:22");
-				that.drawSmallText(0, 90, "TOTAL MOVES");
-				that.drawBigText(0, 100, "  9,612,334");
-				that.drawSmallText(0, 130, "TOTAL PULLS");
-				that.drawBigText(0, 140, "     84,414");
+				this.drawSmallText(0, 50, "TOTAL TIME PLAYED");
+				this.drawBigText(0, 60, "  131:54:22");
+				this.drawSmallText(0, 90, "TOTAL MOVES");
+				this.drawBigText(0, 100, "  9,612,334");
+				this.drawSmallText(0, 130, "TOTAL PULLS");
+				this.drawBigText(0, 140, "     84,414");
 				
-				for (i=0; i<that.menu.items.length; i++)
+				for (i=0; i<this.menu.items.length; i++)
 				{
-					that.drawSmallText(200, 50 + i * 20, (that.menu.selection == i ? "> " : "  ") + that.menu.items[i].title);
+					this.drawSmallText(200, 50 + i * 20, (this.menu.selection == i ? "> " : "  ") + this.menu.items[i].title);
 				}
 				
-				that.drawSmallText(0, 270, "GITHUB.COM/GHEJA/BOKOSAN - WWW.BOKOSAN.NET");
+				this.drawSmallText(0, 270, "GITHUB.COM/GHEJA/BOKOSAN - WWW.BOKOSAN.NET");
 			break;
 			
 			case SCREEN_GAME:
-				for (i=0; i<that.objects.length; i++)
+				for (i=0; i<this.objects.length; i++)
 				{
-					that.objects[i].updateRenderOrder();
-					that.objects[i].setRenderNeeded(true);
+					this.objects[i].updateRenderOrder();
+					this.objects[i].setRenderNeeded(true);
 				}
 				
-				for (y=0; y<that.currentLevelHeight; y++)
+				for (y=0; y<this.currentLevelHeight; y++)
 				{
-					for (x=0; x<that.currentLevelWidth; x++)
+					for (x=0; x<this.currentLevelWidth; x++)
 					{
-						c = that.currentLevel[y * that.currentLevelWidth + x];
+						c = this.currentLevel[y * this.currentLevelWidth + x];
 						a = x * 20;
 						b = y * 18;
 						
@@ -885,14 +879,14 @@ var Game = function()
 						a2 = x * 20;
 						b2 = y * 18;
 						
-						for (i=0; i<that.objects.length; i++)
+						for (i=0; i<this.objects.length; i++)
 						{
-							if (that.objects[i].getRenderNeeded())
+							if (this.objects[i].getRenderNeeded())
 							{
-								p = that.objects[i].getPosition();
+								p = this.objects[i].getPosition();
 								if (p[0] > a1 && p[0] <= a2 && p[1] > b1 && p[1] <= b2)
 								{
-									that.objects[i].draw();
+									this.objects[i].draw();
 								}
 							}
 						}
@@ -1036,47 +1030,45 @@ var Game = function()
 	
 	o.init = function()
 	{
-		var that, i, j, a, dpr, bsr;
+		var i, j, a, dpr, bsr;
 		
-		that = this;
-		
-		that.realCanvas = document.getElementById("c");
-		that.realCtx = that.realCanvas.getContext("2d");
+		this.realCanvas = document.getElementById("c");
+		this.realCtx = this.realCanvas.getContext("2d");
 		
 		// I love the hiDPI display hacks
 		dpr = window.devicePixelRatio || 1;
 		
-		bsr = that.realCtx.webkitBackingStorePixelRatio ||
-			that.realCtx.mozBackingStorePixelRatio ||
-			that.realCtx.msBackingStorePixelRatio ||
-			that.realCtx.oBackingStorePixelRatio ||
-			that.realCtx.backingStorePixelRatio || 1;
+		bsr = this.realCtx.webkitBackingStorePixelRatio ||
+			this.realCtx.mozBackingStorePixelRatio ||
+			this.realCtx.msBackingStorePixelRatio ||
+			this.realCtx.oBackingStorePixelRatio ||
+			this.realCtx.backingStorePixelRatio || 1;
 		
-		that.pixelRatio = dpr / bsr;
+		this.pixelRatio = dpr / bsr;
 		
-		that.canvas = document.createElement('canvas');
-		that.canvas.width = WIDTH;
-		that.canvas.height = HEIGHT;
+		this.canvas = document.createElement('canvas');
+		this.canvas.width = WIDTH;
+		this.canvas.height = HEIGHT;
 		
-		that.ctx = that.canvas.getContext("2d");
-		that.ctx.imageSmoothingEnabled = false;
-		that.ctx.mozImageSmoothingEnabled = false;
-		that.ctx.webkitImageSmoothingEnabled = false;
-		that.ctx.msImageSmoothingEnabled = false;
+		this.ctx = this.canvas.getContext("2d");
+		this.ctx.imageSmoothingEnabled = false;
+		this.ctx.mozImageSmoothingEnabled = false;
+		this.ctx.webkitImageSmoothingEnabled = false;
+		this.ctx.msImageSmoothingEnabled = false;
 		
-		that._asset = new Image();
-		that._asset.addEventListener('load', that.assetLoadFinished.bind(that));
-		that._asset.src = "./tileset.png";
+		this._asset = new Image();
+		this._asset.addEventListener('load', this.assetLoadFinished.bind(this));
+		this._asset.src = "./tileset.png";
 		
-		that.inputHandler = new InputHandler(window);
+		this.inputHandler = new InputHandler(window);
 		
-		that.switchScreen(SCREEN_INTRO);
-		that.fadeMode = FADE_MODE_IN;
-		that.fadePercent = 0;
+		this.switchScreen(SCREEN_INTRO);
+		this.fadeMode = FADE_MODE_IN;
+		this.fadePercent = 0;
 		
-		window.addEventListener('resize', that.onResize.bind(that));
-		that.onResize();
-		window.setInterval(that.renderFrame.bind(that), 1000 / 12);
+		window.addEventListener('resize', this.onResize.bind(this));
+		this.onResize();
+		window.setInterval(this.renderFrame.bind(this), 1000 / 12);
 	}
 	
 	return o;
