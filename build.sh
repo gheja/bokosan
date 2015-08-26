@@ -56,7 +56,7 @@ if [ "$do_stage1" == "y" ]; then
 	rm -v build/tmp/* || /bin/true
 	
 	echo "* Copying files..."
-	cp -v ./src/index.html ./src/jsfxr.js ./src/synth.js ./src/main.js ./src/package.json ./src/tileset.png ./build/tmp/
+	cp -v ./src/index.html ./src/jsfxr.js ./src/synth.js ./src/main.js ./src/package.json ./src/tileset.png ./src/style.css ./build/tmp/
 	
 	echo "* Removing debug sections, merging files and renaming some variables..."
 	cat ./build/tmp/jsfxr.js ./build/tmp/synth.js ./build/tmp/main.js | sed \
@@ -105,6 +105,9 @@ if [ "$do_stage2" == "y" ]; then
 	
 	echo "* Optimizing index.html..."
 	cat ./build/tmp/index2.html | sed -r 's/^\s+//g' | tr -d '\r' | tr '\n' ' ' | sed -e 's/> </></g' > ./build/tmp/index3.html
+	
+	echo "* Optimizing style.css..."
+	cat ./build/tmp/style.css | sed -r 's/^\s+//g' | sed -r 's/:\s+/:/g' | tr -d '\r' | tr -d '\n' | sed -e 's/;\}/\}/g' > ./build/tmp/style2.css
 fi
 
 if [ "$do_stage3" == "y" ]; then
