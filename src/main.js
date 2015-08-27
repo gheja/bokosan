@@ -569,9 +569,6 @@ Game.prototype.drawImageAdvanced = function(sctx, dctx, sx, sy, sw, sh, dx, dy, 
 
 Game.prototype.drawText = function(posX, posY, content, blinking, width, height, scale)
 {
-	width = width ? width : 1000; // characters
-	height = height ? height: 1000; // characters
-	
 	var i, x, y, index;
 	
 	if (blinking && Math.floor(this.currentScreenTicks / 6) % 2 == 0)
@@ -609,14 +606,19 @@ Game.prototype.drawText = function(posX, posY, content, blinking, width, height,
 	}
 }
 
-Game.prototype.drawSmallText = function(posX, posY, content, blinking, width, height)
+Game.prototype.drawSmallText = function(posX, posY, content)
 {
-	this.drawText(posX, posY, content, blinking, width, height, 1);
+	this.drawText(posX, posY, content, false, 1000, 1000, 1);
 }
 
-Game.prototype.drawBigText = function(posX, posY, content, blinking, width, height)
+Game.prototype.drawSmallTextBlinking = function(posX, posY, content)
 {
-	this.drawText(posX, posY, content, blinking, width, height, 2);
+	this.drawText(posX, posY, content, true, 1000, 1000, 1);
+}
+
+Game.prototype.drawBigText = function(posX, posY, content)
+{
+	this.drawText(posX, posY, content, false, 1000, 1000, 2);
 }
 
 Game.prototype.drawTile = function(posX, posY, tileNumber, rotated, mirrored, floorOnly)
@@ -818,35 +820,35 @@ Game.prototype.screenDraw = function()
 	switch (this.currentScreen)
 	{
 		case SCREEN_INTRO:
-			this.drawBigText(146, 80, "BOKOSAN", 0, 0, 0);
-			this.drawSmallText(122, 100, "FOR JS13KGAMES 2015\n\n  WWW.BOKOSAN.NET", 0, 0, 0);
+			this.drawBigText(146, 80, "BOKOSAN");
+			this.drawSmallText(122, 100, "FOR JS13KGAMES 2015\n\n  WWW.BOKOSAN.NET");
 			if (this.isTouchAvailable)
 			{
-				this.drawSmallText(96, 200, "TOUCH ANYWHERE TO CONTINUE", true, 0, 0);
+				this.drawSmallTextBlinking(96, 200, "TOUCH ANYWHERE TO CONTINUE");
 			}
 			else
 			{
-				this.drawSmallText(104, 200, "PRESS A KEY TO CONTINUE", true, 0, 0);
+				this.drawSmallTextBlinking(104, 200, "PRESS A KEY TO CONTINUE");
 			}
 		break;
 		
 		case SCREEN_MENU:
-			this.drawBigText(0, 0, "BOKOSAN", 0, 0, 0);
-			this.drawSmallText(0, 20, "FOR JS13KGAMES 2015", 0, 0, 0);
+			this.drawBigText(0, 0, "BOKOSAN");
+			this.drawSmallText(0, 20, "FOR JS13KGAMES 2015");
 			
-			this.drawSmallText(0, 50, "TOTAL TIME PLAYED", 0, 0, 0);
-			this.drawBigText(0, 60, "  131:54:22", 0, 0, 0);
-			this.drawSmallText(0, 90, "TOTAL MOVES", 0, 0, 0);
-			this.drawBigText(0, 100, "  9,612,334", 0, 0, 0);
-			this.drawSmallText(0, 130, "TOTAL PULLS", 0, 0, 0);
-			this.drawBigText(0, 140, "     84,414", 0, 0, 0);
+			this.drawSmallText(0, 50, "TOTAL TIME PLAYED");
+			this.drawBigText(0, 60, "  131:54:22");
+			this.drawSmallText(0, 90, "TOTAL MOVES");
+			this.drawBigText(0, 100, "  9,612,334");
+			this.drawSmallText(0, 130, "TOTAL PULLS");
+			this.drawBigText(0, 140, "     84,414");
 			
 			for (i=0; i<this.menu.items.length; i++)
 			{
-				this.drawSmallText(200, 50 + i * 20, (this.menu.selection == i ? "> " : "  ") + this.menu.items[i].title, 0, 0, 0);
+				this.drawSmallText(200, 50 + i * 20, (this.menu.selection == i ? "> " : "  ") + this.menu.items[i].title);
 			}
 			
-			this.drawSmallText(0, 270, "GITHUB.COM/GHEJA/BOKOSAN - WWW.BOKOSAN.NET", 0, 0, 0);
+			this.drawSmallText(0, 270, "GITHUB.COM/GHEJA/BOKOSAN - WWW.BOKOSAN.NET");
 		break;
 		
 		case SCREEN_GAME:
