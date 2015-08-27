@@ -76,7 +76,8 @@ if [ "$do_stage1" == "y" ]; then
 		--logging_level FINEST \
 		--warning_level VERBOSE \
 		--formatting PRETTY_PRINT \
-		--formatting SINGLE_QUOTES
+		--formatting SINGLE_QUOTES \
+		--summary_detail_level 3
 fi
 
 if [ "$do_stage2" == "y" ]; then
@@ -89,7 +90,8 @@ if [ "$do_stage2" == "y" ]; then
 		--js ./build/tmp/merged.min1.js \
 		--js_output_file ./build/tmp/merged.min2.js \
 		--logging_level FINEST \
-		--warning_level VERBOSE
+		--warning_level VERBOSE \
+		--summary_detail_level 3
 	
 	echo "* Embedding js and css into index.html..."
 	cat ./build/tmp/index.html | sed -E 's,<script[^>]+></script>,,gi' | sed \
