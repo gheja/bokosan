@@ -93,8 +93,11 @@ if [ "$do_stage2" == "y" ]; then
 		--warning_level VERBOSE \
 		--summary_detail_level 3
 	
+	echo "* Optimizing style.css..."
+	cat ./build/tmp/style.css | sed -r 's/^\s+//g' | sed -r 's/:\s+/:/g' | tr -d '\r' | tr -d '\n' | sed -e 's/;\}/\}/g' > ./build/tmp/style2.css
+	
 	echo "* Embedding js and css into index.html..."
-	cat ./build/tmp/index.html | sed -E 's,<script[^>]+></script>,,gi' | sed \
+	cat ./build/tmp/index.html | sed -E 's,<script[^>]+></script>,,gi' | sed -E 's,<link type=\"text/css\"[^>]+>,,gi'| sed \
 		-e '/<!-- insert minified javascript here -->/{' \
 		-e 'i <script>' \
 		-e 'r ./build/tmp/merged.min2.js' \
@@ -102,16 +105,13 @@ if [ "$do_stage2" == "y" ]; then
 		-e 'd}' \
 		-e '/<!-- insert minified css here -->/{' \
 		-e 'i <style>' \
-		-e 'r ./build/tmp/style.min.js' \
+		-e 'r ./build/tmp/style2.css' \
 		-e 'a </style>' \
 		-e 'd}' \
 		> ./build/tmp/index2.html
 	
 	echo "* Optimizing index.html..."
-	cat ./build/tmp/index2.html | sed -r 's/^\s+//g' | tr -d '\r' | tr '\n' ' ' | sed -e 's/> </></g' > ./build/tmp/index3.html
-	
-	echo "* Optimizing style.css..."
-	cat ./build/tmp/style.css | sed -r 's/^\s+//g' | sed -r 's/:\s+/:/g' | tr -d '\r' | tr -d '\n' | sed -e 's/;\}/\}/g' > ./build/tmp/style2.css
+	cat ./build/tmp/index2.html | grep -Ev '^\s+$' | sed -r 's/^\s+//g' | tr -d '\r' | tr '\n' ' ' | sed -e 's/> </></g' > ./build/tmp/index3.html
 fi
 
 if [ "$do_stage3" == "y" ]; then
