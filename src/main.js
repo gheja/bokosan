@@ -29,6 +29,13 @@
 /** @const @type {number} */ var OBJ_STATUS_FALLING = 4;
 
 // InputHandler
+/** @const @type {number} */ var IH_KEY_UP = 0;
+/** @const @type {number} */ var IH_KEY_RIGHT = 1;
+/** @const @type {number} */ var IH_KEY_DOWN = 2;
+/** @const @type {number} */ var IH_KEY_LEFT = 3;
+/** @const @type {number} */ var IH_KEY_ACTION = 4;
+/** @const @type {number} */ var IH_KEY_CANCEL = 5;
+
 /** @const @type {number} */ var IH_KEY_STAUTS_RESET = 0;
 /** @const @type {number} */ var IH_KEY_STAUTS_PRESSED = 1;
 /** @const @type {number} */ var IH_KEY_STAUTS_RELEASED = 2;
@@ -383,14 +390,14 @@ PlayerObj.prototype.isStuck = function()
 var InputHandler = function(obj)
 {
 	this.keyPressed = false;
-	this.keys = {
-		up: { keyCodes: [ 38, 87 ], status: IH_KEY_STAUTS_RESET },
-		down: { keyCodes: [ 40, 83 ], status: IH_KEY_STAUTS_RESET },
-		left: { keyCodes: [ 37, 65 ], status: IH_KEY_STAUTS_RESET },
-		right:  { keyCodes: [ 39, 68 ], status: IH_KEY_STAUTS_RESET },
-		action: { keyCodes: [ 16, 32, 13 ], status: IH_KEY_STAUTS_RESET },
-		back: { keyCodes: [ 27 ], status: IH_KEY_STAUTS_RESET }
-	};
+	this.keys = [
+		{ keyCodes: [ 38, 87 ], status: IH_KEY_STAUTS_RESET }, // IH_KEY_UP
+		{ keyCodes: [ 39, 68 ], status: IH_KEY_STAUTS_RESET }, // IH_KEY_RIGHT
+		{ keyCodes: [ 40, 83 ], status: IH_KEY_STAUTS_RESET }, // IH_KEY_DOWN
+		{ keyCodes: [ 37, 65 ], status: IH_KEY_STAUTS_RESET }, // IH_KEY_LEFT
+		{ keyCodes: [ 16, 32, 13 ], status: IH_KEY_STAUTS_RESET }, // IH_KEY_ACTION
+		{ keyCodes: [ 27 ], status: IH_KEY_STAUTS_RESET } // IH_KEY_CANCEL
+	];
 	
 	this.bind(obj);
 }
@@ -401,7 +408,7 @@ InputHandler.prototype.setKeyStatus = function(keyCode, statusFrom, statusTo)
 	
 	// if keyCode == -1 then set status for all keys
 	
-	for (i in  this.keys)
+	for (i in this.keys)
 	{
 		for (j=0; j<this.keys[i].keyCodes.length; j++)
 		{
@@ -426,6 +433,18 @@ InputHandler.prototype.setKeyStatus = function(keyCode, statusFrom, statusTo)
 	}
 	console.log(s);
 */
+}
+
+InputHandler.prototype.isKeyStatus = function(key, status)
+{
+	if (this.keys[key].status == status)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 InputHandler.prototype.onKeyDown = function(e)
@@ -924,15 +943,15 @@ Game.prototype.screenTick = function()
 	
 	if (this.currentScreen == SCREEN_MENU)
 	{
-		if (this.inputHandler.keys.up.status != IH_KEY_STAUTS_RESET)
+		if (!this.inputHandler.isKeyStatus(IH_KEY_UP, IH_KEY_STAUTS_RESET))
 		{
 			this.menu.selection--;
 		}
-		else if (this.inputHandler.keys.down.status != IH_KEY_STAUTS_RESET)
+		else if (!this.inputHandler.isKeyStatus(IH_KEY_DOWN, IH_KEY_STAUTS_RESET))
 		{
 			this.menu.selection++;
 		}
-		else if (this.inputHandler.keys.action.status != IH_KEY_STAUTS_RESET || this.inputHandler.keys.right.status != IH_KEY_STAUTS_RESET)
+		else if (!this.inputHandler.isKeyStatus(IH_KEY_ACTION, IH_KEY_STAUTS_RESET) || !this.inputHandler.isKeyStatus(IH_KEY_RIGHT, IH_KEY_STAUTS_RESET))
 		{
 			this.menu.items[this.menu.selection].callback();
 		}
@@ -958,38 +977,38 @@ Game.prototype.screenTick = function()
 		}
 		else
 		{
-			if (this.inputHandler.keys.action.status == IH_KEY_STAUTS_RELEASED)
+			if (this.inputHandler.isKeyStatus(IH_KEY_ACTION, IH_KEY_STAUTS_RELEASED))
 			{
 				this.player.tryRelease();
 			}
 			
-			if (this.inputHandler.keys.action.status == IH_KEY_STAUTS_PRESSED)
+			if (this.inputHandler.isKeyStatus(IH_KEY_ACTION, IH_KEY_STAUTS_PRESSED))
 			{
 				this.player.tryGrab();
 			}
 			
-			if (this.inputHandler.keys.back.status != IH_KEY_STAUTS_RESET)
+			if (!this.inputHandler.isKeyStatus(IH_KEY_CANCEL, IH_KEY_STAUTS_RESET))
 			{
 				// pause
 				this.screenFadeAndSwitch(SCREEN_MENU);
 			}
 			
-			if (this.inputHandler.keys.up.status != IH_KEY_STAUTS_RESET)
+			if (!this.inputHandler.isKeyStatus(IH_KEY_UP, IH_KEY_STAUTS_RESET))
 			{
 				this.player.tryWalk(OBJ_ORIENTATION_NORTH);
 			}
 			
-			if (this.inputHandler.keys.right.status != IH_KEY_STAUTS_RESET)
+			if (!this.inputHandler.isKeyStatus(IH_KEY_RIGHT, IH_KEY_STAUTS_RESET))
 			{
 				this.player.tryWalk(OBJ_ORIENTATION_EAST);
 			}
 			
-			if (this.inputHandler.keys.down.status != IH_KEY_STAUTS_RESET)
+			if (!this.inputHandler.isKeyStatus(IH_KEY_DOWN, IH_KEY_STAUTS_RESET))
 			{
 				this.player.tryWalk(OBJ_ORIENTATION_SOUTH);
 			}
 			
-			if (this.inputHandler.keys.left.status != IH_KEY_STAUTS_RESET)
+			if (!this.inputHandler.isKeyStatus(IH_KEY_LEFT, IH_KEY_STAUTS_RESET))
 			{
 				this.player.tryWalk(OBJ_ORIENTATION_WEST);
 			}
