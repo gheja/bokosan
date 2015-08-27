@@ -542,7 +542,6 @@ var Game = function()
 	this.ctx = null;
 	this._asset = null;
 	this._assetLoaded = false;
-	this.objectStore = null;
 	this.ticks = 0;
 	this.waitingForKeypress = false;
 	/** @type {Menu} */ this.currentMenu = null;
