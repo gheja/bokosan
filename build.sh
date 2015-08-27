@@ -56,10 +56,12 @@ if [ "$do_stage1" == "y" ]; then
 	rm -v build/tmp/* || /bin/true
 	
 	echo "* Copying files..."
-	cp -v ./src/index.html ./src/jsfxr.js ./src/synth.js ./src/main.js ./src/package.json ./src/tileset.png ./src/style.css ./build/tmp/
+	# cp -v ./src/index.html ./src/jsfxr.js ./src/synth.js ./src/main.js ./src/package.json ./src/tileset.png ./src/style.css ./build/tmp/
+	cp -v ./src/index.html ./src/main.js ./src/package.json ./src/tileset.png ./src/style.css ./build/tmp/
 	
 	echo "* Removing debug sections, merging files and renaming some variables..."
-	cat ./build/tmp/jsfxr.js ./build/tmp/synth.js ./build/tmp/main.js | sed \
+	# cat ./build/tmp/jsfxr.js ./build/tmp/synth.js ./build/tmp/main.js | sed \
+	cat ./build/tmp/main.js | sed \
 		-e '/DEBUG BEGIN/,/\DEBUG END/{d}' > ./build/tmp/merged.js
 	
 	echo "* Running Closure Compiler (advanced optimizations, pretty print)..."
