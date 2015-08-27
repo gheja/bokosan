@@ -506,7 +506,31 @@ InputHandler.prototype.bind = function(w)
 
 
 /**
- * @constructor 
+ * @constructor
+ */
+var Menu = function(selection, items)
+{
+	/** @type {number} */ this.selection = selection;
+	/** @type {Array} */ this.items = items;
+}
+
+Menu.prototype.step = function(direction)
+{
+	// this.selection = Math.min(Math.max(this.selection + direction, 0), this.items.length - 1);
+	
+	// ensure that the selection is valid, roll over if necessary
+	this.selection = (this.selection + direction + this.items.length) % this.items.length;
+}
+
+Menu.prototype.go = function()
+{
+	this.items[this.selection][1]();
+}
+
+
+
+/**
+ * @constructor
  */
 var Game = function()
 {
@@ -521,7 +545,12 @@ var Game = function()
 	this.objectStore = null;
 	this.ticks = 0;
 	this.waitingForKeypress = false;
-	this.menu = null;
+	/** @type {Menu} */ this.currentMenu = null;
+	/** @type {Menu} */ this.mainMenu = new Menu(0, [
+		[ "PLAY", this.screenFadeAndSwitch.bind(this, SCREEN_GAME) ],
+		[ "CUSTOMIZE", this.screenFadeAndSwitch.bind(this, SCREEN_MENU) ],
+		[ "HOW TO PLAY", this.screenFadeAndSwitch.bind(this, SCREEN_MENU) ]
+	]);
 	
 	/** @type {Array<Obj>} */ this.objects = [];
 	/** @type {PlayerObj} */ this.player = null;
@@ -750,17 +779,7 @@ Game.prototype.switchScreen = function(_new_screen)
 		break;
 		
 		case SCREEN_MENU:
-			this.menu = {
-				selection: 0,
-				items: [
-					{ title: "PLAY", callback: this.screenFadeAndSwitch.bind(this, SCREEN_GAME) },
-					{ title: "CUSTOMIZE", callback: this.screenFadeAndSwitch.bind(this, SCREEN_MENU) },
-					{ title: "HOW TO PLAY", callback: this.screenFadeAndSwitch.bind(this, SCREEN_MENU) }
-				]
-			};
-			
-			// this.waitingForKeypress = true;
-			// this.nextScreen = this.SCREEN_GAME;
+			this.currentMenu = this.mainMenu;
 		break;
 		
 		case SCREEN_GAME:
@@ -862,9 +881,9 @@ Game.prototype.screenDraw = function()
 			this.drawSmallText(0, 130, "TOTAL PULLS");
 			this.drawBigText(0, 140, "     84,414");
 			
-			for (i=0; i<this.menu.items.length; i++)
+			for (i=0; i<this.currentMenu.items.length; i++)
 			{
-				this.drawSmallText(200, 50 + i * 20, (this.menu.selection == i ? "> " : "  ") + this.menu.items[i].title);
+				this.drawSmallText(200, 50 + i * 20, (this.currentMenu.selection == i ? "> " : "  ") + this.currentMenu.items[i][0]);
 			}
 			
 			this.drawSmallText(0, 270, "GITHUB.COM/GHEJA/BOKOSAN - WWW.BOKOSAN.NET");
@@ -945,19 +964,16 @@ Game.prototype.screenTick = function()
 	{
 		if (!this.inputHandler.isKeyStatus(IH_KEY_UP, IH_KEY_STAUTS_RESET))
 		{
-			this.menu.selection--;
+			this.currentMenu.step(-1);
 		}
 		else if (!this.inputHandler.isKeyStatus(IH_KEY_DOWN, IH_KEY_STAUTS_RESET))
 		{
-			this.menu.selection++;
+			this.currentMenu.step(1);
 		}
 		else if (!this.inputHandler.isKeyStatus(IH_KEY_ACTION, IH_KEY_STAUTS_RESET) || !this.inputHandler.isKeyStatus(IH_KEY_RIGHT, IH_KEY_STAUTS_RESET))
 		{
-			this.menu.items[this.menu.selection].callback();
+			this.currentMenu.go();
 		}
-		
-		// ensure that the selection is valid, roll over if necessary
-		this.menu.selection = (this.menu.selection + 3) % 3;
 		
 		this.inputHandler.clearKeys();
 		// this.inputHandler.clearReleasedKeys();
