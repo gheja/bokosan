@@ -55,14 +55,21 @@ if [ "$do_stage1" == "y" ]; then
 	echo "* Cleaning up build directories for stage 1..."
 	rm -v build/tmp/* || /bin/true
 	
+	files=`cat ./src/index.html | grep -vE '<!--' | grep -E '<script.* src="([^"]+)"' | grep -Eo 'src=\".*\"' | cut -d \" -f 2`
+	
 	echo "* Copying files..."
-	# cp -v ./src/index.html ./src/jsfxr.js ./src/synth.js ./src/main.js ./src/package.json ./src/tileset.png ./src/style.css ./build/tmp/
-	cp -v ./src/index.html ./src/main.js ./src/package.json ./src/tileset.png ./src/style.css ./build/tmp/
+	cp -v ./src/index.html ./src/package.json ./src/tileset.png ./src/style.css ./build/tmp/
+	
+	for i in $files; do
+		cp -v ./src/$i ./build/tmp/
+	done
+	
+	echo "\"use strict\";" > ./build/tmp/merged.js
 	
 	echo "* Removing debug sections, merging files and renaming some variables..."
-	# cat ./build/tmp/jsfxr.js ./build/tmp/synth.js ./build/tmp/main.js | sed \
-	cat ./build/tmp/main.js | sed \
-		-e '/DEBUG BEGIN/,/\DEBUG END/{d}' > ./build/tmp/merged.js
+	for i in $files; do
+		cat ./build/tmp/$i | sed -e '/DEBUG BEGIN/,/\DEBUG END/{d}' | grep -vE '^\"use strict\";$' >> ./build/tmp/merged.js
+	done
 	
 	echo "* Running Closure Compiler (advanced optimizations, pretty print)..."
 	try java -jar ./build/compiler/compiler.jar \
