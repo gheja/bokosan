@@ -859,7 +859,7 @@ Game.prototype.screenDraw = function()
 		case SCREEN_INTRO:
 			this.drawBigText(146, 80, "BOKOSAN");
 			this.drawSmallText(122, 100, "FOR JS13KGAMES 2015\n\n  WWW.BOKOSAN.NET");
-			if (this.isTouchAvailable)
+			if (this.isTouchAvailable())
 			{
 				this.drawSmallTextBlinking(96, 200, "TOUCH ANYWHERE TO CONTINUE");
 			}
