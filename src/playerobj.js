@@ -68,22 +68,27 @@ PlayerObj.prototype.tick = function()
 	this.tileMirrored = this.animations[a][1][b][1];
 }
 
-PlayerObj.prototype.checkCollisionAndGo = function(dx, dy, steps)
+PlayerObj.prototype.checkCollisionAndGo = function(dx, dy, steps, speed, fx, fy)
 {
 	if (this.getNeighbourTile(dx, dy) == 'w' || this.getNeighbourBox(dx, dy) !== null)
 	{
 		return;
 	}
 	
-	this.moveStepX = dx * 2;
-	this.moveStepY = dy * 2;
+	this.moveStepX = dx * speed;
+	this.moveStepY = dy * speed;
 	this.moveStepLeft = steps;
+	
+	this.moveFinalX = this.x + fx;
+	this.moveFinalY = this.y + fy;
 	
 	if (this.status == OBJ_STATUS_GRAB)
 	{
 		// copy the movement to the box
 		this.grabbedBox.moveStepX = this.moveStepX;
 		this.grabbedBox.moveStepY = this.moveStepY;
+		this.grabbedBox.moveFinalX = this.grabbedBox.x + fx;
+		this.grabbedBox.moveFinalY = this.grabbedBox.y + fy;
 		this.grabbedBox.moveStepLeft = this.moveStepLeft;
 		
 		this.status = OBJ_STATUS_PULLING;
@@ -116,19 +121,19 @@ PlayerObj.prototype.tryWalk = function(orientation)
 	switch (orientation)
 	{
 		case OBJ_ORIENTATION_NORTH:
-			this.checkCollisionAndGo(0, -1, 9);
+			this.checkCollisionAndGo(0, -1, 6, 3, 0, -18);
 		break;
 		
 		case OBJ_ORIENTATION_EAST:
-			this.checkCollisionAndGo(1, 0, 10);
+			this.checkCollisionAndGo(1, 0, 6, 3, 20, 0);
 		break;
 		
 		case OBJ_ORIENTATION_SOUTH:
-			this.checkCollisionAndGo(0, 1, 9);
+			this.checkCollisionAndGo(0, 1, 6, 3, 0, 18);
 		break;
 		
 		case OBJ_ORIENTATION_WEST:
-			this.checkCollisionAndGo(-1, 0, 10);
+			this.checkCollisionAndGo(-1, 0, 6, 3, -20, 0);
 		break;
 	}
 }

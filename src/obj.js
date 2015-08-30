@@ -104,6 +104,8 @@ Obj.prototype.moveIfNeeded = function()
 		{
 			this.moveStepX = 0;
 			this.moveStepY = 0;
+			this.x = this.moveFinalX;
+			this.y = this.moveFinalY;
 			this.tryStop();
 		}
 	}
