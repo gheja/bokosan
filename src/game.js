@@ -251,6 +251,9 @@ Game.prototype.onResize = function()
 
 Game.prototype.loadLevel = function(index)
 {
+	this.currentStats.time = 0;
+	this.currentStats.moves = 0;
+	this.currentStats.pulls = 0;
 	this.currentLevelWidth = this.levels[index][0];
 	this.currentLevelHeight = this.levels[index][1];
 	this.currentLevel = this.levels[index][2];
