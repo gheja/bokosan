@@ -382,7 +382,7 @@ Game.prototype.screenDraw = function()
 				this.drawSmallText(200, 50 + i * 20, (this.currentMenu.selection == i ? "> " : "  ") + this.currentMenu.items[i][0]);
 			}
 			
-			this.drawSmallText(0, 270, "GITHUB.COM/GHEJA/BOKOSAN - WWW.BOKOSAN.NET");
+			this.drawSmallText(0, 270, "WWW.BOKOSAN.NET             GITHUB.COM/GHEJA/BOKOSAN");
 		break;
 		
 		case SCREEN_GAME:
@@ -436,6 +436,8 @@ Game.prototype.screenDraw = function()
 					}
 				}
 			}
+			
+			this.drawSmallText(0, 270, "TIME 0:00:00   MOVES 00000   PULLS 00000  LEVEL 1-50");
 		break;
 	}
 }
