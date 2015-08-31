@@ -39,3 +39,12 @@
 /** @const @type {number} */ var IH_KEY_STAUTS_RESET = 0;
 /** @const @type {number} */ var IH_KEY_STAUTS_PRESSED = 1;
 /** @const @type {number} */ var IH_KEY_STAUTS_RELEASED = 2;
+
+/** @const @type {number} */ var SOUND_NEXT = 0;
+/** @const @type {number} */ var SOUND_MENU = 1;
+/** @const @type {number} */ var SOUND_STEP1 = 2;
+/** @const @type {number} */ var SOUND_STEP2 = 3;
+/** @const @type {number} */ var SOUND_BOX_GRAB = 4;
+/** @const @type {number} */ var SOUND_BOX_RELEASE = 5;
+/** @const @type {number} */ var SOUND_BOX_PULL = 6;
+/** @const @type {number} */ var SOUND_TEXT = 7;
