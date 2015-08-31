@@ -17,6 +17,11 @@ var Game = function()
 	this.levelPadY = 0;
 	this.ready = false;
 	this.ticks = 0;
+	this.currentStats = {
+		time: 0,
+		moves: 0,
+		pulls: 0
+	};
 	this.sounds = [];
 	this.waitingForKeypress = false;
 	/** @type {Menu} */ this.currentMenu = null;
@@ -59,6 +64,20 @@ var Game = function()
 	this.fadeMode = FADE_MODE_NONE;
 	this.fadePercent = 0; // 0: faded/black ... 100: clear/game screen
 	this.validTextCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 .,:!?()x<>udr@/-_+*=\"'";
+}
+
+Game.prototype.zeroPad = function(i, length)
+{
+	var s;
+	
+	s = i.toString();
+	
+	while (s.length < length)
+	{
+		s = '0' + s;
+	}
+	
+	return s;
 }
 
 	// thx David @ http://stackoverflow.com/a/15439809
@@ -437,7 +456,7 @@ Game.prototype.screenDraw = function()
 				}
 			}
 			
-			this.drawSmallText(0, 270, "TIME 0:00:00   MOVES 00000   PULLS 00000  LEVEL 1-50");
+			this.drawSmallText(0, 270, "TIME 0:00:00   MOVES " + this.zeroPad(this.currentStats.moves, 5) + "   PULLS " + this.zeroPad(this.currentStats.pulls, 5) + "  LEVEL 1-50");
 		break;
 	}
 }
@@ -498,6 +517,8 @@ Game.prototype.screenTick = function()
 		}
 		else
 		{
+			this.currentStats.time += 1/12;
+			
 			if (this.inputHandler.isKeyStatus(IH_KEY_ACTION, IH_KEY_STAUTS_RELEASED))
 			{
 				this.player.tryRelease();
