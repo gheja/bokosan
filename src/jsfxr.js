@@ -474,8 +474,3 @@ function Jsfxr(values, returnObject)
 		return data;
 	}
 }
-
-function JsfxrGetSoundObject(settings)
-{
-	return Jsfxr(settings, true);
-}
