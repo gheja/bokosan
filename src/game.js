@@ -13,6 +13,8 @@ var Game = function()
 	this.ctx = null;
 	this._asset = null;
 	this._assetLoaded = false;
+	this.levelPadX = 0;
+	this.levelPadY = 0;
 	this.ready = false;
 	this.ticks = 0;
 	this.sounds = [];
@@ -217,6 +219,8 @@ Game.prototype.loadLevel = function(index)
 	this.currentLevelWidth = this.levels[index][0];
 	this.currentLevelHeight = this.levels[index][1];
 	this.currentLevel = this.levels[index][2];
+	this.levelPadX = Math.floor((WIDTH - this.currentLevelWidth * 20) / 2);
+	this.levelPadY = Math.floor((HEIGHT - this.currentLevelHeight * 18) / 2);
 }
 
 Game.prototype.isLevelFinished = function()
@@ -388,8 +392,8 @@ Game.prototype.screenDraw = function()
 				for (x=0; x<this.currentLevelWidth; x++)
 				{
 					c = this.currentLevel[y * this.currentLevelWidth + x];
-					a = x * 20;
-					b = y * 18;
+					a = x * 20 + this.levelPadX;
+					b = y * 18 + this.levelPadY;
 					
 					switch (c)
 					{

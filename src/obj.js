@@ -26,7 +26,7 @@ var Obj = function(game, x, y)
 
 Obj.prototype.draw = function()
 {
-	this.game.drawTile(this.x, this.y, this.tileNumber, this.tileRotated, this.tileMirrored, this.floorOnly);
+	this.game.drawTile(this.x + this.game.levelPadX, this.y + this.game.levelPadY, this.tileNumber, this.tileRotated, this.tileMirrored, this.floorOnly);
 	this.renderNeeded = false;
 }
 
