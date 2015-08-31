@@ -79,6 +79,11 @@ Game.prototype.addSound = function(params)
 
 Game.prototype.playSound = function(id)
 {
+	if (this.sounds[id].currentTime != this.sounds[id].duration)
+	{
+		this.sounds[id].currentTime = 0;
+	}
+	
 	this.sounds[id].play();
 }
 
