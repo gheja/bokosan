@@ -224,8 +224,8 @@ Game.prototype.loadLevel = function(index)
 	this.currentLevelWidth = this.levels[index][0];
 	this.currentLevelHeight = this.levels[index][1];
 	this.currentLevel = this.levels[index][2];
-	this.levelPadX = Math.floor((WIDTH - this.currentLevelWidth * 20) / 2);
-	this.levelPadY = Math.floor((HEIGHT - this.currentLevelHeight * 18) / 2);
+	this.levelPadX = Math.floor((WIDTH - this.currentLevelWidth * 20 - 10) / 2);
+	this.levelPadY = Math.floor((HEIGHT - this.currentLevelHeight * 18 - 9) / 2);
 }
 
 Game.prototype.isLevelFinished = function()
