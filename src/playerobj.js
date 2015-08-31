@@ -92,10 +92,12 @@ PlayerObj.prototype.checkCollisionAndGo = function(dx, dy, steps, speed, fx, fy)
 		this.grabbedBox.moveStepLeft = this.moveStepLeft;
 		
 		this.status = OBJ_STATUS_PULLING;
+		this.game.playSound(SOUND_BOX_PULL);
 	}
 	else
 	{
 		this.status = OBJ_STATUS_WALKING;
+		this.game.playSound(SOUND_STEP1);
 	}
 }
 
@@ -185,10 +187,15 @@ PlayerObj.prototype.tryGrab = function()
 	
 	this.grabbedBox = box;
 	this.status = OBJ_STATUS_GRAB;
+	this.game.playSound(SOUND_BOX_GRAB);
 }
 
 PlayerObj.prototype.tryRelease = function()
 {
+	if (this.grabbedBox != null)
+	{
+		this.game.playSound(SOUND_BOX_RELEASE);
+	}
 	this.status = OBJ_STATUS_STANDING;
 	this.grabbedBox = null;
 }

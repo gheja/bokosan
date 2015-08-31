@@ -444,6 +444,7 @@ Game.prototype.screenTick = function()
 		{
 			this.fadeMode = FADE_MODE_OUT;
 			this.waitingForKeypress = false;
+			this.playSound(SOUND_NEXT);
 		}
 	}
 	
@@ -455,14 +456,17 @@ Game.prototype.screenTick = function()
 		if (!this.inputHandler.isKeyStatus(IH_KEY_UP, IH_KEY_STAUTS_RESET))
 		{
 			this.currentMenu.step(-1);
+			this.playSound(SOUND_MENU);
 		}
 		else if (!this.inputHandler.isKeyStatus(IH_KEY_DOWN, IH_KEY_STAUTS_RESET))
 		{
 			this.currentMenu.step(1);
+			this.playSound(SOUND_MENU);
 		}
 		else if (!this.inputHandler.isKeyStatus(IH_KEY_ACTION, IH_KEY_STAUTS_RESET) || !this.inputHandler.isKeyStatus(IH_KEY_RIGHT, IH_KEY_STAUTS_RESET))
 		{
 			this.currentMenu.go();
+			this.playSound(SOUND_NEXT);
 		}
 		
 		this.inputHandler.clearKeys();
@@ -608,6 +612,17 @@ Game.prototype.init = function(window)
 	this.switchScreen(SCREEN_INTRO);
 	this.fadeMode = FADE_MODE_IN;
 	this.fadePercent = 0;
+	
+	this.addSound([0,,0.15,0.03,0.37,0.65,,,,,,0.4199,0.54,,,,,,1,-1,,,-1,0.5]); // SOUND_NEXT
+	this.addSound([0,0.01,0.01,0.01,0.05,0.65,,,,,,,,,,,,,1,-1,,,-1,0.5]); // SOUND_MENU
+	// this.addSound([0,0.04,0.01,,0.16,0.65,,,,,,,,,,,,,1,-1,,,-1,0.5]);
+	// this.addSound([0,0.03,0.15,0.02,0.57,0.19,,,,,,,,0.24,-0.04,,0.3999,0.1399,0.17,,,,-1,0.52]);
+	this.addSound([0,0.09,0.01,,0.11,0.1,,,,,,,,,,,,,1,,,0.16,-0.3199,0.5]); // SOUND_STEP1
+	this.addSound([0,0.09,0.01,,0.11,0.1,,,,,,,,,,,,,0.32,,,0.16,-0.3199,0.5]); // SOUND_STEP2
+	this.addSound([3,0.14,0.21,,0.23,0.18,,,,,,,,,,,,,0.27,,,0.16,-0.3199,0.5]); // SOUND_BOX_GRAB
+	this.addSound([3,0.14,0.21,,0.23,0.18,,,,,,,,,,,,,0.27,,,0.16,-0.3199,0.5]); // SOUND_BOX_GRAB
+	this.addSound([3,0.29,0.15,,0.22,0.2,,0.04,,,,,,,,,,,0.38,,,0.16,,0.5]); // SOUND_BOX_RELEASE
+	this.addSound([0,0.07,0.0157,,0.1099,0.82,,,,,,,,,-0.4399,,,,1,,,,,0.5]); // SOUND_TEXT
 	
 	window.addEventListener('resize', this.onResize.bind(this));
 	this.onResize();
