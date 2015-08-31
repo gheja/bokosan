@@ -80,6 +80,12 @@ Game.prototype.zeroPad = function(i, length)
 	return s;
 }
 
+Game.prototype.timePad = function(t)
+{
+	t = Math.floor(t);
+	return Math.floor(t / 3600) + ":" + this.zeroPad(Math.floor((t % 3600) / 60), 2) + ":"+ this.zeroPad(t % 60, 2);
+}
+
 	// thx David @ http://stackoverflow.com/a/15439809
 Game.prototype.isTouchAvailable = function()
 {
@@ -456,7 +462,7 @@ Game.prototype.screenDraw = function()
 				}
 			}
 			
-			this.drawSmallText(0, 270, "TIME 0:00:00   MOVES " + this.zeroPad(this.currentStats.moves, 5) + "   PULLS " + this.zeroPad(this.currentStats.pulls, 5) + "  LEVEL 1-50");
+			this.drawSmallText(0, 270, "TIME " + this.timePad(this.currentStats.time) + "   MOVES " + this.zeroPad(this.currentStats.moves, 5) + "   PULLS " + this.zeroPad(this.currentStats.pulls, 5) + "  LEVEL 1-50");
 		break;
 	}
 }
