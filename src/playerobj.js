@@ -63,6 +63,19 @@ PlayerObj.prototype.tick = function()
 	
 	b = this.tickCount % this.animations[a][1].length;
 	
+	if (this.status == OBJ_STATUS_WALKING || this.status == OBJ_STATUS_PULLING)
+	{
+		// yes, intentional
+		if (this.tickCount % 4 == 1)
+		{
+			this.game.playSound(SOUND_STEP1);
+		}
+		else if (this.tickCount % 4 == 3)
+		{
+			this.game.playSound(SOUND_STEP2);
+		}
+	}
+	
 	this.tileNumber = this.animations[a][1][b][0];
 	this.tileRotated = this.animations[a][0];
 	this.tileMirrored = this.animations[a][1][b][1];
@@ -97,7 +110,6 @@ PlayerObj.prototype.checkCollisionAndGo = function(dx, dy, steps, speed, fx, fy)
 	else
 	{
 		this.status = OBJ_STATUS_WALKING;
-		this.game.playSound(SOUND_STEP1);
 	}
 }
 
