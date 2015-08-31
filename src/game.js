@@ -15,6 +15,7 @@ var Game = function()
 	this._assetLoaded = false;
 	this.ready = false;
 	this.ticks = 0;
+	this.sounds = [];
 	this.waitingForKeypress = false;
 	/** @type {Menu} */ this.currentMenu = null;
 	/** @type {Menu} */ this.mainMenu = new Menu(0, [
@@ -67,6 +68,16 @@ Game.prototype.isTouchAvailable = function()
 	}
 	
 	return false;
+}
+
+Game.prototype.addSound = function(params)
+{
+	this.sounds.push(JsfxrGetSoundObject(params));
+}
+
+Game.prototype.playSound = function(id)
+{
+	this.sounds[id].play();
 }
 
 Game.prototype.drawImageAdvanced = function(sctx, dctx, sx, sy, sw, sh, dx, dy, dw, dh, rotated, mirrored)
