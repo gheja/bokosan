@@ -66,6 +66,14 @@ var Game = function()
 	this.validTextCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 .,:!?()x<>udr@/-_+*=\"'";
 }
 
+Game.prototype.fixCanvasContextSmoothing = function(ctx)
+{
+	ctx.imageSmoothingEnabled = false;
+	ctx.mozImageSmoothingEnabled = false;
+	ctx.webkitImageSmoothingEnabled = false;
+	ctx.msImageSmoothingEnabled = false;
+}
+
 Game.prototype.zeroPad = function(i, length)
 {
 	var s;
@@ -235,10 +243,7 @@ Game.prototype.onResize = function()
 		this.realCanvas.height = h * this.pixelRatio;
 		
 		// these are reset to true on resize
-		this.realCtx.imageSmoothingEnabled = false;
-		this.realCtx.mozImageSmoothingEnabled = false;
-		this.realCtx.webkitImageSmoothingEnabled = false;
-		this.realCtx.msImageSmoothingEnabled = false;
+		this.fixCanvasContextSmoothing(this.realCtx);
 		
 		this.realCanvas.style.width = w;
 		this.realCanvas.style.height = h;
@@ -644,10 +649,7 @@ Game.prototype.init = function(window)
 	this.canvas.height = HEIGHT;
 	
 	this.ctx = this.canvas.getContext("2d");
-	this.ctx.imageSmoothingEnabled = false;
-	this.ctx.mozImageSmoothingEnabled = false;
-	this.ctx.webkitImageSmoothingEnabled = false;
-	this.ctx.msImageSmoothingEnabled = false;
+	this.fixCanvasContextSmoothing(this.ctx);
 	
 	this._asset = new Image();
 	this._asset.addEventListener('load', this.assetLoadFinished.bind(this));
