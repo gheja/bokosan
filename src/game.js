@@ -97,9 +97,14 @@ Game.prototype.isTouchAvailable = function()
 	return false;
 }
 
-Game.prototype.addSound = function(params)
+Game.prototype.addSounds = function(sounds)
 {
-	this.sounds.push(JsfxrGetSoundObject(params));
+	var i;
+	
+	for (i in sounds)
+	{
+		this.sounds.push(Jsfxr(sounds[i], true));
+	}
 }
 
 Game.prototype.playSound = function(id)
@@ -651,14 +656,16 @@ Game.prototype.init = function(window)
 	this.fadeMode = FADE_MODE_IN;
 	this.fadePercent = 0;
 	
-	this.addSound([0,,0.2,0.03,0.5,0.65,,,,,,0.4199,0.54,,,,,,1,-1,,,-1,0.5]); // SOUND_NEXT
-	this.addSound([0,0.01,0.01,0.1,0.05,0.65,,,,,,,,,,,,,1,-1,,,-1,0.5]); // SOUND_MENU
-	this.addSound([0,0.086,0.0189,,0.1085,0.1085,,,,,,,,0.526,,,-0.268,,0.2345,,,,,0.5]); // SOUND_STEP1
-	this.addSound([0,0.086,0.0189,,0.1085,0.1085,,,,,,,,0.526,,,0.3719,,0.2345,,,,,0.5]); // SOUND_STEP2
-	this.addSound([3,0.086,0.029,,0.166,0.1545,,,,,,,,0.526,,,0.3719,,0.2975,,,,,0.5]); // SOUND_BOX_GRAB
-	this.addSound([3,0.086,0.029,,0.166,0.1545,,,,,,,,0.526,,,-0.3029,,0.2975,,,,,0.5]); // SOUND_BOX_RELEASE
-	this.addSound([3,0.1885,0.2285,,0.3085,0.2,,0.04,,,,,,,,,-0.383,,0.2345,,,0.286,,0.5]); // SOUND_BOX_PULL
-	this.addSound([0,0.07,0.0157,,0.1099,0.82,,,,,,,,,-0.4399,,,,1,,,,,0.5]); // SOUND_TEXT
+	this.addSounds([
+		[,,0.2,0.03,0.5,0.65,,,,,,0.42,0.54,,,,,,1,-1,,,-1,0.5], // SOUND_NEXT
+		[,0.01,0.01,0.1,0.05,0.65,,,,,,,,,,,,,1,-1,,,-1,0.5], // SOUND_MENU
+		[,0.09,0.02,,0.11,0.11,,,,,,,,0.53,,,-0.27,,0.23,,,,,0.5], // SOUND_STEP1
+		[,0.09,0.02,,0.11,0.11,,,,,,,,0.53,,,0.37,,0.23,,,,,0.5], // SOUND_STEP2
+		[3,0.09,0.03,,0.16,0.16,,,,,,,,0.53,,,0.37,,0.3,,,,,0.5], // SOUND_BOX_GRAB
+		[3,0.09,0.03,,0.16,0.16,,,,,,,,0.53,,,-0.3,,0.3,,,,,0.5], // SOUND_BOX_RELEASE
+		[3,0.19,0.23,,0.31,0.2,,0.04,,,,,,,,,-0.37,,0.23,,,0.29,,0.5], // SOUND_BOX_PULL
+		[,0.07,0.02,,0.11,0.82,,,,,,,,,-0.44,,,,1,,,,,0.5] // SOUND_TEXT
+	]);
 	
 	window.addEventListener('resize', this.onResize.bind(this));
 	this.onResize();
