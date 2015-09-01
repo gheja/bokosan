@@ -11,6 +11,10 @@
 /** @const @type {number} */ var SCREEN_INTRO = 1;
 /** @const @type {number} */ var SCREEN_MENU = 2;
 /** @const @type {number} */ var SCREEN_GAME = 3;
+/** @const @type {number} */ var SCREEN_LEVELS = 4;
+/** @const @type {number} */ var SCREEN_CHALLENGES = 5;
+/** @const @type {number} */ var SCREEN_ABOUT = 6;
+/** @const @type {number} */ var SCREEN_HOWTO = 7;
 
 /** @const @type {number} */ var MENU_MAIN = 0;
 

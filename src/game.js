@@ -343,6 +343,26 @@ Game.prototype.switchScreen = function(_new_screen)
 				}
 			}
 		break;
+		
+		case SCREEN_LEVELS:
+			this.waitingForKeypress = true;
+			this.nextScreen = SCREEN_GAME;
+		break;
+		
+		case SCREEN_CHALLENGES:
+			this.waitingForKeypress = true;
+			this.nextScreen = SCREEN_MENU;
+		break;
+		
+		case SCREEN_ABOUT:
+			this.waitingForKeypress = true;
+			this.nextScreen = SCREEN_MENU;
+		break;
+		
+		case SCREEN_HOWTO:
+			this.waitingForKeypress = true;
+			this.nextScreen = SCREEN_MENU;
+		break;
 	}
 	
 	// clear all inputs captured during fade
@@ -487,6 +507,22 @@ Game.prototype.screenDraw = function()
 			}
 			
 			this.drawSmallText(0, 270, "TIME " + this.timePad(this.currentStats.time) + "   MOVES " + this.zeroPad(this.currentStats.moves, 5) + "   PULLS " + this.zeroPad(this.currentStats.pulls, 5) + "  LEVEL 1-50");
+		break;
+		
+		case SCREEN_ABOUT:
+			this.drawSmallText(0, 270, "(ABOUT SCREEN)");
+		break;
+		
+		case SCREEN_HOWTO:
+			this.drawSmallText(0, 270, "(HOW TO PLAY SCREEN)");
+		break;
+		
+		case SCREEN_LEVELS:
+			this.drawSmallText(0, 270, "(LEVELS SCREEN)");
+		break;
+		
+		case SCREEN_CHALLENGES:
+			this.drawSmallText(0, 270, "(CHALLENGES SCREEN)");
 		break;
 	}
 }
