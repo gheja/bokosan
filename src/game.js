@@ -15,7 +15,6 @@ var Game = function()
 	this._assetLoaded = false;
 	this.levelPadX = 0;
 	this.levelPadY = 0;
-	this.ready = false;
 	this.ticks = 0;
 	this.storage = null; // == window.localStorage
 	this.currentStats = [
@@ -460,20 +459,13 @@ Game.prototype.screenDraw = function()
 		case SCREEN_TITLE:
 			this.drawBigText(146, 80, "BOKOSAN");
 			this.drawSmallText(122, 100, "FOR JS13KGAMES 2015\n\n  WWW.BOKOSAN.NET");
-			if (!this.ready)
+			if (this.isTouchAvailable())
 			{
-				this.drawSmallText(168, 200, "LOADING");
+				this.drawSmallTextBlinking(96, 200, "TOUCH ANYWHERE TO CONTINUE");
 			}
 			else
 			{
-				if (this.isTouchAvailable())
-				{
-					this.drawSmallTextBlinking(96, 200, "TOUCH ANYWHERE TO CONTINUE");
-				}
-				else
-				{
-					this.drawSmallTextBlinking(104, 200, "PRESS A KEY TO CONTINUE");
-				}
+				this.drawSmallTextBlinking(104, 200, "PRESS A KEY TO CONTINUE");
 			}
 		break;
 		
@@ -707,7 +699,6 @@ Game.prototype.redraw = function()
 
 Game.prototype.loadFinished = function()
 {
-	this.ready = true;
 	this.setWaitForKeypress(SCREEN_INTRO);
 }
 
