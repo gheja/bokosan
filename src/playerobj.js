@@ -106,13 +106,13 @@ PlayerObj.prototype.checkCollisionAndGo = function(dx, dy, steps, speed, fx, fy)
 		
 		this.status = OBJ_STATUS_PULLING;
 		this.game.playSound(SOUND_BOX_PULL);
-		this.game.currentStats.pulls++;
+		this.game.statIncrease(STAT_PULLS);
 	}
 	else
 	{
 		this.status = OBJ_STATUS_WALKING;
 	}
-	this.game.currentStats.moves++;
+	this.game.statIncrease(STAT_MOVES);
 }
 
 PlayerObj.prototype.tryWalk = function(orientation)

@@ -17,11 +17,13 @@ var Game = function()
 	this.levelPadY = 0;
 	this.ready = false;
 	this.ticks = 0;
-	this.currentStats = {
-		time: 0,
-		moves: 0,
-		pulls: 0
-	};
+	this.currentStats = [
+		0, // STAT_FRAMES
+		0, // STAT_MOVES
+		0, // STAT_PULLS
+		0, // STAT_LEVELS_STARTED
+		0  // STAT_LEVELS_FINISHED
+	];
 	this.sounds = [];
 	this.waitingForKeypress = false;
 	/** @type {Menu} */ this.currentMenu = null;
@@ -132,6 +134,11 @@ Game.prototype.isTouchAvailable = function()
 	}
 	
 	return false;
+}
+
+Game.prototype.statIncrease = function(statKey)
+{
+	this.currentStats[statKey]++;
 }
 
 Game.prototype.addSounds = function(sounds)
@@ -278,9 +285,9 @@ Game.prototype.onResize = function()
 
 Game.prototype.loadLevel = function(index)
 {
-	this.currentStats.time = 0;
-	this.currentStats.moves = 0;
-	this.currentStats.pulls = 0;
+	this.currentStats[STAT_FRAMES] = 0;
+	this.currentStats[STAT_MOVES] = 0;
+	this.currentStats[STAT_PULLS] = 0;
 	this.currentLevelWidth = this.levels[index][0];
 	this.currentLevelHeight = this.levels[index][1];
 	this.currentLevel = this.levels[index][2];
@@ -526,7 +533,7 @@ Game.prototype.screenDraw = function()
 				}
 			}
 			
-			this.drawSmallText(0, 270, "TIME " + this.timePad(this.currentStats.time) + "   MOVES " + this.zeroPad(this.currentStats.moves, 5) + "   PULLS " + this.zeroPad(this.currentStats.pulls, 5) + "  LEVEL 1-50");
+			this.drawSmallText(0, 270, "TIME " + this.timePad(this.currentStats[STAT_FRAMES] * 1/12) + "   MOVES " + this.zeroPad(this.currentStats[STAT_MOVES], 5) + "   PULLS " + this.zeroPad(this.currentStats[STAT_PULLS], 5) + "  LEVEL 1-50");
 		break;
 		
 		case SCREEN_ABOUT:
@@ -606,7 +613,7 @@ Game.prototype.screenTick = function()
 		}
 		else
 		{
-			this.currentStats.time += 1/12;
+			this.statIncrease(STAT_FRAMES);
 			
 			if (this.inputHandler.isKeyStatus(IH_KEY_ACTION, IH_KEY_STAUTS_RELEASED))
 			{
