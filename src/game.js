@@ -97,6 +97,12 @@ Game.prototype.fixCanvasContextSmoothing = function(ctx)
 	ctx.msImageSmoothingEnabled = false;
 }
 
+Game.prototype.setWaitForKeypress = function(_nextScreen)
+{
+	this.waitingForKeypress = true;
+	this.nextScreen = _nextScreen;
+}
+
 Game.prototype.zeroPad = function(i, length)
 {
 	var s;
@@ -327,8 +333,7 @@ Game.prototype.switchScreen = function(_new_screen)
 		break;
 		
 		case SCREEN_INTRO:
-			this.waitingForKeypress = true;
-			this.nextScreen = SCREEN_MENU;
+			this.setWaitForKeypress(SCREEN_MENU);
 		break;
 		
 		case SCREEN_MENU:
@@ -364,23 +369,19 @@ Game.prototype.switchScreen = function(_new_screen)
 		break;
 		
 		case SCREEN_LEVELS:
-			this.waitingForKeypress = true;
-			this.nextScreen = SCREEN_GAME;
+			this.setWaitForKeypress(SCREEN_GAME);
 		break;
 		
 		case SCREEN_CHALLENGES:
-			this.waitingForKeypress = true;
-			this.nextScreen = SCREEN_MENU;
+			this.setWaitForKeypress(SCREEN_MENU);
 		break;
 		
 		case SCREEN_ABOUT:
-			this.waitingForKeypress = true;
-			this.nextScreen = SCREEN_MENU;
+			this.setWaitForKeypress(SCREEN_MENU);
 		break;
 		
 		case SCREEN_HOWTO:
-			this.waitingForKeypress = true;
-			this.nextScreen = SCREEN_MENU;
+			this.setWaitForKeypress(SCREEN_MENU);
 		break;
 	}
 	
@@ -680,8 +681,7 @@ Game.prototype.redraw = function()
 Game.prototype.loadFinished = function()
 {
 	this.ready = true;
-	this.waitingForKeypress = true;
-	this.nextScreen = SCREEN_INTRO;
+	this.setWaitForKeypress(SCREEN_INTRO);
 }
 
 Game.prototype.assetLoadFinished = function()
