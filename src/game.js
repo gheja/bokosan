@@ -231,7 +231,7 @@ Game.prototype.drawSmallText = function(posX, posY, content)
 
 Game.prototype.drawSmallTextBlinking = function(posX, posY, content)
 {
-	if (Math.floor(this.currentScreenTicks / 6) % 2 == 0)
+	if (Math.floor(this.currentScreenTicks / 6) % 2 == 1)
 	{
 		this.drawText(posX, posY, content, 1);
 	}
