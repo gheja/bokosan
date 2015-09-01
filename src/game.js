@@ -106,7 +106,7 @@ Game.prototype.setWaitForKeypress = function(_nextScreen)
 	this.nextScreen = _nextScreen;
 }
 
-Game.prototype.zeroPad = function(i, length)
+Game.prototype.pad = function(i, length, padder)
 {
 	var s;
 	
@@ -114,7 +114,7 @@ Game.prototype.zeroPad = function(i, length)
 	
 	while (s.length < length)
 	{
-		s = '0' + s;
+		s = padder + s;
 	}
 	
 	return s;
@@ -123,7 +123,7 @@ Game.prototype.zeroPad = function(i, length)
 Game.prototype.timePad = function(t)
 {
 	t = Math.floor(t);
-	return Math.floor(t / 3600) + ":" + this.zeroPad(Math.floor((t % 3600) / 60), 2) + ":"+ this.zeroPad(t % 60, 2);
+	return Math.floor(t / 3600) + ":" + this.pad(Math.floor((t % 3600) / 60), 2, '0') + ":"+ this.pad(t % 60, 2, '0');
 }
 
 	// thx David @ http://stackoverflow.com/a/15439809
@@ -545,7 +545,7 @@ Game.prototype.screenDraw = function()
 				}
 			}
 			
-			this.drawSmallText(0, 270, "TIME " + this.timePad(this.currentStats[STAT_FRAMES] * 1/12) + "   MOVES " + this.zeroPad(this.currentStats[STAT_MOVES], 5) + "   PULLS " + this.zeroPad(this.currentStats[STAT_PULLS], 5) + "  LEVEL 1-50");
+			this.drawSmallText(0, 270, "TIME " + this.timePad(this.currentStats[STAT_FRAMES] * 1/12) + "   MOVES " + this.pad(this.currentStats[STAT_MOVES], 5, '0') + "   PULLS " + this.pad(this.currentStats[STAT_PULLS], 5, '0') + "  LEVEL 1-50");
 		break;
 		
 		case SCREEN_ABOUT:
