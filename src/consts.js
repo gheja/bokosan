@@ -12,6 +12,11 @@
 /** @const @type {number} */ var SCREEN_MENU = 2;
 /** @const @type {number} */ var SCREEN_GAME = 3;
 
+/** @const @type {number} */ var MENU_MAIN = 0;
+
+/** @const @type {number} */ var ACTION_OPEN_MENU = 0;
+/** @const @type {number} */ var ACTION_CHANGE_SCREEN = 1;
+
 // Obj orientations
 /** @const @type {number} */ var OBJ_ORIENTATION_NORTH = 0;
 /** @const @type {number} */ var OBJ_ORIENTATION_EAST = 1;

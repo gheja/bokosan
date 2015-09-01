@@ -3,10 +3,11 @@
 /**
  * @constructor
  */
-var Menu = function(selection, items)
+var Menu = function(game, items)
 {
-	/** @type {number} */ this.selection = selection;
+	/** @type {Game} */ this.game = game;
 	/** @type {Array} */ this.items = items;
+	/** @type {number} */ this.selection = 0;
 }
 
 Menu.prototype.step = function(direction)
@@ -19,5 +20,12 @@ Menu.prototype.step = function(direction)
 
 Menu.prototype.go = function()
 {
-	this.items[this.selection][1]();
+	if (this.items[this.selection][1] == ACTION_OPEN_MENU)
+	{
+		this.game.openMenu(this.items[this.selection][2]);
+	}
+	else
+	{
+		this.game.screenFadeAndSwitch(this.items[this.selection][2]);
+	}
 }

@@ -25,11 +25,15 @@ var Game = function()
 	this.sounds = [];
 	this.waitingForKeypress = false;
 	/** @type {Menu} */ this.currentMenu = null;
-	/** @type {Menu} */ this.mainMenu = new Menu(0, [
-		[ "PLAY", this.screenFadeAndSwitch.bind(this, SCREEN_GAME) ],
-		[ "CUSTOMIZE", this.screenFadeAndSwitch.bind(this, SCREEN_MENU) ],
-		[ "HOW TO PLAY", this.screenFadeAndSwitch.bind(this, SCREEN_MENU) ]
-	]);
+	/** @type {Array<Menu>} */this.menus = [
+		// MENU_MAIN
+		new Menu(this, [
+			[ "PLAY", ACTION_CHANGE_SCREEN, SCREEN_GAME ],
+			[ "OPTIONS", ACTION_OPEN_MENU, MENU_MAIN ],
+			[ "HOW TO PLAY", ACTION_OPEN_MENU, MENU_MAIN ],
+			[ "ABOUT", ACTION_OPEN_MENU, MENU_MAIN ]
+		])
+	];
 	
 	/** @type {Array<Obj>} */ this.objects = [];
 	/** @type {PlayerObj} */ this.player = null;
@@ -285,6 +289,11 @@ Game.prototype.screenFadeAndSwitch = function(_new_screen)
 	this.fadeMode = FADE_MODE_OUT;
 }
 
+Game.prototype.openMenu = function(id)
+{
+	this.currentMenu = this.menus[id];
+}
+
 Game.prototype.switchScreen = function(_new_screen)
 {
 	var x, y, a, b;
@@ -304,7 +313,7 @@ Game.prototype.switchScreen = function(_new_screen)
 		break;
 		
 		case SCREEN_MENU:
-			this.currentMenu = this.mainMenu;
+			this.openMenu(MENU_MAIN);
 		break;
 		
 		case SCREEN_GAME:
