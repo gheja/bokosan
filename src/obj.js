@@ -21,7 +21,6 @@ var Obj = function(game, x, y)
 	this.floorOnly = false;
 	this.orientation = OBJ_ORIENTATION_NORTH;
 	this.status = OBJ_STATUS_STANDING;
-	this.isBox = false;
 }
 
 Obj.prototype.draw = function()
