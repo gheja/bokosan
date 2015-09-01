@@ -1,0 +1,6 @@
+  - reorder declarations of variables and properties (see github issue #1)
+  - shorten package.json comment
+  - remove howto graphics
+  - remove favicon
+  - replace "parseInt(x || 0, 10)" with "x * 1"
+  - replace "Math.floor(x)" with "x || 0" or "~~x"
