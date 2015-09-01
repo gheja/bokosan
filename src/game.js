@@ -17,6 +17,7 @@ var Game = function()
 	this.levelPadY = 0;
 	this.ready = false;
 	this.ticks = 0;
+	this.storage = null; // == window.localStorage
 	this.currentStats = [
 		0, // STAT_FRAMES
 		0, // STAT_MOVES
@@ -139,6 +140,11 @@ Game.prototype.isTouchAvailable = function()
 Game.prototype.statIncrease = function(statKey)
 {
 	this.currentStats[statKey]++;
+	if (this.storage)
+	{
+		this.storage.setItem('s' + statKey, parseInt(this.storage.getItem('s' + statKey) || 0, 10) + 1);
+		// shorter but uglier: this.storage.setItem('s' + statKey, this.storage.getItem('s' + statKey) * 1 + 1);
+	}
 }
 
 Game.prototype.addSounds = function(sounds)
@@ -749,6 +755,8 @@ Game.prototype.init = function(window)
 		[3,0.19,0.23,,0.31,0.2,,0.04,,,,,,,,,-0.37,,0.23,,,0.29,,0.5], // SOUND_BOX_PULL
 		[,0.07,0.02,,0.11,0.82,,,,,,,,,-0.44,,,,1,,,,,0.5] // SOUND_TEXT
 	]);
+	
+	this.storage = window.localStorage;
 	
 	window.addEventListener('resize', this.onResize.bind(this));
 	this.onResize();
