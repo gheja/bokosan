@@ -137,13 +137,18 @@ Game.prototype.isTouchAvailable = function()
 	return false;
 }
 
+Game.prototype.statGetLocalStorageValue = function(statKey)
+{
+	return parseInt(this.storage.getItem('s' + statKey) || 0, 10);
+	// shorter but uglier: return this.storage.getItem('s' + statKey) * 1;
+}
+
 Game.prototype.statIncrease = function(statKey)
 {
 	this.currentStats[statKey]++;
 	if (this.storage)
 	{
-		this.storage.setItem('s' + statKey, parseInt(this.storage.getItem('s' + statKey) || 0, 10) + 1);
-		// shorter but uglier: this.storage.setItem('s' + statKey, this.storage.getItem('s' + statKey) * 1 + 1);
+		this.storage.setItem('s' + statKey, this.statGetLocalStorageValue(statKey) + 1);
 	}
 }
 
