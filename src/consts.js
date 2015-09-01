@@ -7,13 +7,10 @@
 /** @const @type {number} */ var FADE_MODE_IN = 1;
 /** @const @type {number} */ var FADE_MODE_OUT = 2;
 
-/** @const @type {number} */ var SCREEN_INTRO = 0;
-/** @const @type {number} */ var SCREEN_MENU = 1;
-/** @const @type {number} */ var SCREEN_HIGHSCORE = 2;
-/** @const @type {number} */ var SCREEN_DIALOG_HELLO = 3;
-/** @const @type {number} */ var SCREEN_DIALOG_FAIL1 = 4;
-/** @const @type {number} */ var SCREEN_DIALOG_FAIL2 = 5;
-/** @const @type {number} */ var SCREEN_GAME = 6;
+/** @const @type {number} */ var SCREEN_TITLE = 0;
+/** @const @type {number} */ var SCREEN_INTRO = 1;
+/** @const @type {number} */ var SCREEN_MENU = 2;
+/** @const @type {number} */ var SCREEN_GAME = 3;
 
 // Obj orientations
 /** @const @type {number} */ var OBJ_ORIENTATION_NORTH = 0;

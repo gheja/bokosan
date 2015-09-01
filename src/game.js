@@ -56,7 +56,7 @@ var Game = function()
 	];
 	
 	
-	this.currentScreen = SCREEN_INTRO;
+	this.currentScreen = SCREEN_TITLE;
 	this.currentScreenTicks = 0;
 	
 	this.currentLevel = "";
@@ -295,7 +295,12 @@ Game.prototype.switchScreen = function(_new_screen)
 	// initialization of the new screen
 	switch (_new_screen)
 	{
+		case SCREEN_TITLE:
+		break;
+		
 		case SCREEN_INTRO:
+			this.waitingForKeypress = true;
+			this.nextScreen = SCREEN_MENU;
 		break;
 		
 		case SCREEN_MENU:
@@ -377,7 +382,7 @@ Game.prototype.screenDraw = function()
 	
 	switch (this.currentScreen)
 	{
-		case SCREEN_INTRO:
+		case SCREEN_TITLE:
 			this.drawBigText(146, 80, "BOKOSAN");
 			this.drawSmallText(122, 100, "FOR JS13KGAMES 2015\n\n  WWW.BOKOSAN.NET");
 			if (!this.ready)
@@ -395,6 +400,10 @@ Game.prototype.screenDraw = function()
 					this.drawSmallTextBlinking(104, 200, "PRESS A KEY TO CONTINUE");
 				}
 			}
+		break;
+		
+		case SCREEN_INTRO:
+			this.drawSmallText(0, 270, "(INTRO SCREEN)");
 		break;
 		
 		case SCREEN_MENU:
@@ -490,7 +499,10 @@ Game.prototype.screenTick = function()
 		}
 	}
 	
-	if (this.currentScreen == SCREEN_INTRO)
+	if (this.currentScreen == SCREEN_TITLE)
+	{
+	}
+	else if (this.currentScreen == SCREEN_INTRO)
 	{
 	}
 	else if (this.currentScreen == SCREEN_MENU)
@@ -605,7 +617,7 @@ Game.prototype.loadFinished = function()
 {
 	this.ready = true;
 	this.waitingForKeypress = true;
-	this.nextScreen = SCREEN_MENU;
+	this.nextScreen = SCREEN_INTRO;
 }
 
 Game.prototype.assetLoadFinished = function()
@@ -650,7 +662,7 @@ Game.prototype.init = function(window)
 	
 	this.inputHandler = new InputHandler(window);
 	
-	this.switchScreen(SCREEN_INTRO);
+	this.switchScreen(SCREEN_TITLE);
 	this.fadeMode = FADE_MODE_IN;
 	this.fadePercent = 0;
 	
