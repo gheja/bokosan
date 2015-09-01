@@ -142,17 +142,13 @@ Game.prototype.drawImageAdvanced = function(sctx, dctx, sx, sy, sw, sh, dx, dy, 
 	dctx.restore();
 }
 
-Game.prototype.drawText = function(posX, posY, content, blinking, width, height, scale)
+Game.prototype.drawText = function(posX, posY, content, scale)
 {
 	var i, x, y, index;
 	
-	if (blinking && Math.floor(this.currentScreenTicks / 6) % 2 == 0)
-	{
-		return;
-	}
-	
 	x = 0;
 	y = 0;
+	
 	for (i=0; i<content.length; i++)
 	{
 		if (content[i] == "\n")
@@ -172,28 +168,25 @@ Game.prototype.drawText = function(posX, posY, content, blinking, width, height,
 		this.ctx.drawImage(this._asset, index * 7, 0, 7, 10, posX + x * 8 * scale, posY + y * 10 * scale, 7 * scale, 10 * scale);
 		
 		x++;
-		
-		if (x > width)
-		{
-			x = 0;
-			y++;
-		}
 	}
 }
 
 Game.prototype.drawSmallText = function(posX, posY, content)
 {
-	this.drawText(posX, posY, content, false, 1000, 1000, 1);
+	this.drawText(posX, posY, content, 1);
 }
 
 Game.prototype.drawSmallTextBlinking = function(posX, posY, content)
 {
-	this.drawText(posX, posY, content, true, 1000, 1000, 1);
+	if (Math.floor(this.currentScreenTicks / 6) % 2 == 0)
+	{
+		this.drawText(posX, posY, content, 1);
+	}
 }
 
 Game.prototype.drawBigText = function(posX, posY, content)
 {
-	this.drawText(posX, posY, content, false, 1000, 1000, 2);
+	this.drawText(posX, posY, content, 2);
 }
 
 Game.prototype.drawTile = function(posX, posY, tileNumber, rotated, mirrored, floorOnly)
