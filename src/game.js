@@ -486,11 +486,11 @@ Game.prototype.screenDraw = function()
 			this.drawSmallText(0, 20, "FOR JS13KGAMES 2015");
 			
 			this.drawSmallText(0, 50, "TOTAL TIME PLAYED");
-			this.drawBigText(0, 60, "  131:54:22");
+			this.drawBigText(0, 60, this.pad(this.timePad(this.statGetLocalStorageValue(STAT_FRAMES) * 1/12), 10, ' '));
 			this.drawSmallText(0, 90, "TOTAL MOVES");
-			this.drawBigText(0, 100, "  9,612,334");
+			this.drawBigText(0, 100, this.pad(this.thousandPad(this.statGetLocalStorageValue(STAT_MOVES)), 10, ' '));
 			this.drawSmallText(0, 130, "TOTAL PULLS");
-			this.drawBigText(0, 140, "     84,414");
+			this.drawBigText(0, 140, this.pad(this.thousandPad(this.statGetLocalStorageValue(STAT_PULLS)), 10, ' '));
 			
 			for (i=0; i<this.currentMenu.items.length; i++)
 			{
