@@ -80,8 +80,7 @@ Obj.prototype.getNeighbourBox = function(dx, dy)
 	
 	for (i in this.game.objects)
 	{
-		// instanceof not working
-		if (this.game.objects[i].isBox && this.game.objects[i].x == this.x + dx * 20 && this.game.objects[i].y == this.y + dy * 18)
+		if (this.game.objects[i] instanceof BoxObj && this.game.objects[i].x == this.x + dx * 20 && this.game.objects[i].y == this.y + dy * 18)
 		{
 			return this.game.objects[i];
 		}
