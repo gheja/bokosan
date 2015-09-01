@@ -120,6 +120,13 @@ Game.prototype.pad = function(i, length, padder)
 	return s;
 }
 
+Game.prototype.thousandPad = function(num)
+{
+	// thx Elias Zamaria @ http://stackoverflow.com/a/2901298
+	// NOTE: will work only for integers
+	return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
 Game.prototype.timePad = function(t)
 {
 	t = Math.floor(t);
