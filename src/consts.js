@@ -27,6 +27,8 @@
 /** @const @type {number} */ var STAT_FRAMES = 0;
 /** @const @type {number} */ var STAT_MOVES = 1;
 /** @const @type {number} */ var STAT_PULLS = 2;
+/** @const @type {number} */ var STAT_LEVELS_STARTED = 3;
+/** @const @type {number} */ var STAT_LEVELS_FINISHED = 4;
 
 // Obj orientations
 /** @const @type {number} */ var OBJ_ORIENTATION_NORTH = 0;

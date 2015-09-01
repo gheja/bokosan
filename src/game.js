@@ -288,6 +288,7 @@ Game.prototype.loadLevel = function(index)
 	this.currentStats[STAT_FRAMES] = 0;
 	this.currentStats[STAT_MOVES] = 0;
 	this.currentStats[STAT_PULLS] = 0;
+	this.statIncrease(STAT_LEVELS_STARTED);
 	this.currentLevelWidth = this.levels[index][0];
 	this.currentLevelHeight = this.levels[index][1];
 	this.currentLevel = this.levels[index][2];
@@ -604,6 +605,7 @@ Game.prototype.screenTick = function()
 		{
 			// congratulate the user, update highscores, etc.
 			// yes, the player can win even if stuck
+			this.statIncrease(STAT_LEVELS_FINISHED);
 			this.screenFadeAndSwitch(SCREEN_MENU);
 		}
 		else if (this.player.isStuck())
