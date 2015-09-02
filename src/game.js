@@ -90,6 +90,7 @@ var Game = function()
 	this.fadePercent = 0; // 0: faded/black ... 100: clear/game screen
 	this.validTextCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 .,:!?()x<>udr@/-_+*=\"'";
 	this.inputHandler = null;
+	this.touchHandler = null;
 }
 
 Game.prototype.fixCanvasContextSmoothing = function(ctx)
@@ -744,6 +745,7 @@ Game.prototype.init = function(window)
 	this._asset.src = "./tileset.png";
 	
 	this.inputHandler = new InputHandler(window);
+	this.touchHandler = new TouchHandler(this.inputHandler, 200, 200, window);
 	
 	this.switchScreen(SCREEN_TITLE);
 	this.fadeMode = FADE_MODE_IN;

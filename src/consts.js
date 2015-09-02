@@ -63,3 +63,8 @@
 /** @const @type {number} */ var SOUND_BOX_RELEASE = 5;
 /** @const @type {number} */ var SOUND_BOX_PULL = 6;
 /** @const @type {number} */ var SOUND_TEXT = 7;
+
+/** @const @type {number} */ var TOUCH_TRESHOLD = 40;
+/** @const @type {number} */ var TOUCH_MODE_CANCEL = 0;
+/** @const @type {number} */ var TOUCH_MODE_ACTION = 1;
+/** @const @type {number} */ var TOUCH_MODE_MOVE = 2;
