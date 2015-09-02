@@ -80,10 +80,17 @@ var Game = function()
 		// 2
 	];
 	
-	
-	this.currentScreen = SCREEN_TITLE;
-	this.currentScreenTicks = 0;
-	
+	this.screens = [
+		new ScreenTitle(),
+		new ScreenIntro(),
+		new ScreenMenu(),
+		new ScreenLevel(),
+		new ScreenLevels(),
+		new ScreenChallenges(),
+		new ScreenAbout(),
+		new ScreenHowto()
+	];
+	/** @type {Screen} */ this.currentScreen = null;
 	this.currentLevel = "";
 	
 	this.fadeMode = FADE_MODE_NONE;
@@ -233,7 +240,7 @@ Game.prototype.drawSmallText = function(posX, posY, content)
 
 Game.prototype.drawSmallTextBlinking = function(posX, posY, content)
 {
-	if (Math.floor(this.currentScreenTicks / 6) % 2 == 1)
+	if (Math.floor(this.ticks / 6) % 2 == 1)
 	{
 		this.drawText(posX, posY, content, 1);
 	}
@@ -304,15 +311,43 @@ Game.prototype.onResize = function()
 
 Game.prototype.loadLevel = function(index)
 {
+	var x, y, a, b;
+	
 	this.currentStats[STAT_FRAMES] = 0;
 	this.currentStats[STAT_MOVES] = 0;
 	this.currentStats[STAT_PULLS] = 0;
 	this.statIncrease(STAT_LEVELS_STARTED);
+	
 	this.currentLevelWidth = this.levels[index][0];
 	this.currentLevelHeight = this.levels[index][1];
 	this.currentLevel = this.levels[index][2];
+	
 	this.levelPadX = Math.floor((WIDTH - this.currentLevelWidth * 20 - 10) / 2);
 	this.levelPadY = Math.floor((HEIGHT - this.currentLevelHeight * 18 - 9) / 2);
+	
+	this.objects.length = 0;
+	this.player = null;
+	
+	for (y=0; y<this.currentLevelHeight; y++)
+	{
+		for (x=0; x<this.currentLevelWidth; x++)
+		{
+			a = x * 20;
+			b = y * 18;
+			
+			switch (this.currentLevel[y * this.currentLevelWidth + x])
+			{
+				case "P": // the player
+					this.player = new PlayerObj(game, a, b);
+					this.objects.push(this.player);
+				break;
+				
+				case "B": // a box
+					this.objects.push(new BoxObj(game, a, b));
+				break;
+			}
+		}
+	}
 }
 
 Game.prototype.isLevelFinished = function()
@@ -348,71 +383,8 @@ Game.prototype.openMenu = function(id)
 
 Game.prototype.switchScreen = function(_new_screen)
 {
-	var x, y, a, b;
-	
-	this.currentScreen = _new_screen;
-	this.currentScreenTicks = 0;
-	
-	// initialization of the new screen
-	switch (_new_screen)
-	{
-		case SCREEN_TITLE:
-		break;
-		
-		case SCREEN_INTRO:
-			this.setWaitForKeypress(SCREEN_MENU);
-		break;
-		
-		case SCREEN_MENU:
-			this.openMenu(MENU_MAIN);
-		break;
-		
-		case SCREEN_GAME:
-			this.loadLevel(1);
-			
-			this.objects.length = 0;
-			this.player = null;
-			
-			for (y=0; y<this.currentLevelHeight; y++)
-			{
-				for (x=0; x<this.currentLevelWidth; x++)
-				{
-					a = x * 20;
-					b = y * 18;
-					
-					switch (this.currentLevel[y * this.currentLevelWidth + x])
-					{
-						case "P": // the player
-							this.player = new PlayerObj(this, a, b);
-							this.objects.push(this.player);
-						break;
-						
-						case "B": // a box
-							this.objects.push(new BoxObj(this, a, b));
-						break;
-					}
-				}
-			}
-		break;
-		
-		case SCREEN_LEVELS:
-			this.setWaitForKeypress(SCREEN_GAME);
-		break;
-		
-		case SCREEN_CHALLENGES:
-			this.setWaitForKeypress(SCREEN_MENU);
-		break;
-		
-		case SCREEN_ABOUT:
-			this.setWaitForKeypress(SCREEN_MENU);
-		break;
-		
-		case SCREEN_HOWTO:
-			this.setWaitForKeypress(SCREEN_MENU);
-		break;
-	}
-	
-	// clear all inputs captured during fade
+	this.currentScreen = this.screens[_new_screen];
+	this.currentScreen.init(this);
 	this.inputHandler.clearKeys();
 }
 
@@ -452,229 +424,6 @@ Game.prototype.fadeApply = function(ctx, percent)
 	ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 }
 
-Game.prototype.screenDraw = function()
-{
-	var x, y, a, b, c, width, height, i, a1, b1, a2, b2, p;
-	
-	switch (this.currentScreen)
-	{
-		case SCREEN_TITLE:
-			this.drawBigText(146, 80, "BOKOSAN");
-			this.drawSmallText(122, 100, "FOR JS13KGAMES 2015\n\n  WWW.BOKOSAN.NET");
-			if (this.isTouchAvailable())
-			{
-				this.drawSmallTextBlinking(96, 200, "TOUCH ANYWHERE TO CONTINUE");
-			}
-			else
-			{
-				this.drawSmallTextBlinking(104, 200, "PRESS A KEY TO CONTINUE");
-			}
-		break;
-		
-		case SCREEN_INTRO:
-			this.drawSmallText(0, 270, "(INTRO SCREEN)");
-		break;
-		
-		case SCREEN_MENU:
-			this.drawBigText(0, 0, "BOKOSAN");
-			this.drawSmallText(0, 20, "FOR JS13KGAMES 2015");
-			
-			this.drawSmallText(0, 50, "TOTAL TIME PLAYED");
-			this.drawBigText(0, 60, this.pad(this.timePad(this.statGetLocalStorageValue(STAT_FRAMES) * 1/12), 10, ' '));
-			this.drawSmallText(0, 90, "TOTAL MOVES");
-			this.drawBigText(0, 100, this.pad(this.thousandPad(this.statGetLocalStorageValue(STAT_MOVES)), 10, ' '));
-			this.drawSmallText(0, 130, "TOTAL PULLS");
-			this.drawBigText(0, 140, this.pad(this.thousandPad(this.statGetLocalStorageValue(STAT_PULLS)), 10, ' '));
-			
-			for (i=0; i<this.currentMenu.items.length; i++)
-			{
-				this.drawSmallText(200, 50 + i * 20, (this.currentMenu.selection == i ? "> " : "  ") + this.currentMenu.items[i][0]);
-			}
-			
-			this.drawSmallText(0, 270, "WWW.BOKOSAN.NET             GITHUB.COM/GHEJA/BOKOSAN");
-		break;
-		
-		case SCREEN_GAME:
-			for (i=0; i<this.objects.length; i++)
-			{
-				this.objects[i].updateRenderOrder();
-				this.objects[i].setRenderNeeded(true);
-			}
-			
-			for (y=0; y<this.currentLevelHeight; y++)
-			{
-				for (x=0; x<this.currentLevelWidth; x++)
-				{
-					c = this.currentLevel[y * this.currentLevelWidth + x];
-					a = x * 20 + this.levelPadX;
-					b = y * 18 + this.levelPadY;
-					
-					switch (c)
-					{
-						case "w": // wall
-							this.drawTile(a, b, 0, 0, 0, 0);
-						break;
-						
-						case ".": // floor
-						case "P": // floor (below the player)
-							this.drawTile(a, b, 2, 0, 0, 0);
-						break;
-						
-						case "/": // keep-clear floor
-						case "B": // keep-clear floor (below the box)
-							this.drawTile(a, b, 3, 0, 0, 0);
-						break;
-					}
-					
-					
-					a1 = (x - 1) * 20;
-					b1 = (y - 1) * 18;
-					a2 = x * 20;
-					b2 = y * 18;
-					
-					for (i=0; i<this.objects.length; i++)
-					{
-						if (this.objects[i].getRenderNeeded())
-						{
-							p = this.objects[i].getPosition();
-							if (p[0] > a1 && p[0] <= a2 && p[1] > b1 && p[1] <= b2)
-							{
-								this.objects[i].draw();
-							}
-						}
-					}
-				}
-			}
-			
-			this.drawSmallText(0, 270, "TIME " + this.timePad(this.currentStats[STAT_FRAMES] * 1/12) + "   MOVES " + this.pad(this.currentStats[STAT_MOVES], 5, '0') + "   PULLS " + this.pad(this.currentStats[STAT_PULLS], 5, '0') + "  LEVEL 1-50");
-		break;
-		
-		case SCREEN_ABOUT:
-			this.drawSmallText(0, 270, "(ABOUT SCREEN)");
-		break;
-		
-		case SCREEN_HOWTO:
-			this.drawSmallText(0, 270, "(HOW TO PLAY SCREEN)");
-		break;
-		
-		case SCREEN_LEVELS:
-			this.drawSmallText(0, 270, "(LEVELS SCREEN)");
-		break;
-		
-		case SCREEN_CHALLENGES:
-			this.drawSmallText(0, 270, "(CHALLENGES SCREEN)");
-		break;
-	}
-}
-
-Game.prototype.screenTick = function()
-{
-	var i;
-	
-	this.ticks++;
-	this.currentScreenTicks++;
-	
-	if (this.waitingForKeypress)
-	{
-		if (this.inputHandler.checkIfKeyPressedAndClear())
-		{
-			this.fadeMode = FADE_MODE_OUT;
-			this.waitingForKeypress = false;
-			this.playSound(SOUND_NEXT);
-		}
-	}
-	
-	if (this.currentScreen == SCREEN_TITLE)
-	{
-	}
-	else if (this.currentScreen == SCREEN_INTRO)
-	{
-	}
-	else if (this.currentScreen == SCREEN_MENU)
-	{
-		if (!this.inputHandler.isKeyStatus(IH_KEY_UP, IH_KEY_STAUTS_RESET))
-		{
-			this.currentMenu.step(-1);
-			this.playSound(SOUND_MENU);
-		}
-		else if (!this.inputHandler.isKeyStatus(IH_KEY_DOWN, IH_KEY_STAUTS_RESET))
-		{
-			this.currentMenu.step(1);
-			this.playSound(SOUND_MENU);
-		}
-		else if (!this.inputHandler.isKeyStatus(IH_KEY_ACTION, IH_KEY_STAUTS_RESET) || !this.inputHandler.isKeyStatus(IH_KEY_RIGHT, IH_KEY_STAUTS_RESET))
-		{
-			this.currentMenu.go();
-			this.playSound(SOUND_NEXT);
-		}
-		
-		this.inputHandler.clearKeys();
-		// this.inputHandler.clearReleasedKeys();
-	}
-	else if (this.currentScreen == SCREEN_GAME)
-	{
-		if (this.isLevelFinished())
-		{
-			// congratulate the user, update highscores, etc.
-			// yes, the player can win even if stuck
-			this.statIncrease(STAT_LEVELS_FINISHED);
-			this.screenFadeAndSwitch(SCREEN_MENU);
-		}
-		else if (this.player.isStuck())
-		{
-			// show a dialog about this unfortunate incident...
-			this.screenFadeAndSwitch(SCREEN_MENU);
-		}
-		else
-		{
-			this.statIncrease(STAT_FRAMES);
-			
-			if (this.inputHandler.isKeyStatus(IH_KEY_ACTION, IH_KEY_STAUTS_RELEASED))
-			{
-				this.player.tryRelease();
-			}
-			
-			if (this.inputHandler.isKeyStatus(IH_KEY_ACTION, IH_KEY_STAUTS_PRESSED))
-			{
-				this.player.tryGrab();
-			}
-			
-			if (!this.inputHandler.isKeyStatus(IH_KEY_CANCEL, IH_KEY_STAUTS_RESET))
-			{
-				// pause
-				this.screenFadeAndSwitch(SCREEN_MENU);
-			}
-			
-			if (!this.inputHandler.isKeyStatus(IH_KEY_UP, IH_KEY_STAUTS_RESET))
-			{
-				this.player.tryWalk(OBJ_ORIENTATION_NORTH);
-			}
-			
-			if (!this.inputHandler.isKeyStatus(IH_KEY_RIGHT, IH_KEY_STAUTS_RESET))
-			{
-				this.player.tryWalk(OBJ_ORIENTATION_EAST);
-			}
-			
-			if (!this.inputHandler.isKeyStatus(IH_KEY_DOWN, IH_KEY_STAUTS_RESET))
-			{
-				this.player.tryWalk(OBJ_ORIENTATION_SOUTH);
-			}
-			
-			if (!this.inputHandler.isKeyStatus(IH_KEY_LEFT, IH_KEY_STAUTS_RESET))
-			{
-				this.player.tryWalk(OBJ_ORIENTATION_WEST);
-			}
-		}
-		
-		this.inputHandler.clearReleasedKeys();
-	}
-	
-	for (i=0; i<this.objects.length; i++)
-	{
-		this.objects[i].tick();
-	}
-}
-
 Game.prototype.redraw = function()
 {
 	if (!this._assetLoaded)
@@ -686,13 +435,25 @@ Game.prototype.redraw = function()
 	
 	if (this.fadeMode == FADE_MODE_NONE)
 	{
-		this.screenTick();
+		this.ticks++;
+		
+		if (this.waitingForKeypress)
+		{
+			if (this.inputHandler.checkIfKeyPressedAndClear())
+			{
+				this.fadeMode = FADE_MODE_OUT;
+				this.waitingForKeypress = false;
+				this.playSound(SOUND_NEXT);
+			}
+		}
+		
+		this.currentScreen.tick(this);
 	}
 	
 	this.ctx.fillStyle = "#555";
 	this.ctx.fillRect(0, 0, WIDTH, HEIGHT);
 	
-	this.screenDraw();
+	this.currentScreen.draw(this);
 	
 	this.fadeApply(this.ctx, this.fadePercent);
 	
