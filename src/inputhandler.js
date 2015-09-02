@@ -83,7 +83,7 @@ InputHandler.prototype.onKeyUp = function(e)
 	this.setKeyStatus(keyCode, IH_KEY_STAUTS_PRESSED, IH_KEY_STAUTS_RELEASED);
 }
 
-InputHandler.prototype.onTouchStart = function(e)
+InputHandler.prototype.onTouch = function()
 {
 	this.keyPressed = true;
 }
@@ -114,7 +114,6 @@ InputHandler.prototype.bind = function(w)
 {
 	w.addEventListener('keydown', this.onKeyDown.bind(this));
 	w.addEventListener('keyup', this.onKeyUp.bind(this));
-	w.addEventListener('touchstart', this.onTouchStart.bind(this));
 	
 	this.clearKeys();
 }
