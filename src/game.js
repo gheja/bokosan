@@ -89,6 +89,7 @@ var Game = function()
 	this.fadeMode = FADE_MODE_NONE;
 	this.fadePercent = 0; // 0: faded/black ... 100: clear/game screen
 	this.validTextCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 .,:!?()x<>udr@/-_+*=\"'";
+	this.inputHandler = null;
 }
 
 Game.prototype.fixCanvasContextSmoothing = function(ctx)
