@@ -141,9 +141,9 @@ if [ "$do_stage3" == "y" ]; then
 	zip_file="${name}_${now}_${git_id}.zip"
 	
 	echo "* Creating new archive ${zip_file} ..."
-	try zip ${zip_file} -r -9 ./game
-	
-	try cd ..
+	try cd ./game
+	try zip ../${zip_file} -r -9 .
+	try cd ../..
 	
 	echo "Done."
 	
