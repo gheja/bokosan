@@ -24,8 +24,12 @@ Menu.prototype.go = function()
 	{
 		this.game.openMenu(this.items[this.selection][2]);
 	}
-	else
+	else if (this.items[this.selection][1] == ACTION_CHANGE_SCREEN)
 	{
 		this.game.screenFadeAndSwitch(this.items[this.selection][2]);
+	}
+	else // ACTION_CUSTOM
+	{
+		this.items[this.selection][2].call();
 	}
 }
