@@ -67,8 +67,20 @@ var Game = function()
 		],
 		// 1
 		[
-			// width, height, level data
-			9, 7,
+			// width, height, A+ limit, level data
+			7, 7, 13,
+			"wwwwwww" +
+			"w/B///w" +
+			"w/////w" +
+			"wwww//w" +
+			" w....w" +
+			" w.P..w" +
+			" wwwwww"
+		],
+		// 2
+		[
+			// width, height, A+ limit, level data
+			9, 7, 37,
 			"   wwwww " +
 			"wwww.P.w " +
 			"wBB/...ww" +
@@ -76,8 +88,20 @@ var Game = function()
 			"wwww...ww" +
 			"   w...w " +
 			"   wwwww "
+		],
+		// 3
+		[
+			// width, height, A+ limit, level data
+			9, 8, 37,
+			"     wwww" +
+			"wwwwww//w" +
+			"wb.P////w" +
+			"w..w////w" +
+			"w..w//www" +
+			"waaw/B/Bw" +
+			"wwwwB/B/w" +
+			"   wwwwww"
 		]
-		// 2
 	];
 	
 	this.screens = [
