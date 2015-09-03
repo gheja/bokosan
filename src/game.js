@@ -40,19 +40,30 @@ var Game = function()
 		new Menu(this, [
 			[ "SINGLE PLAYER", ACTION_CHANGE_SCREEN, SCREEN_LEVELS ],
 			[ "ONLINE CHALLENGE", ACTION_CHANGE_SCREEN, SCREEN_CHALLENGES ],
-			[ "CUSTOMIZE", ACTION_OPEN_MENU, MENU_PLAY ],
+			[ "CUSTOMIZE", ACTION_OPEN_MENU, MENU_CUSTOMIZE ],
 			[ "BACK TO MENU", ACTION_OPEN_MENU, MENU_MAIN ]
 		]),
 		
 		// MENU_OPTIONS
 		new Menu(this, [
+			[ "MUSIC:      ON", ACTION_CUSTOM, function(){} ],
+			[ "SOUND:      ON", ACTION_CUSTOM, function(){} ],
+			[ "SEND STATS: ON", ACTION_CUSTOM, function(){} ],
 			[ "BACK TO MENU", ACTION_OPEN_MENU, MENU_MAIN ]
 		]),
 		
 		// MENU_PAUSED
 		new Menu(this, [
-			[ "CONTINUE", ACTION_OPEN_MENU, MENU_MAIN ],
+			[ "CONTINUE", ACTION_CHANGE_SCREEN, SCREEN_GAME ],
 			[ "BACK TO MENU", ACTION_OPEN_MENU, MENU_MAIN ]
+		]),
+		
+		// MENU_CUSTOMIZE
+		new Menu(this, [
+			[ "NAME", ACTION_CUSTOM, function(){} ],
+			[ "SHIRT COLOR", ACTION_CUSTOM, function(){} ],
+			[ "PANTS COLOR", ACTION_CUSTOM, function(){} ],
+			[ "BACK TO MENU", ACTION_OPEN_MENU, MENU_PLAY ]
 		])
 	];
 	
