@@ -114,6 +114,9 @@ ScreenLevels.prototype.draw = function(game)
 					
 					case "a":
 					case "b":
+					case "c":
+					case "d":
+					case "e":
 						color = "#000";
 					break;
 					

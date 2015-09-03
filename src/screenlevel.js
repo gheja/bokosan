@@ -113,12 +113,24 @@ ScreenLevel.prototype.draw = function(game)
 					game.drawTile(a, b, 3, 0, 0, 0);
 				break;
 				
-				case "a": // spike
-					game.drawTile(a, b, 5, 0, 0, 0);
+				case "a": // hole
+					game.drawTile(a, b, 4, 0, 0, 0);
 				break;
 				
 				case "b": // hole
-					game.drawTile(a, b, 4, 0, 0, 0);
+					game.drawTile(a, b, 5, 0, 0, 0);
+				break;
+				
+				case "c": // hole
+					game.drawTile(a, b, 6, 0, 0, 0);
+				break;
+				
+				case "d": // hole
+					game.drawTile(a, b, 7, 0, 0, 0);
+				break;
+				
+				case "e": // spike
+					game.drawTile(a, b, 8, 0, 0, 0);
 				break;
 			}
 			

@@ -103,15 +103,15 @@ var Game = function()
 		// 3
 		[
 			// width, height, A+ limit, level data
-			9, 8, 37,
-			"     wwww" +
-			"wwwwww//w" +
-			"wb.P////w" +
-			"w..w////w" +
-			"w..w//www" +
-			"waaw/B/Bw" +
-			"wwwwB/B/w" +
-			"   wwwwww"
+			15, 8, 37,
+			"     wwwwwwwwww" +
+			"wwwwww//w.e..ew" +
+			"we.P////......w" +
+			"w..w////w.abbbw" +
+			"w..w//www.cdddw" +
+			"wadw/B/Bw.cdddw" +
+			"wwwwB/B/wwwwwww" +
+			"   wwwwww      "
 		]
 	];
 	
@@ -130,7 +130,7 @@ var Game = function()
 	
 	this.fadeMode = FADE_MODE_NONE;
 	this.fadePercent = 0; // 0: faded/black ... 100: clear/game screen
-	this.validTextCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 .,:!?()x<>udr@/-_+*=\"'";
+	this.validTextCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 .,:!?()x<>udr@/-_+*=\"'abc";
 	this.inputHandler = null;
 	this.touchHandler = null;
 }

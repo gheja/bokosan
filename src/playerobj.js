@@ -12,31 +12,31 @@ var PlayerObj = function(game, x, y)
 	this.game = game;
 	this.x = x;
 	this.y = y;
-	this.tileNumber = 6;
+	this.tileNumber = 13;
 	this.floorOnly = true;
 	this.grabbedBox = null;
 	
 	// [ 0: "rotated?", 1: [ 0: [ 0: "tile", 1: "mirrored?" ], 1: ... ]
 	this.animations = [
-		[ 0, [ [  6, 0 ]                                  ] ], //  0: north_standing:
-		[ 0, [ [  7, 0 ], [  6, 0 ], [  7, 1 ], [  6, 0 ] ] ], //  1: north_walking:
-		[ 0, [ [  8, 0 ]                                  ] ], //  2: north_grab:
-		[ 0, [ [ 12, 0 ], [  8, 1 ], [ 12, 0 ], [  8, 0 ] ] ], //  3: north_pulling:
+		[ 0, [ [ 10, 0 ]                                  ] ], //  0: north_standing:
+		[ 0, [ [ 11, 0 ], [ 10, 0 ], [ 11, 1 ], [ 10, 0 ] ] ], //  1: north_walking:
+		[ 0, [ [ 12, 0 ]                                  ] ], //  2: north_grab:
+		[ 0, [ [ 16, 0 ], [ 12, 1 ], [ 16, 0 ], [ 12, 0 ] ] ], //  3: north_pulling:
 		
-		[ 1, [ [  9, 0 ]                                  ] ], //  4: east_standing:
-		[ 1, [ [ 10, 0 ], [  9, 0 ], [ 10, 1 ], [  9, 0 ] ] ], //  5: east_walking:
-		[ 1, [ [ 11, 0 ]                                  ] ], //  6: east_grab:
-		[ 1, [ [ 13, 0 ], [ 11, 1 ], [ 13, 0 ], [ 11, 0 ] ] ], //  7: east_pulling:
+		[ 1, [ [ 13, 0 ]                                  ] ], //  4: east_standing:
+		[ 1, [ [ 14, 0 ], [ 13, 0 ], [ 14, 1 ], [ 13, 0 ] ] ], //  5: east_walking:
+		[ 1, [ [ 15, 0 ]                                  ] ], //  6: east_grab:
+		[ 1, [ [ 17, 0 ], [ 15, 1 ], [ 17, 0 ], [ 15, 0 ] ] ], //  7: east_pulling:
 		
-		[ 0, [ [  9, 0 ]                                  ] ], //  8: south_standing:
-		[ 0, [ [ 10, 0 ], [  9, 0 ], [ 10, 1 ], [  9, 0 ] ] ], //  9: south_walking:
-		[ 0, [ [ 11, 0 ]                                  ] ], // 10: south_grab:
-		[ 0, [ [ 13, 0 ], [ 11, 1 ], [ 13, 0 ], [ 11, 0 ] ] ], // 11: south_pulling:
+		[ 0, [ [ 13, 0 ]                                  ] ], //  8: south_standing:
+		[ 0, [ [ 14, 0 ], [ 13, 0 ], [ 14, 1 ], [ 13, 0 ] ] ], //  9: south_walking:
+		[ 0, [ [ 15, 0 ]                                  ] ], // 10: south_grab:
+		[ 0, [ [ 17, 0 ], [ 15, 1 ], [ 17, 0 ], [ 15, 0 ] ] ], // 11: south_pulling:
 		
-		[ 1, [ [  6, 0 ]                                  ] ], // 12: west_standing:
-		[ 1, [ [  7, 0 ], [  6, 0 ], [  7, 1 ], [  6, 0 ] ] ], // 13: west_walking:
-		[ 1, [ [  8, 0 ]                                  ] ], // 14: west_grab:
-		[ 1, [ [ 12, 0 ], [  8, 1 ], [ 12, 0 ], [  8, 0 ] ] ], // 15: west_pulling:
+		[ 1, [ [ 10, 0 ]                                  ] ], // 12: west_standing:
+		[ 1, [ [ 11, 0 ], [ 10, 0 ], [ 11, 1 ], [ 10, 0 ] ] ], // 13: west_walking:
+		[ 1, [ [ 12, 0 ]                                  ] ], // 14: west_grab:
+		[ 1, [ [ 16, 0 ], [ 12, 1 ], [ 16, 0 ], [ 12, 0 ] ] ], // 15: west_pulling:
 		
 		[ 0, []                                             ]  // 16: falling
 	];
