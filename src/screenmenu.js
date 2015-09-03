@@ -33,6 +33,11 @@ ScreenMenu.prototype.tick = function(game)
 		game.currentMenu.go();
 		game.playSound(SOUND_NEXT);
 	}
+	else if (game.inputHandler.isKeyActive(IH_KEY_CANCEL) || game.inputHandler.isKeyActive(IH_KEY_LEFT))
+	{
+		game.openMenu(MENU_MAIN);
+		game.playSound(SOUND_MENU);
+	}
 	
 	game.inputHandler.clearKeys();
 	// game.inputHandler.clearReleasedKeys();
