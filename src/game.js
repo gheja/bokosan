@@ -91,7 +91,7 @@ var Game = function()
 		new ScreenHowto()
 	];
 	/** @type {Screen} */ this.currentScreen = null;
-	this.currentLevel = "";
+	this.currentLevel = null;
 	
 	this.fadeMode = FADE_MODE_NONE;
 	this.fadePercent = 0; // 0: faded/black ... 100: clear/game screen
@@ -318,24 +318,22 @@ Game.prototype.loadLevel = function(index)
 	this.currentStats[STAT_PULLS] = 0;
 	this.statIncrease(STAT_LEVELS_STARTED);
 	
-	this.currentLevelWidth = this.levels[index][0];
-	this.currentLevelHeight = this.levels[index][1];
-	this.currentLevel = this.levels[index][2];
+	this.currentLevel = this.levels[index];
 	
-	this.levelPadX = Math.floor((WIDTH - this.currentLevelWidth * 20 - 10) / 2);
-	this.levelPadY = Math.floor((HEIGHT - this.currentLevelHeight * 18 - 9) / 2);
+	this.levelPadX = Math.floor((WIDTH - this.currentLevel[LEVEL_DATA_WIDTH] * 20 - 10) / 2);
+	this.levelPadY = Math.floor((HEIGHT - this.currentLevel[LEVEL_DATA_HEIGHT] * 18 - 9) / 2);
 	
 	this.objects.length = 0;
 	this.player = null;
 	
-	for (y=0; y<this.currentLevelHeight; y++)
+	for (y=0; y<this.currentLevel[LEVEL_DATA_HEIGHT]; y++)
 	{
-		for (x=0; x<this.currentLevelWidth; x++)
+		for (x=0; x<this.currentLevel[LEVEL_DATA_WIDTH]; x++)
 		{
 			a = x * 20;
 			b = y * 18;
 			
-			switch (this.currentLevel[y * this.currentLevelWidth + x])
+			switch (this.currentLevel[LEVEL_DATA_TILES][y * this.currentLevel[LEVEL_DATA_WIDTH] + x])
 			{
 				case "P": // the player
 					this.player = new PlayerObj(game, a, b);

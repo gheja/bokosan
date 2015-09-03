@@ -69,9 +69,9 @@ Obj.prototype.getNeighbourTile = function(dx, dy)
 {
 	var p;
 	
-	p = (Math.floor(this.y / 18) + dy) * this.game.currentLevelWidth + (Math.floor(this.x / 20) + dx);
+	p = (Math.floor(this.y / 18) + dy) * this.game.currentLevel[LEVEL_DATA_WIDTH] + (Math.floor(this.x / 20) + dx);
 	
-	return this.game.currentLevel[p];
+	return this.game.currentLevel[LEVEL_DATA_TILES][p];
 },
 
 Obj.prototype.getNeighbourBox = function(dx, dy)

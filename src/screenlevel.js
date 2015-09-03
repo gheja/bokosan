@@ -90,11 +90,11 @@ ScreenLevel.prototype.draw = function(game)
 		game.objects[i].setRenderNeeded(true);
 	}
 	
-	for (y=0; y<game.currentLevelHeight; y++)
+	for (y=0; y<game.currentLevel[LEVEL_DATA_HEIGHT]; y++)
 	{
-		for (x=0; x<game.currentLevelWidth; x++)
+		for (x=0; x<game.currentLevel[LEVEL_DATA_WIDTH]; x++)
 		{
-			c = game.currentLevel[y * game.currentLevelWidth + x];
+			c = game.currentLevel[LEVEL_DATA_TILES][y * game.currentLevel[LEVEL_DATA_WIDTH] + x];
 			a = x * 20 + game.levelPadX;
 			b = y * 18 + game.levelPadY;
 			

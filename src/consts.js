@@ -69,3 +69,8 @@
 /** @const @type {number} */ var TOUCH_MODE_CANCEL = 0;
 /** @const @type {number} */ var TOUCH_MODE_ACTION = 1;
 /** @const @type {number} */ var TOUCH_MODE_MOVE = 2;
+
+/** @const @type {number} */ var LEVEL_DATA_WIDTH = 0;
+/** @const @type {number} */ var LEVEL_DATA_HEIGHT = 1;
+/** @const @type {number} */ var LEVEL_DATA_APLUS = 2;
+/** @const @type {number} */ var LEVEL_DATA_TILES = 3;
