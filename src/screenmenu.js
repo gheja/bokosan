@@ -17,17 +17,17 @@ ScreenMenu.prototype.init = function(game)
 
 ScreenMenu.prototype.tick = function(game)
 {
-	if (!game.inputHandler.isKeyStatus(IH_KEY_UP, IH_KEY_STAUTS_RESET))
+	if (game.inputHandler.isKeyActive(IH_KEY_UP))
 	{
 		game.currentMenu.step(-1);
 		game.playSound(SOUND_MENU);
 	}
-	else if (!game.inputHandler.isKeyStatus(IH_KEY_DOWN, IH_KEY_STAUTS_RESET))
+	else if (game.inputHandler.isKeyActive(IH_KEY_DOWN))
 	{
 		game.currentMenu.step(1);
 		game.playSound(SOUND_MENU);
 	}
-	else if (!game.inputHandler.isKeyStatus(IH_KEY_ACTION, IH_KEY_STAUTS_RESET) || !game.inputHandler.isKeyStatus(IH_KEY_RIGHT, IH_KEY_STAUTS_RESET))
+	else if (game.inputHandler.isKeyActive(IH_KEY_ACTION) || game.inputHandler.isKeyActive(IH_KEY_RIGHT))
 	{
 		game.currentMenu.go();
 		game.playSound(SOUND_NEXT);

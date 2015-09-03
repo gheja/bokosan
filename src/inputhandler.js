@@ -63,6 +63,18 @@ InputHandler.prototype.isKeyStatus = function(key, status)
 	}
 }
 
+InputHandler.prototype.isKeyActive = function(key)
+{
+	if (this.keys[key].status == IH_KEY_STAUTS_PRESSED || this.keys[key].status == IH_KEY_STAUTS_RELEASED)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
 InputHandler.prototype.onKeyDown = function(e)
 {
 	var keyCode;

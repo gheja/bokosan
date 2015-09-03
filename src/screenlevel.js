@@ -45,28 +45,28 @@ ScreenLevel.prototype.tick = function(game)
 			game.player.tryGrab();
 		}
 		
-		if (!game.inputHandler.isKeyStatus(IH_KEY_CANCEL, IH_KEY_STAUTS_RESET))
+		if (game.inputHandler.isKeyActive(IH_KEY_CANCEL))
 		{
 			// pause
 			game.screenFadeAndSwitch(SCREEN_MENU);
 		}
 		
-		if (!game.inputHandler.isKeyStatus(IH_KEY_UP, IH_KEY_STAUTS_RESET))
+		if (game.inputHandler.isKeyActive(IH_KEY_UP))
 		{
 			game.player.tryWalk(OBJ_ORIENTATION_NORTH);
 		}
 		
-		if (!game.inputHandler.isKeyStatus(IH_KEY_RIGHT, IH_KEY_STAUTS_RESET))
+		if (game.inputHandler.isKeyActive(IH_KEY_RIGHT))
 		{
 			game.player.tryWalk(OBJ_ORIENTATION_EAST);
 		}
 		
-		if (!game.inputHandler.isKeyStatus(IH_KEY_DOWN, IH_KEY_STAUTS_RESET))
+		if (game.inputHandler.isKeyActive(IH_KEY_DOWN))
 		{
 			game.player.tryWalk(OBJ_ORIENTATION_SOUTH);
 		}
 		
-		if (!game.inputHandler.isKeyStatus(IH_KEY_LEFT, IH_KEY_STAUTS_RESET))
+		if (game.inputHandler.isKeyActive(IH_KEY_LEFT))
 		{
 			game.player.tryWalk(OBJ_ORIENTATION_WEST);
 		}
