@@ -228,3 +228,30 @@ PlayerObj.prototype.isStuck = function()
 	
 	return true;
 }
+
+PlayerObj.prototype.isInHole = function()
+{
+	var a;
+	
+	if (this.moveStepLeft == 0)
+	{
+		a = this.getNeighbourTile(0, 0);
+		
+		if (a == 'a' || a == 'b' || a == 'c' || a == 'd')
+		{
+			return true;
+		}
+	}
+	
+	return false;
+}
+
+PlayerObj.prototype.isOnSpikes = function()
+{
+	if (this.moveStepLeft == 0 && this.getNeighbourTile(0, 0) == 'e')
+	{
+		return true;
+	}
+	
+	return false;
+}

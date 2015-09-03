@@ -30,6 +30,16 @@ ScreenLevel.prototype.tick = function(game)
 		// show a dialog about this unfortunate incident...
 		game.screenFadeAndSwitch(SCREEN_LEVELS);
 	}
+	else if (game.player.isInHole())
+	{
+		// show a dialog about this unfortunate incident...
+		game.screenFadeAndSwitch(SCREEN_LEVELS);
+	}
+	else if (game.player.isOnSpikes())
+	{
+		// show a dialog about this unfortunate incident...
+		game.screenFadeAndSwitch(SCREEN_LEVELS);
+	}
 	else
 	{
 		game.statIncrease(STAT_FRAMES);
