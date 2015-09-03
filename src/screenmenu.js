@@ -52,10 +52,10 @@ ScreenMenu.prototype.draw = function(game)
 	
 	game.drawSmallText(0, 50, "TOTAL TIME PLAYED");
 	game.drawBigText(0, 60, game.pad(game.timePad(game.statGetLocalStorageValue(STAT_FRAMES) * 1/12), 10, ' '));
-	game.drawSmallText(0, 90, "TOTAL MOVES");
-	game.drawBigText(0, 100, game.pad(game.thousandPad(game.statGetLocalStorageValue(STAT_MOVES)), 10, ' '));
-	game.drawSmallText(0, 130, "TOTAL PULLS");
-	game.drawBigText(0, 140, game.pad(game.thousandPad(game.statGetLocalStorageValue(STAT_PULLS)), 10, ' '));
+	game.drawSmallText(0, 85, "TOTAL MOVES");
+	game.drawBigText(0, 95, game.pad(game.thousandPad(game.statGetLocalStorageValue(STAT_MOVES)), 10, ' '));
+	game.drawSmallText(0, 120, "TOTAL PULLS");
+	game.drawBigText(0, 130, game.pad(game.thousandPad(game.statGetLocalStorageValue(STAT_PULLS)), 10, ' '));
 	
 	for (i=0; i<game.currentMenu.items.length; i++)
 	{
@@ -63,4 +63,6 @@ ScreenMenu.prototype.draw = function(game)
 	}
 	
 	game.drawSmallText(0, 270, "WWW.BOKOSAN.NET             GITHUB.COM/GHEJA/BOKOSAN");
+	// game.drawSmallText(300, 260, "WWW.BOKOSAN.NET");
+	// game.drawSmallText(228, 270, "GITHUB.COM/GHEJA/BOKOSAN");
 }
