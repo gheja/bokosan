@@ -381,6 +381,7 @@ Game.prototype.loadLevel = function(index)
 			}
 		}
 	}
+	this.player.orientation = OBJ_ORIENTATION_SOUTH;
 }
 
 Game.prototype.isLevelFinished = function()
