@@ -2,6 +2,7 @@
 
 /**
  * @constructor
+ * @extends {Screen}
  */
 var ScreenAbout = function()
 {

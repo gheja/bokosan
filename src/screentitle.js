@@ -3,7 +3,6 @@
 /**
  * @constructor
  * @extends {Screen}
- * @param {Game} game
  */
 var ScreenTitle = function()
 {
