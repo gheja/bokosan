@@ -413,6 +413,7 @@ Game.prototype.screenFadeAndSwitch = function(_new_screen)
 Game.prototype.openMenu = function(id)
 {
 	this.currentMenu = this.menus[id];
+	this.currentMenu.selection = 0;
 }
 
 Game.prototype.switchScreen = function(_new_screen)
