@@ -112,6 +112,14 @@ ScreenLevel.prototype.draw = function(game)
 				case "B": // keep-clear floor (below the box)
 					game.drawTile(a, b, 3, 0, 0, 0);
 				break;
+				
+				case "a": // spike
+					game.drawTile(a, b, 5, 0, 0, 0);
+				break;
+				
+				case "b": // hole
+					game.drawTile(a, b, 4, 0, 0, 0);
+				break;
 			}
 			
 			
