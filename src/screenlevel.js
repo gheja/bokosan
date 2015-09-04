@@ -95,8 +95,7 @@ ScreenLevel.prototype.draw = function(game)
 	
 	for (i=0; i<game.objects.length; i++)
 	{
-		game.objects[i].updateRenderOrder();
-		game.objects[i].setRenderNeeded(true);
+		game.objects[i].renderNeeded = true;
 	}
 	
 	for (y=0; y<game.currentLevel[LEVEL_DATA_HEIGHT]; y++)
@@ -152,10 +151,9 @@ ScreenLevel.prototype.draw = function(game)
 			
 			for (i=0; i<game.objects.length; i++)
 			{
-				if (game.objects[i].getRenderNeeded())
+				if (game.objects[i].renderNeeded)
 				{
-					p = game.objects[i].getPosition();
-					if (p[0] > a1 && p[0] <= a2 && p[1] > b1 && p[1] <= b2)
+					if (game.objects[i].x > a1 && game.objects[i].x <= a2 && game.objects[i].y > b1 && game.objects[i].y  <= b2)
 					{
 						game.objects[i].draw();
 					}

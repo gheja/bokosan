@@ -29,37 +29,6 @@ Obj.prototype.draw = function()
 	this.renderNeeded = false;
 }
 
-Obj.prototype.setPosition = function(x, y)
-{
-	this.x = x;
-	this.y = y;
-}
-
-Obj.prototype.getPosition = function()
-{
-	return [ this.x, this.y ];
-}
-
-Obj.prototype.setRenderNeeded = function(value)
-{
-	this.renderNeeded = value;
-}
-
-Obj.prototype.getRenderNeeded = function()
-{
-	return this.renderNeeded;
-}
-
-Obj.prototype.updateRenderOrder = function()
-{
-	this.renderOrder = this.y * WIDTH + this.x;
-}
-
-Obj.prototype.getRenderOrder = function()
-{
-	return this.renderOrder;
-}
-
 Obj.prototype.tryStop = function()
 {
 	this.status = OBJ_STATUS_STANDING;
