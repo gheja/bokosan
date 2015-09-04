@@ -34,6 +34,12 @@ if [ $? != 0 ]; then
 	exit 1
 fi
 
+which base64 2>/dev/null >/dev/null
+if [ $? != 0 ]; then
+	echo "\"base64\" not found in PATH, probably is not installed."
+	exit 1
+fi
+
 if [ ! -e build/compiler/compiler.jar ]; then
 	echo "* Closure Compiler not found."
 	
@@ -64,19 +70,26 @@ if [ "$do_stage1" == "y" ]; then
 		cp -v ./src/$i ./build/tmp/
 	done
 	
-	echo "\"use strict\";" > ./build/tmp/merged.js
+	echo "* Creating base64 encoded tileset..."
+	tmp=`cat ./build/tmp/tileset.png | base64 -w 0`
+	tileset="data:image/png;base64,$tmp"
 	
 	echo "* Removing debug sections, merging files and renaming some variables..."
+	
+	echo "\"use strict\";" > ./build/tmp/merged.js
 	for i in $files; do
 		cat ./build/tmp/$i | sed -e '/DEBUG BEGIN/,/\DEBUG END/{d}' | grep -vE '^\"use strict\";$' >> ./build/tmp/merged.js
 	done
+	
+	echo "* Embedding tileset.png into js..."
+	cat ./build/tmp/merged.js | sed -e "s!./tileset.png!${tileset}!g" > ./build/tmp/merged2.js
 	
 	echo "* Running Closure Compiler (advanced optimizations, pretty print)..."
 	try java -jar ./build/compiler/compiler.jar \
 		--compilation_level ADVANCED_OPTIMIZATIONS \
 		--use_types_for_optimization \
 		--externs ./src/externs.js \
-		--js ./build/tmp/merged.js \
+		--js ./build/tmp/merged2.js \
 		--js_output_file ./build/tmp/merged.min1.js \
 		--create_source_map ./build/tmp/merged.min1.js.map \
 		--variable_renaming_report ./build/tmp/merged.min1.js.vars \
@@ -123,8 +136,8 @@ fi
 
 if [ "$do_stage3" == "y" ]; then
 	echo "* Creating package..."
-	try cp -v ./build/tmp/index3.html ./build/tmp/tileset.png ./build/tmp/package.json ./build/game/
-	try mv -v ./build/game/index3.html ./build/game/index.html
+	try cp -v ./build/tmp/index3.html  ./build/game/index.html
+	try cp -v ./build/tmp/package.json ./build/game/
 	
 	try cd ./build
 	
