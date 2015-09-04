@@ -4,4 +4,5 @@
   - remove favicon
   - replace "parseInt(x || 0, 10)" with "x * 1"
   - replace "Math.floor(x)" with "x | 0" or "~~x"
-  - embed init(), tick(), draw() methods of Screen functions into three big cases
+  - embed init(), tick(), draw() methods of Screen functions into three big switches
+  - remove parameters where an undefined works just as well as the current parameter
