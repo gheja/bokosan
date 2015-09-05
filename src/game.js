@@ -73,11 +73,6 @@ var Game = function()
 	/** @type {Array} */ this.levels = [
 		// 0
 		[
-			0, 0,
-			""
-		],
-		// 1
-		[
 			// width, height, A+ limit, level data
 			7, 7, 13,
 			"wwwwwww" +
@@ -88,7 +83,7 @@ var Game = function()
 			" w.P..w" +
 			" wwwwww"
 		],
-		// 2
+		// 1
 		[
 			// width, height, A+ limit, level data
 			9, 7, 37,
@@ -100,12 +95,12 @@ var Game = function()
 			"   w...w " +
 			"   wwwww "
 		],
-		// 3
+		// 2
 		[
 			// width, height, A+ limit, level data
 			15, 8, 37,
 			"     wwwwwwwwww" +
-			"wwwwww//w.e..ew" +
+			"wwwwww//w.ee.ew" +
 			"we.P////......w" +
 			"w..w////w.abbbw" +
 			"w..w//www.cdddw" +
