@@ -33,6 +33,7 @@ ScreenLevel.prototype.tick = function(game)
 	{
 		if (game.player.status != OBJ_STATUS_FALLING)
 		{
+			game.playSound(SOUND_FALLING);
 			game.player.setStatus(OBJ_STATUS_FALLING);
 			game.screenFadeAndSwitch(SCREEN_LEVELS);
 		}
