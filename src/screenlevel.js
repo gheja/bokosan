@@ -39,6 +39,7 @@ ScreenLevel.prototype.tick = function(game)
 	}
 	else if (game.player.isOnSpikes())
 	{
+		game.playSound(SOUND_SPIKE);
 		game.screenFadeAndSwitch(SCREEN_LEVELS);
 	}
 	else

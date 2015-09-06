@@ -69,6 +69,7 @@
 /** @const @type {number} */ var SOUND_BOX_PULL = 6;
 /** @const @type {number} */ var SOUND_TEXT = 7;
 /** @const @type {number} */ var SOUND_NEXT = 8;
+/** @const @type {number} */ var SOUND_SPIKE = 9;
 
 /** @const @type {number} */ var TOUCH_TRESHOLD = 40;
 /** @const @type {number} */ var TOUCH_MODE_CANCEL = 0;
