@@ -9,6 +9,7 @@ var ScreenLevels = function()
 	this.selection = 1;
 	this.min = 1;
 	this.max = 1;
+	this.unlockedCount = 1;
 }
 
 ScreenLevels.prototype = new Screen2();
@@ -23,71 +24,91 @@ ScreenLevels.prototype.go = function(game)
 ScreenLevels.prototype.drawSelectionBox = function()
 {
 	game.ctx.fillStyle = '#000';
-	game.ctx.fillRect(((this.selection - 1) % 2) * 110 + 16, Math.floor((this.selection - 1) / 2) * 80 + 46, 96, 72);
+	game.ctx.fillRect((((this.selection - 1) % 6) % 2) * 110 + 16, Math.floor(((this.selection - 1) % 6) / 2) * 80 + 46, 96, 72);
+}
+
+ScreenLevels.prototype.drawPreview = function(game, j, p1, p2)
+{
+	var x, y, l, padX, padY, a, b, color;
 	
+	l = game.levels[j - 1];
+	
+	padX = Math.floor((22 - l[LEVEL_DATA_WIDTH]) / 2);
+	padY = Math.floor((15- l[LEVEL_DATA_HEIGHT]) / 2);
+	
+	for (y=0; y<l[LEVEL_DATA_HEIGHT]; y++)
+	{
+		for (x=0; x<l[LEVEL_DATA_WIDTH]; x++)
+		{
+			a = p1 + (x + padX) * 4;
+			b = p2 + (y + padY) * 4;
+			
+			switch (l[LEVEL_DATA_TILES][y * l[LEVEL_DATA_WIDTH] + x])
+			{
+				case "w": // wall
+					color = "#b42";
+					break;
+				
+				case "/": // keep-clear floor
+					color = "#a86";
+				break;
+				
+				case "B":
+					color = "#eee";
+				break;
+				
+				case ".":
+				case "P":
+					color = "#333";
+				break;
+				
+				case "a":
+				case "b":
+				case "c":
+				case "d":
+				case "e":
+					color = "#000";
+				break;
+				
+				default:
+					continue;
+				break;
+			}
+			
+			game.ctx.fillStyle = color;
+			game.ctx.fillRect(a, b, 4, 4);
+		}
+	}
 }
 
 ScreenLevels.prototype.drawSelectionOptions = function()
 {
-	var i, j, l, c, x, y, color, a, b, p1, p2, padX, padY;
+	var i, j, p1, p2, page;
 	
-	// draw level previews
-	for (i=this.min; i<=this.max; i++)
+	page = Math.floor((this.selection - 1) / 6);
+	
+	for (i=1; i<=6; i++)
 	{
+		j = page * 6 + i;
+		
+		if (j > this.max)
+		{
+			break;
+		}
+		
 		p1 = ((i - 1) % 2) * 110 + 20;
 		p2 = Math.floor((i - 1) / 2) * 80 + 50;
 		
 		game.ctx.fillStyle = "#444";
 		game.ctx.fillRect(p1, p2, 88, 64);
 		
-		l = game.levels[i - 1];
-		
-		padX = Math.floor((22 - l[LEVEL_DATA_WIDTH]) / 2);
-		padY = Math.floor((15- l[LEVEL_DATA_HEIGHT]) / 2);
-		
-		for (y=0; y<l[LEVEL_DATA_HEIGHT]; y++)
+		if (this.unlockedCount < j)
 		{
-			for (x=0; x<l[LEVEL_DATA_WIDTH]; x++)
-			{
-				a = p1 + (x + padX) * 4;
-				b = p2 + (y + padY) * 4;
-				
-				switch (l[LEVEL_DATA_TILES][y * l[LEVEL_DATA_WIDTH] + x])
-				{
-					case "w": // wall
-						color = "#b42";
-						break;
-					
-					case "/": // keep-clear floor
-						color = "#a86";
-					break;
-					
-					case "B":
-						color = "#eee";
-					break;
-					
-					case ".":
-					case "P":
-						color = "#333";
-					break;
-					
-					case "a":
-					case "b":
-					case "c":
-					case "d":
-					case "e":
-						color = "#000";
-					break;
-					
-					default:
-						continue;
-					break;
-				}
-				
-				game.ctx.fillStyle = color;
-				game.ctx.fillRect(a, b, 4, 4);
-			}
+			game.drawSmallText(p1 + 20, p2 + 28, "LOCKED");
+			continue;
 		}
+		
+		this.drawPreview(game, j, p1, p2);
 	}
 }
 
@@ -100,7 +121,9 @@ ScreenLevels.prototype.drawStats = function()
 
 ScreenLevels.prototype.init = function(game)
 {
-	this.max = game.levels.length;
+	// this.max = game.levels.length;
+	this.max = 20;
+	this.unlockedCount = 3;
 	this.selection = game.currentLevelIndex + 1;
 }
 
@@ -128,8 +151,11 @@ ScreenLevels.prototype.tick = function(game)
 	}
 	else if (game.inputHandler.isKeyActive(IH_KEY_ACTION))
 	{
-		this.go(game);
-		game.playSound(SOUND_NEXT);
+		if (this.selection <= this.unlockedCount)
+		{
+			this.go(game);
+			game.playSound(SOUND_NEXT);
+		}
 	}
 	else if (game.inputHandler.isKeyActive(IH_KEY_CANCEL))
 	{
