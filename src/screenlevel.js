@@ -141,6 +141,10 @@ ScreenLevel.prototype.draw = function(game)
 				case "e": // spike
 					game.drawTile(a, b, 8, 0, 0, 0);
 				break;
+				
+				case "f": // spike (triggered)
+					game.drawTile(a, b, 9, 0, 0, 0);
+				break;
 			}
 			
 			
