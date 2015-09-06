@@ -16,8 +16,8 @@ ScreenLevels.prototype = new Screen2();
 ScreenLevels.prototype.go = function(game)
 {
 	game.gameMode = GAME_MODE_LOCAL;
+	game.nextLevelIndex = this.selection - 1;
 	game.statReset();
-	game.loadLevel(this.selection - 1);
 	game.screenFadeAndSwitch(SCREEN_GAME);
 }
 
@@ -102,6 +102,7 @@ ScreenLevels.prototype.drawStats = function()
 ScreenLevels.prototype.init = function(game)
 {
 	this.max = game.levels.length;
+	this.selection = game.currentLevelIndex + 1;
 }
 
 ScreenLevels.prototype.tick = function(game)

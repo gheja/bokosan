@@ -12,6 +12,11 @@ ScreenLevel.prototype = new Screen2();
 
 ScreenLevel.prototype.init = function(game)
 {
+	// if paused
+	if (game.nextLevelIndex !== null)
+	{
+		game.loadLevel();
+	}
 }
 
 ScreenLevel.prototype.tick = function(game)
@@ -33,9 +38,10 @@ ScreenLevel.prototype.tick = function(game)
 	{
 		if (game.player.status != OBJ_STATUS_FALLING)
 		{
+			game.nextLevelIndex = game.currentLevelIndex - 1;
 			game.playSound(SOUND_FALLING);
 			game.player.setStatus(OBJ_STATUS_FALLING);
-			game.screenFadeAndSwitch(SCREEN_LEVELS);
+			game.screenFadeAndSwitch(SCREEN_GAME);
 		}
 	}
 	else if (game.player.isOnSpikes())

@@ -124,6 +124,7 @@ var Game = function()
 	/** @type {Screen} */ this.currentScreen = null;
 	this.currentLevel = null;
 	this.currentLevelIndex = 0;
+	this.nextLevelIndex = 0;
 	
 	this.fadeMode = FADE_MODE_NONE;
 	this.fadePercent = 0; // 0: faded/black ... 100: clear/game screen
@@ -348,14 +349,15 @@ Game.prototype.onResize = function()
 	
 }
 
-Game.prototype.loadLevel = function(index)
+Game.prototype.loadLevel = function()
 {
 	var x, y, a, b;
 	
 	this.statIncrease(STAT_LEVELS_STARTED);
 	
-	this.currentLevel = this.levels[index];
-	this.currentLevelIndex = index;
+	this.currentLevelIndex = this.nextLevelIndex;
+	this.nextLevelIndex = null;
+	this.currentLevel = this.levels[this.currentLevelIndex];
 	
 	this.levelPadX = Math.floor((WIDTH - this.currentLevel[LEVEL_DATA_WIDTH] * 20 - 10) / 2);
 	this.levelPadY = Math.floor((HEIGHT - this.currentLevel[LEVEL_DATA_HEIGHT] * 18 - 9) / 2);
