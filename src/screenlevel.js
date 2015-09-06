@@ -174,7 +174,7 @@ ScreenLevel.prototype.draw = function(game)
 		}
 	}
 	
-	game.drawSmallText(0, 270, "TIME " + game.timePad(game.currentStats[STAT_FRAMES] * 1/12) + "   MOVES " + game.pad(game.currentStats[STAT_MOVES], 5, '0') + "   PULLS " + game.pad(game.currentStats[STAT_PULLS], 5, '0') + "  LEVEL 1-50");
+	game.drawSmallText(0, 270, "TIME " + game.timePad(game.currentStats[STAT_FRAMES] * 1/12) + "   MOVES " + game.pad(game.currentStats[STAT_MOVES], 5, '0') + "   PULLS " + game.pad(game.currentStats[STAT_PULLS], 5, '0') + "  LEVEL 1-" + game.pad(game.currentLevelIndex + 1, 2, '0'));
 }
 
 
