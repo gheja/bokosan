@@ -15,6 +15,7 @@ var PlayerObj = function(game, x, y)
 	this.tileNumber = 13;
 	this.floorOnly = true;
 	this.grabbedBox = null;
+	this.walkStepSoundCounter = 0;
 	
 	// [ 0: "rotated?", 1: [ 0: [ 0: "tile", 1: "mirrored?" ], 1: ... ]
 	this.animations = [
@@ -69,13 +70,18 @@ PlayerObj.prototype.tick = function()
 	
 	if (this.status == OBJ_STATUS_WALKING || this.status == OBJ_STATUS_PULLING)
 	{
-		if (this.animationFrameNumber % 4 == 1)
+		if (this.animationFrameNumber % 2 == 1)
 		{
-			this.game.playSound(SOUND_STEP1);
-		}
-		else if (this.animationFrameNumber % 4 == 3)
-		{
-			this.game.playSound(SOUND_STEP2);
+			this.walkStepSoundCounter++;
+			
+			if (this.walkStepSoundCounter % 2 == 0)
+			{
+				this.game.playSound(SOUND_STEP1);
+			}
+			else
+			{
+				this.game.playSound(SOUND_STEP2);
+			}
 		}
 	}
 	
