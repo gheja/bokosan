@@ -13,6 +13,7 @@ var Game = function()
 	this.ctx = null;
 	this._asset = null;
 	this._assetLoaded = false;
+	this.gameMode = 0;
 	this.levelPadX = 0;
 	this.levelPadY = 0;
 	this.ticks = 0;
@@ -182,6 +183,13 @@ Game.prototype.isTouchAvailable = function()
 	return false;
 }
 
+Game.prototype.statReset = function()
+{
+	this.currentStats[STAT_FRAMES] = 0;
+	this.currentStats[STAT_MOVES] = 0;
+	this.currentStats[STAT_PULLS] = 0;
+}
+
 Game.prototype.statGetLocalStorageValue = function(statKey)
 {
 	return parseInt(this.storage.getItem('s' + statKey) || 0, 10);
@@ -343,9 +351,6 @@ Game.prototype.loadLevel = function(index)
 {
 	var x, y, a, b;
 	
-	this.currentStats[STAT_FRAMES] = 0;
-	this.currentStats[STAT_MOVES] = 0;
-	this.currentStats[STAT_PULLS] = 0;
 	this.statIncrease(STAT_LEVELS_STARTED);
 	
 	this.currentLevel = this.levels[index];

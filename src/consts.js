@@ -16,6 +16,9 @@
 /** @const @type {number} */ var SCREEN_ABOUT = 6;
 /** @const @type {number} */ var SCREEN_HOWTO = 7;
 
+/** @const @type {number} */ var GAME_MODE_LOCAL = 0;
+/** @const @type {number} */ var GAME_MODE_CHALLENGE = 1;
+
 /** @const @type {number} */ var MENU_MAIN = 0;
 /** @const @type {number} */ var MENU_PLAY = 1;
 /** @const @type {number} */ var MENU_OPTIONS = 2;

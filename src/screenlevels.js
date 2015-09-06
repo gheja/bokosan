@@ -15,6 +15,8 @@ ScreenLevels.prototype = new Screen2();
 
 ScreenLevels.prototype.go = function(game)
 {
+	game.gameMode = GAME_MODE_LOCAL;
+	game.statReset();
 	game.loadLevel(this.selection - 1);
 	game.screenFadeAndSwitch(SCREEN_GAME);
 }
