@@ -64,10 +64,10 @@ if [ "$do_stage1" == "y" ]; then
 	files=`cat ./src/index.html | grep -vE '<!--' | grep -E '<script.* src="([^"]+)"' | grep -Eo 'src=\".*\"' | cut -d \" -f 2`
 	
 	echo "* Copying files..."
-	cp -v ./src/index.html ./src/package.json ./src/tileset.png ./src/style.css ./build/tmp/
+	try cp -v ./src/index.html ./src/server/package.json ./src/tileset.png ./src/style.css ./build/tmp/
 	
 	for i in $files; do
-		cp -v ./src/$i ./build/tmp/
+		try cp -v ./src/$i ./build/tmp/
 	done
 	
 	echo "* Creating base64 encoded tileset..."
