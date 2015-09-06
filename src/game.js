@@ -353,6 +353,11 @@ Game.prototype.loadLevel = function()
 {
 	var x, y, a, b;
 	
+	if (this.gameMode == GAME_MODE_LOCAL)
+	{
+		this.statReset();
+	}
+	
 	this.statIncrease(STAT_LEVELS_STARTED);
 	
 	this.currentLevelIndex = this.nextLevelIndex;
