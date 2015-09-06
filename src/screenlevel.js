@@ -27,17 +27,18 @@ ScreenLevel.prototype.tick = function(game)
 	}
 	else if (game.player.isStuck())
 	{
-		// show a dialog about this unfortunate incident...
 		game.screenFadeAndSwitch(SCREEN_LEVELS);
 	}
 	else if (game.player.isInHole())
 	{
-		// show a dialog about this unfortunate incident...
-		game.screenFadeAndSwitch(SCREEN_LEVELS);
+		if (game.player.status != OBJ_STATUS_FALLING)
+		{
+			game.player.setStatus(OBJ_STATUS_FALLING);
+			game.screenFadeAndSwitch(SCREEN_LEVELS);
+		}
 	}
 	else if (game.player.isOnSpikes())
 	{
-		// show a dialog about this unfortunate incident...
 		game.screenFadeAndSwitch(SCREEN_LEVELS);
 	}
 	else

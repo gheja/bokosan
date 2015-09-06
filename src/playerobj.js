@@ -38,9 +38,11 @@ var PlayerObj = function(game, x, y)
 		[ 1, [ [ 12, 0 ]                                  ] ], // 14: west_grab:
 		[ 1, [ [ 16, 0 ], [ 12, 1 ], [ 16, 0 ], [ 12, 0 ] ] ], // 15: west_pulling:
 		
-		[ 0, []                                             ]  // 16: falling
+		// animation is not playing when screen fade is active - see issue #9
+		// [ 0, [ [ 18, 0 ], [ 18, 1 ], [ 19, 0 ], [ 19, 1 ] ] ]  // 16: falling
+		
+		[ 0, [ [ 18, 0 ]                                  ] ]  // 16: falling 
 	];
-	this.animationFramesLeft = 0;
 }
 
 PlayerObj.prototype = new Obj(0, 0, 0);
@@ -61,16 +63,17 @@ PlayerObj.prototype.tick = function()
 		a = 16;
 	}
 	
-	b = this.tickCount % this.animations[a][1].length;
+	this.animationFrameNumber++;
+	
+	b = this.animationFrameNumber % this.animations[a][1].length;
 	
 	if (this.status == OBJ_STATUS_WALKING || this.status == OBJ_STATUS_PULLING)
 	{
-		// yes, intentional
-		if (this.tickCount % 4 == 1)
+		if (this.animationFrameNumber % 4 == 1)
 		{
 			this.game.playSound(SOUND_STEP1);
 		}
-		else if (this.tickCount % 4 == 3)
+		else if (this.animationFrameNumber % 4 == 3)
 		{
 			this.game.playSound(SOUND_STEP2);
 		}
@@ -104,13 +107,13 @@ PlayerObj.prototype.checkCollisionAndGo = function(dx, dy, steps, speed, fx, fy)
 		this.grabbedBox.moveFinalY = this.grabbedBox.y + fy;
 		this.grabbedBox.moveStepLeft = this.moveStepLeft;
 		
-		this.status = OBJ_STATUS_PULLING;
+		this.setStatus(OBJ_STATUS_PULLING);
 		this.game.playSound(SOUND_BOX_PULL);
 		this.game.statIncrease(STAT_PULLS);
 	}
 	else
 	{
-		this.status = OBJ_STATUS_WALKING;
+		this.setStatus(OBJ_STATUS_WALKING);
 	}
 	this.game.statIncrease(STAT_MOVES);
 }
@@ -158,11 +161,11 @@ PlayerObj.prototype.tryStop = function()
 {
 	if (this.grabbedBox === null)
 	{
-		this.status = OBJ_STATUS_STANDING;
+		this.setStatus(OBJ_STATUS_STANDING);
 	}
 	else
 	{
-		this.status = OBJ_STATUS_GRAB;
+		this.setStatus(OBJ_STATUS_GRAB);
 	}
 }
 
@@ -200,7 +203,7 @@ PlayerObj.prototype.tryGrab = function()
 	}
 	
 	this.grabbedBox = box;
-	this.status = OBJ_STATUS_GRAB;
+	this.setStatus(OBJ_STATUS_GRAB);
 	this.game.playSound(SOUND_BOX_GRAB);
 }
 
@@ -210,7 +213,7 @@ PlayerObj.prototype.tryRelease = function()
 	{
 		this.game.playSound(SOUND_BOX_RELEASE);
 	}
-	this.status = OBJ_STATUS_STANDING;
+	this.setStatus(OBJ_STATUS_STANDING);
 	this.grabbedBox = null;
 }
 

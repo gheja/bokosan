@@ -21,6 +21,7 @@ var Obj = function(game, x, y)
 	this.floorOnly = false;
 	this.orientation = OBJ_ORIENTATION_NORTH;
 	this.status = OBJ_STATUS_STANDING;
+	this.animationFrameNumber = 0;
 }
 
 Obj.prototype.draw = function()
@@ -82,4 +83,10 @@ Obj.prototype.tick = function()
 {
 	this.tickCount++;
 	this.moveIfNeeded();
+}
+
+Obj.prototype.setStatus = function(newStatus)
+{
+	this.status = newStatus;
+	this.animationFrameNumber = 0;
 }
