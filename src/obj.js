@@ -22,11 +22,12 @@ var Obj = function(game, x, y)
 	this.orientation = OBJ_ORIENTATION_NORTH;
 	this.status = OBJ_STATUS_STANDING;
 	this.animationFrameNumber = 0;
+	/** @type {Array} */ this.colors = null;
 }
 
 Obj.prototype.draw = function()
 {
-	this.game.drawTile(this.x + this.game.levelPadX, this.y + this.game.levelPadY, this.tileNumber, this.tileRotated, this.tileMirrored, this.floorOnly);
+	this.game.drawTile(this.x + this.game.levelPadX, this.y + this.game.levelPadY, this.tileNumber, this.tileRotated, this.tileMirrored, this.floorOnly, this.colors);
 	this.renderNeeded = false;
 }
 

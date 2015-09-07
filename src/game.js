@@ -227,7 +227,26 @@ Game.prototype.playSound = function(id)
 	this.sounds[id].play();
 }
 
-Game.prototype.drawImageAdvanced = function(sctx, dctx, sx, sy, sw, sh, dx, dy, dw, dh, rotated, mirrored)
+Game.prototype.replaceColor = function(ctx, x, y, w, h, c1, c2)
+{
+	var d, i, j;
+	
+	d = ctx.getImageData(x, y, w, h);
+	
+	for (i=0; i<d.data.length; i+= 4)
+	{
+		if (d.data[i] == c1[0] && d.data[i+1] == c1[1] && d.data[i+2] == c1[2])
+		{
+			d.data[i] = c2[0];
+			d.data[i+1] = c2[1];
+			d.data[i+2] = c2[2];
+		}
+	}
+	
+	ctx.putImageData(d, x, y);
+}
+
+Game.prototype.drawImageAdvanced = function(sctx, dctx, sx, sy, sw, sh, dx, dy, dw, dh, rotated, mirrored, colors)
 {
 	dctx.save();
 	dctx.translate(dx, dy);
@@ -242,6 +261,13 @@ Game.prototype.drawImageAdvanced = function(sctx, dctx, sx, sy, sw, sh, dx, dy, 
 	}
 	dctx.drawImage(sctx, sx, sy, sw, sh, - dw / 2, - dh / 2, dw, dh);
 	dctx.restore();
+	
+	if (colors)
+	{
+		this.replaceColor(dctx, dx, dy, dw, dh, [ 200, 200, 20 ], colors[0]);
+		this.replaceColor(dctx, dx, dy, dw, dh, [ 200, 200, 120 ], colors[1]);
+		this.replaceColor(dctx, dx, dy, dw, dh, [ 200, 200, 220 ], colors[2]);
+	}
 }
 
 Game.prototype.drawText = function(posX, posY, content, scale)
@@ -291,7 +317,7 @@ Game.prototype.drawBigText = function(posX, posY, content)
 	this.drawText(posX, posY, content, 2);
 }
 
-Game.prototype.drawTile = function(posX, posY, tileNumber, rotated, mirrored, floorOnly)
+Game.prototype.drawTile = function(posX, posY, tileNumber, rotated, mirrored, floorOnly, colors)
 {
 	if (!floorOnly)
 	{
@@ -300,7 +326,7 @@ Game.prototype.drawTile = function(posX, posY, tileNumber, rotated, mirrored, fl
 	}
 	else
 	{
-		this.drawImageAdvanced(this._asset, this.ctx, tileNumber * 28 + 7, 11 + 7, 20, 18, posX + 7, posY + 7, 20, 18, rotated, mirrored);
+		this.drawImageAdvanced(this._asset, this.ctx, tileNumber * 28 + 7, 11 + 7, 20, 18, posX + 7, posY + 7, 20, 18, rotated, mirrored, colors);
 	}
 }
 
@@ -368,7 +394,7 @@ Game.prototype.loadLevel = function()
 	this.levelPadY = Math.floor((HEIGHT - this.currentLevel[LEVEL_DATA_HEIGHT] * 18 - 9) / 2);
 	
 	this.objects.length = 0;
-	this.player = null;
+	this.objects.push(this.player);
 	
 	for (y=0; y<this.currentLevel[LEVEL_DATA_HEIGHT]; y++)
 	{
@@ -380,8 +406,8 @@ Game.prototype.loadLevel = function()
 			switch (this.currentLevel[LEVEL_DATA_TILES][y * this.currentLevel[LEVEL_DATA_WIDTH] + x])
 			{
 				case "P": // the player
-					this.player = new PlayerObj(game, a, b);
-					this.objects.push(this.player);
+					this.player.x = a;
+					this.player.y = b;
 				break;
 				
 				case "B": // a box
@@ -571,6 +597,7 @@ Game.prototype.init = function(window)
 	]);
 	
 	this.storage = window.localStorage;
+	this.player = new PlayerObj(this, 0, 0);
 	
 	window.addEventListener('resize', this.onResize.bind(this));
 	this.onResize();
