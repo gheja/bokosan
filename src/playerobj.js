@@ -267,3 +267,10 @@ PlayerObj.prototype.isOnSpikes = function()
 	
 	return false;
 }
+
+PlayerObj.prototype.reset = function()
+{
+	this.status = OBJ_STATUS_STANDING;
+	this.orientation = OBJ_ORIENTATION_SOUTH;
+	this.grabbedBox = null;
+}
