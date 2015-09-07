@@ -20,7 +20,7 @@
  * Reformatted and restructured by Gabor Heja, 2015
  */
 
-function Jsfxr(values, returnObject)
+function Jsfxr(ctx, values)
 {
 	var i, totalTime, multiplier;
 	
@@ -422,7 +422,7 @@ function Jsfxr(values, returnObject)
 			_superSample *= .125 * _envelopeVolume * _masterVolume;
 			
 			// Clipping if too loud
-			buffer[i] = _superSample >= 1 ? 32767 : _superSample <= -1 ? -32768 : _superSample * 32767 | 0;
+			buffer[i] = _superSample >= 1 ? 1 : _superSample <= -1 ? -1 : _superSample;
 		}
 		
 		return length;
@@ -430,47 +430,13 @@ function Jsfxr(values, returnObject)
 	
 	
 	
-	var a, envelopeFullLength, data, used, dv, base64Characters, output, audioObject;
+	var envelopeFullLength, buffer, data;
 	
-	// Synthesize Wave
 	envelopeFullLength = totalReset();
-	data = new Uint8Array(((envelopeFullLength + 1) / 2 | 0) * 4 + 44);
-	used = synthWave(new Uint16Array(data.buffer, 44), envelopeFullLength) * 2;
 	
-	if (returnObject)
-	{
-		dv = new Uint32Array(data.buffer, 0, 44);
-		
-		// Initialize header
-		dv[0] = 0x46464952; // "RIFF"
-		dv[1] = used + 36;  // put total size here
-		dv[2] = 0x45564157; // "WAVE"
-		dv[3] = 0x20746D66; // "fmt "
-		dv[4] = 0x00000010; // size of the following
-		dv[5] = 0x00010001; // Mono: 1 channel, PCM format
-		dv[6] = 0x0000AC44; // 44,100 samples per second
-		dv[7] = 0x00015888; // byte rate: two bytes per sample
-		dv[8] = 0x00100002; // 16 bits per sample, aligned on every two bytes
-		dv[9] = 0x61746164; // "data"
-		dv[10] = used;      // put number of samples here
-		
-		// Base64 encoding written by me, @maettig
-		used += 44;
-		base64Characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-		output = 'data:audio/wav;base64,';
-		
-		for (i=0; i < used; i += 3)
-		{
-			a = data[i] << 16 | data[i + 1] << 8 | data[i + 2];
-			output += base64Characters[a >> 18] + base64Characters[a >> 12 & 63] + base64Characters[a >> 6 & 63] + base64Characters[a & 63];
-		}
-		
-		audioObject = new Audio();
-		audioObject.src = output;
-		return audioObject;
-	}
-	else
-	{
-		return data;
-	}
+	buffer = ctx.createBuffer(1, envelopeFullLength, 44100);
+	data = buffer.getChannelData(0);
+	synthWave(data, envelopeFullLength);
+	
+	return buffer;
 }

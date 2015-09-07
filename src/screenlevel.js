@@ -39,14 +39,14 @@ ScreenLevel.prototype.tick = function(game)
 		if (game.player.status != OBJ_STATUS_FALLING)
 		{
 			game.nextLevelIndex = game.currentLevelIndex - 1;
-			game.playSound(SOUND_FALLING);
+			game.synth.playSound(SOUND_FALLING);
 			game.player.setStatus(OBJ_STATUS_FALLING);
 			game.screenFadeAndSwitch(SCREEN_GAME);
 		}
 	}
 	else if (game.player.isOnSpikes())
 	{
-		game.playSound(SOUND_SPIKE);
+		game.synth.playSound(SOUND_SPIKE);
 		game.screenFadeAndSwitch(SCREEN_LEVELS);
 	}
 	else

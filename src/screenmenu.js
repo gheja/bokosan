@@ -21,22 +21,22 @@ ScreenMenu.prototype.tick = function(game)
 	if (game.inputHandler.isKeyActive(IH_KEY_UP))
 	{
 		game.currentMenu.step(-1);
-		game.playSound(SOUND_MENU);
+		game.synth.playSound(SOUND_MENU);
 	}
 	else if (game.inputHandler.isKeyActive(IH_KEY_DOWN))
 	{
 		game.currentMenu.step(1);
-		game.playSound(SOUND_MENU);
+		game.synth.playSound(SOUND_MENU);
 	}
 	else if (game.inputHandler.isKeyActive(IH_KEY_ACTION) || game.inputHandler.isKeyActive(IH_KEY_RIGHT))
 	{
 		game.currentMenu.go();
-		game.playSound(SOUND_NEXT);
+		game.synth.playSound(SOUND_NEXT);
 	}
 	else if (game.inputHandler.isKeyActive(IH_KEY_CANCEL) || game.inputHandler.isKeyActive(IH_KEY_LEFT))
 	{
 		game.openMenu(MENU_MAIN);
-		game.playSound(SOUND_MENU);
+		game.synth.playSound(SOUND_MENU);
 	}
 	
 	game.inputHandler.clearKeys();

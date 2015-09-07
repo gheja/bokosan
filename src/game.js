@@ -25,7 +25,6 @@ var Game = function()
 		0, // STAT_LEVELS_STARTED
 		0  // STAT_LEVELS_FINISHED
 	];
-	this.sounds = [];
 	this.waitingForKeypress = false;
 	/** @type {Menu} */ this.currentMenu = null;
 	/** @type {Array<Menu>} */this.menus = [
@@ -132,6 +131,7 @@ var Game = function()
 	this.validTextCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 .,:!?()x<>udr@/-_+*=\"'abc";
 	this.inputHandler = null;
 	this.touchHandler = null;
+	this.synth = null;
 }
 
 Game.prototype.fixCanvasContextSmoothing = function(ctx)
@@ -206,26 +206,6 @@ Game.prototype.statIncrease = function(statKey)
 	{
 		this.storage.setItem('s' + statKey, this.statGetLocalStorageValue(statKey) + 1);
 	}
-}
-
-Game.prototype.addSounds = function(sounds)
-{
-	var i;
-	
-	for (i in sounds)
-	{
-		this.sounds.push(Jsfxr(sounds[i], true));
-	}
-}
-
-Game.prototype.playSound = function(id)
-{
-	if (this.sounds[id].currentTime != this.sounds[id].duration)
-	{
-		this.sounds[id].currentTime = 0;
-	}
-	
-	this.sounds[id].play();
 }
 
 Game.prototype.replaceColor = function(ctx, x, y, w, h, c1, c2)
@@ -514,7 +494,7 @@ Game.prototype.redraw = function()
 			{
 				this.fadeMode = FADE_MODE_OUT;
 				this.waitingForKeypress = false;
-				this.playSound(SOUND_NEXT);
+				this.synth.playSound(SOUND_NEXT);
 			}
 		}
 		
@@ -583,7 +563,8 @@ Game.prototype.init = function(window)
 	this.fadeMode = FADE_MODE_IN;
 	this.fadePercent = 0;
 	
-	this.addSounds([
+	this.synth = new Synth();
+	this.synth.addSamples([
 		[,,0.2,0.03,0.5,0.65,,,,,,0.42,0.54,,,,,,1,-1,,,-1,0.4], // SOUND_HELLO
 		[,0.01,0.01,0.1,0.05,0.65,,,,,,,,,,,,,1,-1,,,-1,0.5], // SOUND_MENU
 		[,0.09,0.02,,0.11,0.11,,,,,,,,0.53,,,-0.27,,0.23,,,,,0.5], // SOUND_STEP1

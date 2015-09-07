@@ -154,7 +154,7 @@ ScreenLevels.prototype.tick = function(game)
 		if (this.selection <= this.unlockedCount)
 		{
 			this.go(game);
-			game.playSound(SOUND_NEXT);
+			game.synth.playSound(SOUND_NEXT);
 		}
 	}
 	else if (game.inputHandler.isKeyActive(IH_KEY_CANCEL))
@@ -166,7 +166,7 @@ ScreenLevels.prototype.tick = function(game)
 	
 	if (lastSelection != this.selection)
 	{
-		game.playSound(SOUND_MENU);
+		game.synth.playSound(SOUND_MENU);
 	}
 	
 	game.inputHandler.clearKeys();

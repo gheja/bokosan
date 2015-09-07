@@ -79,11 +79,11 @@ PlayerObj.prototype.tick = function()
 			
 			if (this.walkStepSoundCounter % 2 == 0)
 			{
-				this.game.playSound(SOUND_STEP1);
+				this.game.synth.playSound(SOUND_STEP1);
 			}
 			else
 			{
-				this.game.playSound(SOUND_STEP2);
+				this.game.synth.playSound(SOUND_STEP2);
 			}
 		}
 	}
@@ -117,7 +117,7 @@ PlayerObj.prototype.checkCollisionAndGo = function(dx, dy, steps, speed, fx, fy)
 		this.grabbedBox.moveStepLeft = this.moveStepLeft;
 		
 		this.setStatus(OBJ_STATUS_PULLING);
-		this.game.playSound(SOUND_BOX_PULL);
+		this.game.synth.playSound(SOUND_BOX_PULL);
 		this.game.statIncrease(STAT_PULLS);
 	}
 	else
@@ -213,14 +213,14 @@ PlayerObj.prototype.tryGrab = function()
 	
 	this.grabbedBox = box;
 	this.setStatus(OBJ_STATUS_GRAB);
-	this.game.playSound(SOUND_BOX_GRAB);
+	this.game.synth.playSound(SOUND_BOX_GRAB);
 }
 
 PlayerObj.prototype.tryRelease = function()
 {
 	if (this.grabbedBox != null)
 	{
-		this.game.playSound(SOUND_BOX_RELEASE);
+		this.game.synth.playSound(SOUND_BOX_RELEASE);
 	}
 	this.setStatus(OBJ_STATUS_STANDING);
 	this.grabbedBox = null;
