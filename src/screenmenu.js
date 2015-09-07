@@ -67,14 +67,18 @@ ScreenMenu.prototype.draw = function(game)
 		" LEVELS FINISHED  27,178");
 	
 	game.ctx.fillStyle = "#474747";
-	game.ctx.fillRect(220, 40, 172, 94);
 	
-	game.drawImageAdvanced(game._asset, game.ctx, 376, 22, 10, 8, 290, 60, 10 * 4, 8 * 4, 0, 0, game.player.colors);
-	game.drawBigText(230, 110, game.player.name);
+	// game.ctx.fillRect(220, 140, 172, 110);
+	// game.drawImageAdvanced(game._asset, game.ctx, 376, 22, 10, 8, 290, 40, 10 * 4, 8 * 4, 0, 0, game.player.colors);
+	// game.drawBigText(230, 90, game.player.name);
+	
+	game.ctx.fillRect(230, 40, 172, 210);
+	game.drawImageAdvanced(game._asset, game.ctx, 376, 22, 10, 8, 300, 50, 10 * 4, 8 * 4, 0, 0, game.player.colors);
+	game.drawBigText(240, 100, game.player.name);
 	
 	for (i=0; i<game.currentMenu.items.length; i++)
 	{
-		game.drawSmallText(230, 150 + i * 20, (game.currentMenu.selection == i ? "> " : "  ") + game.currentMenu.items[i][0]);
+		game.drawSmallText(240, 150 + i * 20, (game.currentMenu.selection == i ? "> " : "  ") + game.currentMenu.items[i][0]);
 	}
 	
 	game.drawSmallText(0, 270, "WWW.BOKOSAN.NET             GITHUB.COM/GHEJA/BOKOSAN");
