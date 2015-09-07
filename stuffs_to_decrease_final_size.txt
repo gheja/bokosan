@@ -8,3 +8,4 @@
   - remove parameters where an undefined works just as well as the current parameter
   - remove PlayerObj.isStuck() check
   - remove alternative buttons (WASD, menu right/left)
+  - optimize color replacement
