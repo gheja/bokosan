@@ -17,7 +17,7 @@ var PlayerObj = function(game, x, y)
 	this.grabbedBox = null;
 	this.walkStepSoundCounter = 0;
 	
-	this.name = "WORKER";
+	this.name = "BOB 970631";
 	this.colors = [ [ 255, 255, 0 ], [ 0, 128, 192 ], [ 255, 128, 0 ] ];
 	
 	// [ 0: "rotated?", 1: [ 0: [ 0: "tile", 1: "mirrored?" ], 1: ... ]

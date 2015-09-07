@@ -62,6 +62,7 @@ var Game = function()
 		// MENU_CUSTOMIZE
 		new Menu(this, [
 			[ "NAME", ACTION_CUSTOM, function(){} ],
+			[ "HARD HAT COLOR", ACTION_CUSTOM, function(){} ],
 			[ "SHIRT COLOR", ACTION_CUSTOM, function(){} ],
 			[ "PANTS COLOR", ACTION_CUSTOM, function(){} ],
 			[ "BACK TO MENU", ACTION_OPEN_MENU, MENU_PLAY ]

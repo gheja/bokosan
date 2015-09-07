@@ -50,16 +50,31 @@ ScreenMenu.prototype.draw = function(game)
 	game.drawBigText(0, 0, "BOKOSAN");
 	game.drawSmallText(0, 20, "FOR JS13KGAMES 2015");
 	
-	game.drawSmallText(0, 50, "TOTAL TIME PLAYED");
-	game.drawBigText(0, 60, game.pad(game.timePad(game.statGetLocalStorageValue(STAT_FRAMES) * 1/12), 10, ' '));
-	game.drawSmallText(0, 85, "TOTAL MOVES");
-	game.drawBigText(0, 95, game.pad(game.thousandPad(game.statGetLocalStorageValue(STAT_MOVES)), 10, ' '));
-	game.drawSmallText(0, 120, "TOTAL PULLS");
-	game.drawBigText(0, 130, game.pad(game.thousandPad(game.statGetLocalStorageValue(STAT_PULLS)), 10, ' '));
+	game.drawSmallText(8, 40, "TOTAL TIME PLAYED");
+	game.drawBigText(40, 50, game.pad(game.timePad(game.statGetLocalStorageValue(STAT_FRAMES) * 1/12), 10, ' '));
+	game.drawSmallText(8, 80, "TOTAL MOVES");
+	game.drawBigText(40, 90, game.pad(game.thousandPad(game.statGetLocalStorageValue(STAT_MOVES)), 10, ' '));
+	game.drawSmallText(8, 120, "TOTAL PULLS");
+	game.drawBigText(40, 130, game.pad(game.thousandPad(game.statGetLocalStorageValue(STAT_PULLS)), 10, ' '));
+	
+	game.drawSmallText(8, 190,
+		"GLOBAL STATISTICS\n" +
+		" TIME PLAYED    12:34:56\n" +
+		" MOVES         1,212,323\n" +
+		" PULLS            78,117\n" +
+		" PLAYERS           1,312\n" +
+		" LEVELS STARTED  134,111\n" +
+		" LEVELS FINISHED  27,178");
+	
+	game.ctx.fillStyle = "#474747";
+	game.ctx.fillRect(220, 40, 172, 94);
+	
+	game.drawImageAdvanced(game._asset, game.ctx, 376, 22, 10, 8, 290, 60, 10 * 4, 8 * 4, 0, 0, game.player.colors);
+	game.drawBigText(230, 110, game.player.name);
 	
 	for (i=0; i<game.currentMenu.items.length; i++)
 	{
-		game.drawSmallText(200, 50 + i * 20, (game.currentMenu.selection == i ? "> " : "  ") + game.currentMenu.items[i][0]);
+		game.drawSmallText(230, 150 + i * 20, (game.currentMenu.selection == i ? "> " : "  ") + game.currentMenu.items[i][0]);
 	}
 	
 	game.drawSmallText(0, 270, "WWW.BOKOSAN.NET             GITHUB.COM/GHEJA/BOKOSAN");
