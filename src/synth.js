@@ -27,5 +27,5 @@ Synth.prototype.playSound = function(id)
 	source.buffer = this.samples[id];
 	source.playbackRate.value = 1;
 	// source.noteOn(0);
-	source.start();
+	source.start(0);
 }
