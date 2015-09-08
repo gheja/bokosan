@@ -357,6 +357,11 @@ Game.prototype.drawTile = function(posX, posY, tileNumber, rotated, mirrored, fl
 	}
 }
 
+Game.prototype.drawTouchToContinue = function(x, y)
+{
+	this.drawSmallTextBlinking(x, y, this.isTouchAvailable() ? "TOUCH ANYWHERE TO CONTINUE" : "  PRESS A KEY TO CONTINUE");
+}
+
 Game.prototype.setColor = function(index)
 {
 	this.player.colors[index] = [ Math.floor(Math.random() * 4) * 63, Math.floor(Math.random() * 4) * 63, Math.floor(Math.random() * 4) * 63 ];
