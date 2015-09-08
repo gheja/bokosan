@@ -239,9 +239,9 @@ Game.prototype.saveScores = function()
 Game.prototype.getScores = function(index)
 {
 	return [
-		this.getLocalStorageArray('ha' + index),
-		this.getLocalStorageArray('hb' + index),
-		this.getLocalStorageArray('hc' + index)
+		this.getLocalStorageArray('ha' + index, []),
+		this.getLocalStorageArray('hb' + index, []),
+		this.getLocalStorageArray('hc' + index, [])
 	]
 }
 
