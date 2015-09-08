@@ -114,9 +114,25 @@ ScreenLevels.prototype.drawSelectionOptions = function()
 
 ScreenLevels.prototype.drawStats = function()
 {
+	var a, s, i;
+	
 	// stats
 	game.drawBigText(240, 35, "LEVEL 1-" + game.pad(this.selection, 2, '0'));
-	game.drawSmallText(240, 65, "BEST TIMES:\n 0:03:01\n 0:03:12\n 0:01:23\n\nBEST MOVES:\n 121 A+\n 122 A+\n 190\n\nBEST PULLS:\n 27\n 29\n 43");
+	a = game.getScores(this.selection - 1);
+	
+	s = "BEST TIMES:\n";
+	for (i in a[0])
+	{
+		s += " " + game.timePad(a[0][i] * 1/12) + "\n";
+	}
+	s += "\n";
+	
+	s += "BEST MOVES:\n " + a[1].join("\n ") + "\n\n";
+	s += "BEST PULLS:\n " + a[2].join("\n ");
+	
+	a[1][i] <= game.levels[this.selection - 1][LEVEL_DATA_APLUS];
+	
+	game.drawSmallText(240, 65, s);
 }
 
 ScreenLevels.prototype.init = function(game)

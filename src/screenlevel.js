@@ -29,6 +29,7 @@ ScreenLevel.prototype.tick = function(game)
 		// yes, the player can win even if stuck
 		game.statIncrease(STAT_LEVELS_FINISHED);
 		game.screenFadeAndSwitch(SCREEN_LEVELS);
+		game.saveScores();
 	}
 	else if (game.player.isStuck())
 	{

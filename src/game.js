@@ -199,6 +199,52 @@ Game.prototype.statGetLocalStorageValue = function(statKey)
 	// shorter but uglier: return this.storage.getItem('s' + statKey) * 1;
 }
 
+Game.prototype.getLocalStorageArray = function(key, defaultValue)
+{
+	var a;
+	
+	a = this.storage.getItem(key);
+	
+	if (a != null)
+	{
+		return a.split(',');
+	}
+	
+	return defaultValue;
+}
+
+Game.prototype.setLocalStorageArray = function(key, value)
+{
+	this.storage.setItem(key, value.join(','));
+}
+
+Game.prototype.saveScoreToLocalStorage = function(key, value, limit)
+{
+	var a;
+	
+	a = this.getLocalStorageArray(key, []);
+	a.push(value);
+	a.sort();
+	a.splice(3, 999);
+	this.setLocalStorageArray(key, a);
+}
+
+Game.prototype.saveScores = function()
+{
+	this.saveScoreToLocalStorage('ha' + this.currentLevelIndex, this.currentStats[STAT_FRAMES], 3);
+	this.saveScoreToLocalStorage('hb' + this.currentLevelIndex, this.currentStats[STAT_MOVES], 3);
+	this.saveScoreToLocalStorage('hc' + this.currentLevelIndex, this.currentStats[STAT_PULLS], 3);
+}
+
+Game.prototype.getScores = function(index)
+{
+	return [
+		this.getLocalStorageArray('ha' + index),
+		this.getLocalStorageArray('hb' + index),
+		this.getLocalStorageArray('hc' + index)
+	]
+}
+
 Game.prototype.statIncrease = function(statKey)
 {
 	this.currentStats[statKey]++;
