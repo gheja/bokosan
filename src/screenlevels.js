@@ -194,9 +194,7 @@ ScreenLevels.prototype.tick = function(game)
 
 ScreenLevels.prototype.draw = function(game)
 {
-	game.drawBigText(0, 0, "BOKOSAN");
-	game.drawSmallText(0, 20, "FOR JS13KGAMES 2015");
-	
+	game.drawHeader();
 	this.drawSelectionBox();
 	this.drawSelectionOptions();
 	this.drawStats();

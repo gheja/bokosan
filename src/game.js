@@ -362,6 +362,12 @@ Game.prototype.drawTouchToContinue = function(x, y)
 	this.drawSmallTextBlinking(x, y, this.isTouchAvailable() ? "TOUCH ANYWHERE TO CONTINUE" : "  PRESS A KEY TO CONTINUE");
 }
 
+Game.prototype.drawHeader = function()
+{
+	game.drawBigText(0, 0, "BOKOSAN");
+	game.drawSmallText(0, 20, "FOR JS13KGAMES 2015");
+}
+
 Game.prototype.setColor = function(index)
 {
 	this.player.colors[index] = [ Math.floor(Math.random() * 4) * 63, Math.floor(Math.random() * 4) * 63, Math.floor(Math.random() * 4) * 63 ];

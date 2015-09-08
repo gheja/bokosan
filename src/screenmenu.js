@@ -47,9 +47,7 @@ ScreenMenu.prototype.draw = function(game)
 {
 	var i;
 	
-	game.drawBigText(0, 0, "BOKOSAN");
-	game.drawSmallText(0, 20, "FOR JS13KGAMES 2015");
-	
+	game.drawHeader();
 	game.drawSmallText(8, 40, "TOTAL TIME PLAYED");
 	game.drawBigText(40, 50, game.pad(game.timePad(game.statGetLocalStorageValue(STAT_FRAMES) * 1/12), 10, ' '));
 	game.drawSmallText(8, 80, "TOTAL MOVES");
