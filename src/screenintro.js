@@ -15,6 +15,7 @@ ScreenIntro.prototype = new Screen2();
 ScreenIntro.prototype.init = function(game)
 {
 	this.scrollerPosition = 0;
+	game.synth.playSong(0);
 	game.setWaitForKeypress(SCREEN_MENU);
 }
 

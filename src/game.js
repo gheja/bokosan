@@ -641,6 +641,37 @@ Game.prototype.init = function(window)
 		[,0.07,0.01,,0.67,0.47,,-0.16,,,,,,0.4,0.5,0.15,0.06,-0.17,1,,,0.06,,0.5] // SOUND_FALLING
 	]);
 	
+	this.synth.setSongs(
+		[
+			[
+				 // SONG_DATA_INTERVAL:
+				250,
+				
+				//SONG_DATA_CHANNELS:
+				[
+					[ // channel 0
+						// SONG_CHANNEL_DATA_NOTE_ID:
+						SOUND_MENU,
+						
+						// SONG_CHANNEL_DATA_BASE_NOTE:
+						20,
+						
+						// SONG_CHANNEL_DATA_NOTES:
+						[ 20, 0, 0, 0, 22, 0, 0, 0, 24, 0, 0, 0, 26, 0, 0, 0 ]
+					],
+					[ SOUND_BOX_GRAB, 20, [ 0, 20, 0, 20, 0, 20, 0, 20, 0, 20, 0, 20, 0, 20, 0, 20 ] ]
+				]
+			],
+			[
+				250,
+				[
+					[ SOUND_MENU,     20, [ 10, 11,  0,  0, 12, 11,  0,  0, 11, 11,  0,  0, 10, 10,  0,  0 ] ],
+					[ SOUND_BOX_GRAB, 20, [  0,  0,  0, 20,  0,  0,  0, 20,  0,  0,  0, 20,  0,  0, 20, 20 ] ]
+				]
+			]
+		]
+	);
+	
 	this.storage = window.localStorage;
 	this.player = new PlayerObj(this, 0, 0);
 	

@@ -13,6 +13,7 @@ ScreenMenu.prototype = new Screen2();
 
 ScreenMenu.prototype.init = function(game)
 {
+	game.synth.playSong(1);
 	game.openMenu(MENU_MAIN);
 }
 
