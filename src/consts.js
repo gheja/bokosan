@@ -81,3 +81,10 @@
 /** @const @type {number} */ var LEVEL_DATA_HEIGHT = 1;
 /** @const @type {number} */ var LEVEL_DATA_APLUS = 2;
 /** @const @type {number} */ var LEVEL_DATA_TILES = 3;
+
+/** @const @type {number} */ var SONG_DATA_INTERVAL = 0;
+/** @const @type {number} */ var SONG_DATA_CHANNELS = 1;
+
+/** @const @type {number} */ var SONG_CHANNEL_DATA_SAMPLE_ID = 0;
+/** @const @type {number} */ var SONG_CHANNEL_DATA_BASE_NOTE = 1;
+/** @const @type {number} */ var SONG_CHANNEL_DATA_NOTES = 2;
