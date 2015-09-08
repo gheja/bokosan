@@ -111,7 +111,7 @@ ScreenLevels.prototype.drawSelectionOptions = function()
 		this.drawPreview(game, j, p1, p2);
 		
 		a = game.getScores(j - 1);
-		if (a[1][i] <= game.levels[j - 1][LEVEL_DATA_APLUS])
+		if (a[1][0] <= game.levels[j - 1][LEVEL_DATA_APLUS])
 		{
 			game.ctx.drawImage(game._asset, 83, 38, 12, 9, p1 + 80, p2 - 4, 12, 9);
 		}
