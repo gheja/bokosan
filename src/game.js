@@ -61,9 +61,9 @@ var Game = function()
 		// MENU_CUSTOMIZE
 		new Menu(this, [
 			[ "NAME", ACTION_CUSTOM, function(){} ],
-			[ "HARD HAT COLOR", ACTION_CUSTOM, function(){} ],
-			[ "SHIRT COLOR", ACTION_CUSTOM, function(){} ],
-			[ "PANTS COLOR", ACTION_CUSTOM, function(){} ],
+			[ "HARD HAT COLOR", ACTION_CUSTOM, this.setColor.bind(this, 0) ],
+			[ "SHIRT COLOR", ACTION_CUSTOM, this.setColor.bind(this, 1) ],
+			[ "PANTS COLOR", ACTION_CUSTOM, this.setColor.bind(this, 2) ],
 			[ "BACK TO MENU", ACTION_OPEN_MENU, MENU_PLAY ]
 		])
 	];
@@ -309,6 +309,11 @@ Game.prototype.drawTile = function(posX, posY, tileNumber, rotated, mirrored, fl
 	{
 		this.drawImageAdvanced(this._asset, this.ctx, tileNumber * 28 + 7, 11 + 7, 20, 18, posX + 7, posY + 7, 20, 18, rotated, mirrored, colors);
 	}
+}
+
+Game.prototype.setColor = function(index)
+{
+	this.player.colors[index] = [ Math.floor(Math.random() * 4) * 63, Math.floor(Math.random() * 4) * 63, Math.floor(Math.random() * 4) * 63 ];
 }
 
 Game.prototype.onResize = function()
