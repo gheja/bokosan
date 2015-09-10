@@ -92,6 +92,7 @@
 /** @const @type {string} */ var STORAGE_PLAYER_COLOR_PREFIX = 'c';
 /** @const @type {string} */ var STORAGE_PLAYER_UID = 'u';
 /** @const @type {string} */ var STORAGE_PLAYER_NAME = 'n';
+/** @const @type {string} */ var STORAGE_STATS_PREFIX = 's';
 /** @const @type {string} */ var STORAGE_HIGHSCORES_TIME_PREFIX = 'ha';
 /** @const @type {string} */ var STORAGE_HIGHSCORES_MOVES_PREFIX = 'hb';
 /** @const @type {string} */ var STORAGE_HIGHSCORES_PULLS_PREFIX = 'hc';

@@ -222,10 +222,29 @@ Game.prototype.statReset = function()
 	this.currentStats[STAT_PULLS] = 0;
 }
 
-Game.prototype.statGetLocalStorageValue = function(statKey)
+Game.prototype.getLocalStorageString = function(key, defaultValue)
 {
-	return parseInt(this.storage.getItem('s' + statKey) || 0, 10);
-	// shorter but uglier: return this.storage.getItem('s' + statKey) * 1;
+	var a;
+	
+	a = this.storage.getItem(key);
+	
+	return a !== null ? a : defaultValue;
+}
+
+Game.prototype.setLocalStorageString = function(key, value)
+{
+	this.storage.setItem(key, value);
+}
+
+Game.prototype.getLocalStorageInt = function(key, defaultValue)
+{
+	return parseInt(this.storage.getItem(key) || defaultValue, 10);
+	// shorter but uglier: return this.storage.getItem(key) * 1;
+}
+
+Game.prototype.setLocalStorageInt = function(key, value)
+{
+	this.storage.setItem(key, value);
 }
 
 Game.prototype.getLocalStorageArray = function(key, defaultValue)
@@ -234,12 +253,7 @@ Game.prototype.getLocalStorageArray = function(key, defaultValue)
 	
 	a = this.storage.getItem(key);
 	
-	if (a != null)
-	{
-		return a.split(',');
-	}
-	
-	return defaultValue;
+	return  a !== null ? a.split(',') : defaultValue;
 }
 
 Game.prototype.setLocalStorageArray = function(key, value)
@@ -247,22 +261,22 @@ Game.prototype.setLocalStorageArray = function(key, value)
 	this.storage.setItem(key, value.join(','));
 }
 
-Game.prototype.saveScoreToLocalStorage = function(key, value, limit)
+Game.prototype.saveScoreToLocalStorage = function(key, value)
 {
 	var a;
 	
 	a = this.getLocalStorageArray(key, []);
 	a.push(value);
-	a.sort();
+	a.sort(function(a, b) { return a - b; });
 	a.splice(3, 999);
 	this.setLocalStorageArray(key, a);
 }
 
 Game.prototype.saveScores = function()
 {
-	this.saveScoreToLocalStorage(STORAGE_HIGHSCORES_TIME_PREFIX + this.currentLevelIndex, this.currentStats[STAT_FRAMES], 3);
-	this.saveScoreToLocalStorage(STORAGE_HIGHSCORES_MOVES_PREFIX + this.currentLevelIndex, this.currentStats[STAT_MOVES], 3);
-	this.saveScoreToLocalStorage(STORAGE_HIGHSCORES_PULLS_PREFIX + this.currentLevelIndex, this.currentStats[STAT_PULLS], 3);
+	this.saveScoreToLocalStorage(STORAGE_HIGHSCORES_TIME_PREFIX + this.currentLevelIndex, this.currentStats[STAT_FRAMES]);
+	this.saveScoreToLocalStorage(STORAGE_HIGHSCORES_MOVES_PREFIX + this.currentLevelIndex, this.currentStats[STAT_MOVES]);
+	this.saveScoreToLocalStorage(STORAGE_HIGHSCORES_PULLS_PREFIX + this.currentLevelIndex, this.currentStats[STAT_PULLS]);
 }
 
 Game.prototype.getScores = function(index)
@@ -274,13 +288,16 @@ Game.prototype.getScores = function(index)
 	]
 }
 
+Game.prototype.statGetValue = function(statKey)
+{
+	return this.getLocalStorageInt(STORAGE_STATS_PREFIX + statKey, 0);
+}
+
 Game.prototype.statIncrease = function(statKey)
 {
 	this.currentStats[statKey]++;
-	if (this.storage)
-	{
-		this.storage.setItem('s' + statKey, this.statGetLocalStorageValue(statKey) + 1);
-	}
+	
+	this.setLocalStorageInt(STORAGE_STATS_PREFIX + statKey, this.statGetValue(statKey) + 1);
 }
 
 Game.prototype.replaceColor = function(ctx, x, y, w, h, c1, c2)
@@ -719,8 +736,6 @@ Game.prototype.init = function(window)
 			]
 		]
 	);
-	
-	this.player = new PlayerObj(this, 0, 0);
 	
 	try
 	{
