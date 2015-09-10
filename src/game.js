@@ -652,6 +652,8 @@ Game.prototype.init = function(window)
 	this.fixCanvasContextSmoothing(this.ctx);
 	
 	this.storage = window.localStorage;
+	
+	this.player = new PlayerObj(this, 0, 0);
 	if (!this.player.uid)
 	{
 		this.firstRun = true;
