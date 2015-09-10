@@ -46,7 +46,7 @@ ScreenMenu.prototype.tick = function(game)
 
 ScreenMenu.prototype.draw = function(game)
 {
-	var t;
+	var t, i;
 	
 	function lerp(a, b, t)
 	{
