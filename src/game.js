@@ -617,6 +617,14 @@ Game.prototype.renderFrame = function()
 	this.redraw();
 }
 
+Game.prototype.onSetUid = function(uid)
+{
+	this.player.uid = uid;
+	this.player.name = "BOB " + this.pad(Math.floor(uid * 1000000), 6, '0');
+	this.storage.setItem(STORAGE_PLAYER_UID, this.player.uid);
+	this.storage.setItem(STORAGE_PLAYER_NAME, this.player.name);
+}
+
 Game.prototype.onServerStats = function(data)
 {
 	this.serverStatsTime = (new Date()).getTime();
@@ -712,7 +720,12 @@ Game.prototype.init = function(window)
 	try
 	{
 		this.socket = io(document.location.href);
+		this.socket.on(NET_MESSAGE_SET_UID, this.onSetUid.bind(this));
 		this.socket.on(NET_MESSAGE_SERVER_STATS, this.onServerStats.bind(this));
+		if (!this.player.uid)
+		{
+			this.netSend(NET_MESSAGE_GET_NEW_UID, 0);
+		}
 		window.setInterval(this.getServerStats.bind(this), 1000);
 		this.getServerStats();
 	}
