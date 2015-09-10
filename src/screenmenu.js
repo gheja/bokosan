@@ -82,10 +82,6 @@ ScreenMenu.prototype.draw = function(game)
 	
 	game.ctx.fillStyle = "#474747";
 	
-	// game.ctx.fillRect(220, 140, 172, 110);
-	// game.drawImageAdvanced(game._asset, game.ctx, 376, 22, 10, 8, 290, 40, 10 * 4, 8 * 4, 0, 0, game.player.colors);
-	// game.drawBigText(230, 90, game.player.name);
-	
 	game.ctx.fillRect(230, 40, 172, 210);
 	game.drawImageAdvanced(game._asset, game.ctx, 376, 22, 10, 8, 300, 50, 10 * 4, 8 * 4, 0, 0, game.player.colors);
 	game.drawBigText(240, 100, game.player.name);
@@ -96,6 +92,4 @@ ScreenMenu.prototype.draw = function(game)
 	}
 	
 	game.drawSmallText(0, 270, "WWW.BOKOSAN.NET             GITHUB.COM/GHEJA/BOKOSAN");
-	// game.drawSmallText(300, 260, "WWW.BOKOSAN.NET");
-	// game.drawSmallText(228, 270, "GITHUB.COM/GHEJA/BOKOSAN");
 }
