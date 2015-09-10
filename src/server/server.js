@@ -1,8 +1,6 @@
 'use strict';
 
 /*
-	NET_MESSAGE_GET_NEW_UID = 'a'
-	NET_MESSAGE_SET_UID = 'b'
 	NET_MESSAGE_GET_SERVER_STATS = 'c'
 	NET_MESSAGE_SERVER_STATS = 'd'
 	NET_MESSAGE_PLAYER_STATS = 'e'
@@ -34,8 +32,8 @@ var Player = function(socket)
 		}
 	};
 	socket.on('disconnect', this.onDisconnect.bind(this));
+	socket.on(NET_MESSAGE_NEW_BOB, this.onNewBob.bind(this));
 	socket.on(NET_MESSAGE_PLAYER_STATS, this.onStat.bind(this));
-	socket.on(NET_MESSAGE_GET_NEW_UID, this.onGetNewUid.bind(this));
 	socket.on(NET_MESSAGE_GET_SERVER_STATS, this.onGetServerStats.bind(this));
 	
 	this.socket = socket;
@@ -60,11 +58,9 @@ Player.prototype.onStat = function(data)
 	db(SERVER_DB_KEY_STATS, stats);
 }
 
-Player.prototype.onGetNewUid = function()
+Player.prototype.onNewBob = function()
 {
 	log.debug('new player');
-	
-	this.socket.emit2(NET_MESSAGE_SET_UID, Math.random());
 	
 	stats[3]++; // players
 	db(SERVER_DB_KEY_STATS, stats);

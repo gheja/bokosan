@@ -1,8 +1,7 @@
 'use strict';
 
 /*
-	NET_MESSAGE_GET_NEW_UID = 'a'
-	NET_MESSAGE_SET_UID = 'b'
+	NET_MESSAGE_NEW_BOB = 'b'
 	NET_MESSAGE_GET_SERVER_STATS = 'c'
 	NET_MESSAGE_SERVER_STATS = 'd'
 	NET_MESSAGE_PLAYER_STATS = 'e'
@@ -31,7 +30,7 @@ var P = function(x)
 		}
 	};
 	x.on('e', this.A.bind(this));
-	x.on('a', this.B.bind(this));
+	x.on('b', this.B.bind(this));
 	x.on('c', this.C.bind(this));
 	
 	this.x = x;
@@ -51,8 +50,6 @@ P.prototype.A = function(d)
 
 P.prototype.B = function()
 {
-	this.x.e('b', Math.random());
-	
 	s[3]++; // players
 	db('s', s);
 }

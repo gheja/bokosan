@@ -137,6 +137,8 @@ var Game = function()
 	this.serverStatsTime = 0;
 	this.serverStatsPrevious = [];
 	this.serverStatsLatest = [];
+	
+	this.firstRun = false;
 }
 
 Game.prototype.fixCanvasContextSmoothing = function(ctx)
@@ -617,14 +619,6 @@ Game.prototype.renderFrame = function()
 	this.redraw();
 }
 
-Game.prototype.onSetUid = function(uid)
-{
-	this.player.uid = uid;
-	this.player.name = "BOB " + this.pad(Math.floor(uid * 1000000), 6, '0');
-	this.storage.setItem(STORAGE_PLAYER_UID, this.player.uid);
-	this.storage.setItem(STORAGE_PLAYER_NAME, this.player.name);
-}
-
 Game.prototype.onServerStats = function(data)
 {
 	this.serverStatsTime = (new Date()).getTime();
@@ -656,6 +650,16 @@ Game.prototype.init = function(window)
 	
 	this.ctx = this.canvas.getContext("2d");
 	this.fixCanvasContextSmoothing(this.ctx);
+	
+	this.storage = window.localStorage;
+	if (!this.player.uid)
+	{
+		this.firstRun = true;
+		this.player.uid = Math.random();
+		this.player.name = "BOB " + this.pad(Math.floor(this.player.uid * 1000000), 6, '0');
+		this.storage.setItem(STORAGE_PLAYER_UID, this.player.uid);
+		this.storage.setItem(STORAGE_PLAYER_NAME, this.player.name);
+	}
 	
 	this._asset = new Image();
 	this._asset.addEventListener('load', this.assetLoadFinished.bind(this));
@@ -714,17 +718,15 @@ Game.prototype.init = function(window)
 		]
 	);
 	
-	this.storage = window.localStorage;
 	this.player = new PlayerObj(this, 0, 0);
 	
 	try
 	{
 		this.socket = io(document.location.href);
-		this.socket.on(NET_MESSAGE_SET_UID, this.onSetUid.bind(this));
 		this.socket.on(NET_MESSAGE_SERVER_STATS, this.onServerStats.bind(this));
-		if (!this.player.uid)
+		if (this.firstRun)
 		{
-			this.netSend(NET_MESSAGE_GET_NEW_UID, 0);
+			this.netSend(NET_MESSAGE_NEW_BOB, 0);
 		}
 		window.setInterval(this.getServerStats.bind(this), 60000);
 		this.getServerStats();
