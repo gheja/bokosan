@@ -96,8 +96,21 @@ if [ "$do_stage1" == "y" ]; then
 	
 	files=`cat ./src/index.html | grep -vE '<!--' | grep -E '<script.* src="([^"]+)"' | grep -Eo 'src=\".*\"' | cut -d \" -f 2 | grep -vE '/socket.io'`
 	
+	if [ ! -e ./src/server/server.js ] || [ ! -e ./src/server/server.min1.js ]; then
+		_error "ERROR: checking server.js or server.min1.js failed."
+		exit 1
+	fi
+	
+	mtime_orig=`stat -c %Y ./src/server/server.js 2>/dev/null`
+	mtime_min=`stat -c %Y ./src/server/server.min1.js 2>/dev/null`
+	
+	if [ $mtime_orig -gt $mtime_min ]; then
+		_error "WARNING: server.js is more recent than server.min.js"
+	fi
+	
 	_message "Copying files..."
-	try cp -v ./src/index.html ./src/style.css ./src/server/server.js ./src/server/package.json ./src/server/game.json ./build/stage1/
+	try cp -v ./src/index.html ./src/style.css ./src/server/package.json ./src/server/game.json ./build/stage1/
+	try cp -v ./src/server/server.min1.js ./build/stage1/server.js
 	
 	_message "Removing debug sections, merging files and renaming some variables..."
 	
