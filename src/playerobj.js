@@ -266,7 +266,7 @@ PlayerObj.prototype.isInHole = function()
 
 PlayerObj.prototype.isOnSpikes = function()
 {
-	if (this.moveStepLeft == 0 && this.getNeighbourTile(0, 0) == 'e')
+	if (this.moveStepLeft == 0 && (this.getNeighbourTile(0, 0) == 'e' || this.getNeighbourTile(0, 0) == 'E'))
 	{
 		return true;
 	}

@@ -501,6 +501,7 @@ Game.prototype.loadLevel = function()
 				break;
 				
 				case "B": // a box
+				case "E": // a box (above the spike)
 					this.objects.push(new BoxObj(game, a, b));
 				break;
 			}

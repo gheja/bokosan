@@ -154,6 +154,7 @@ ScreenLevel.prototype.draw = function(game)
 				break;
 				
 				case "e": // spike
+				case "E": // spike (below the box)
 					if (game.player.x == x * 20 && game.player.y == y * 18)
 					{
 						// triggered spike
