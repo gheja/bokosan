@@ -17,8 +17,14 @@ var PlayerObj = function(game, x, y)
 	this.grabbedBox = null;
 	this.walkStepSoundCounter = 0;
 	
-	this.name = "BOB 970631";
-	this.colors = [ [ 255, 255, 0 ], [ 0, 128, 192 ], [ 255, 128, 0 ] ];
+	this.uid = game.storage.getItem('u') || 0;
+	this.name = game.storage.getItem('n') || 'BOB';
+	this.colors = [
+		game.getLocalStorageArray('c0', [ 255, 255, 0 ] ),
+		game.getLocalStorageArray('c1', [ 0, 128, 192 ] ),
+		game.getLocalStorageArray('c2', [ 255, 128, 0 ] )
+	];
+	
 	
 	// [ 0: "rotated?", 1: [ 0: [ 0: "tile", 1: "mirrored?" ], 1: ... ]
 	this.animations = [
