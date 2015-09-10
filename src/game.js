@@ -188,6 +188,18 @@ Game.prototype.isTouchAvailable = function()
 	return false;
 }
 
+Game.prototype.netSend = function(message, data)
+{
+	try
+	{
+		this.socket.emit(message, data);
+	}
+	catch (err)
+	{
+		// no hard feelings
+	}
+}
+
 Game.prototype.statReset = function()
 {
 	this.currentStats[STAT_FRAMES] = 0;
