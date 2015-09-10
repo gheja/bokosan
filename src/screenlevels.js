@@ -120,21 +120,51 @@ ScreenLevels.prototype.drawSelectionOptions = function()
 
 ScreenLevels.prototype.drawStats = function()
 {
-	var a, s, i;
+	var a, b, s, i;
 	
 	// stats
-	game.drawBigText(240, 35, "LEVEL 1-" + game.pad(this.selection, 2, '0'));
 	a = game.getScores(this.selection - 1);
 	
-	s = "BEST TIMES:\n";
-	for (i in a[0])
-	{
-		s += " " + game.timePad(a[0][i] * 1/12) + "\n";
-	}
-	s += "\n";
+	game.drawBigText(240, 35, "LEVEL 1-" + game.pad(this.selection, 2, '0'));
 	
-	s += "BEST MOVES:\n " + a[1].join("\n ") + "\n\n";
-	s += "BEST PULLS:\n " + a[2].join("\n ");
+	if (this.selection > this.unlockedCount)
+	{
+		game.drawSmallText(240, 65, "COMPLETE PREVIOUS\nLEVELS TO UNLOCK");
+		return;
+	}
+	
+	s = "";
+	
+	if (a[1][0])
+	{
+		b = a[1][0] - game.levels[this.selection - 1][LEVEL_DATA_APLUS];
+		
+		if (b > 0)
+		{
+			s += "ONLY " + b + " MOVES AWAY\nFROM A+ RANK\n\n";
+		}
+		else
+		{
+			s += "RANKED A+\n\n\n";
+		}
+		
+		s += "\n";
+		s += "BEST TIMES:\n";
+		
+		for (i in a[0])
+		{
+			s += "  " + game.timePad(a[0][i] * 1/12) + "\n";
+		}
+		s += "\n";
+		
+		s += "BEST MOVES:\n  " + a[1].join("\n  ") + "\n\n";
+		s += "BEST PULLS:\n  " + a[2].join("\n  ");
+	}
+	else
+	{
+		s += "YOU HAVE NOT PLAYED\nTHIS LEVEL YET";
+	}
+	
 	
 	game.drawSmallText(240, 65, s);
 }
