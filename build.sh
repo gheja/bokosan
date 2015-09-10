@@ -156,7 +156,7 @@ if [ "$do_stage2" == "y" ]; then
 		-e '/<!-- insert minified javascript here -->/{' \
 		-e 'i <script>' \
 		-e 'r ./build/stage2/merged2.min2.js' \
-		-e 'a </script>' \
+		-e 'a </script><script src="/socket.io/socket.io.js"></script>' \
 		-e 'd}' \
 		-e '/<!-- insert minified css here -->/{' \
 		-e 'i <style>' \
