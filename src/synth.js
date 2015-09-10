@@ -6,10 +6,10 @@
 var Synth = function()
 {
 	this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-	this.samples = [];
-	this.songs = [];
+	/** @type {Array<AudioBuffer>} */ this.samples = [];
+	/** @type {Array<Array>} */ this.songs = [];
 	this.timeout = null;
-	this.currentSong = null;
+	/** @type {Array} */ this.currentSong = null;
 	this.currentSongBar = 0;
 	this.channelSounds = [];
 }

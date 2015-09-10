@@ -20,6 +20,9 @@
  * Reformatted and restructured by Gabor Heja, 2015
  */
 
+/**
+ * @return {AudioBuffer}
+ */
 function Jsfxr(ctx, values)
 {
 	var i, totalTime, multiplier;
