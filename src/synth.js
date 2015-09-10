@@ -92,6 +92,11 @@ Synth.prototype.playSound = function(id)
 
 Synth.prototype.playSong = function(id)
 {
+	if (this.currentSong == this.songs[id])
+	{
+		return;
+	}
+	
 	this.currentSongBar = 0;
 	this.currentSong = this.songs[id];
 	if (this.timeout)
