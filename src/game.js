@@ -134,6 +134,9 @@ var Game = function()
 	this.touchHandler = null;
 	this.synth = null;
 	this.socket = null;
+	this.serverStatsTime = 0;
+	this.serverStatsPrevious = [];
+	this.serverStatsLatest = [];
 }
 
 Game.prototype.fixCanvasContextSmoothing = function(ctx)
@@ -198,6 +201,16 @@ Game.prototype.netSend = function(message, data)
 	{
 		// no hard feelings
 	}
+}
+
+Game.prototype.statSubmit = function(completed)
+{
+	this.netSend(NET_MESSAGE_PLAYER_STATS, [ this.currentStats, completed ]);
+}
+
+Game.prototype.getServerStats = function()
+{
+	this.netSend(NET_MESSAGE_GET_SERVER_STATS, 0);
 }
 
 Game.prototype.statReset = function()
@@ -604,6 +617,13 @@ Game.prototype.renderFrame = function()
 	this.redraw();
 }
 
+Game.prototype.onServerStats = function(data)
+{
+	this.serverStatsTime = (new Date()).getTime();
+	this.serverStatsPrevious = data[0];
+	this.serverStatsLatest = data[1];
+}
+
 Game.prototype.init = function(window)
 {
 	var i, j, a, dpr, bsr;
@@ -692,6 +712,9 @@ Game.prototype.init = function(window)
 	try
 	{
 		this.socket = io(document.location.href);
+		this.socket.on(NET_MESSAGE_SERVER_STATS, this.onServerStats.bind(this));
+		window.setInterval(this.getServerStats.bind(this), 1000);
+		this.getServerStats();
 	}
 	catch (err)
 	{

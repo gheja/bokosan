@@ -30,10 +30,12 @@ ScreenLevel.prototype.tick = function(game)
 		game.statIncrease(STAT_LEVELS_FINISHED);
 		game.screenFadeAndSwitch(SCREEN_LEVELS);
 		game.saveScores();
+		game.statSubmit(1);
 	}
 	else if (game.player.isStuck())
 	{
 		game.screenFadeAndSwitch(SCREEN_LEVELS);
+		game.statSubmit(0);
 	}
 	else if (game.player.isInHole())
 	{
@@ -43,12 +45,14 @@ ScreenLevel.prototype.tick = function(game)
 			game.synth.playSound(SOUND_FALLING);
 			game.player.setStatus(OBJ_STATUS_FALLING);
 			game.screenFadeAndSwitch(SCREEN_GAME);
+			game.statSubmit(0);
 		}
 	}
 	else if (game.player.isOnSpikes())
 	{
 		game.synth.playSound(SOUND_SPIKE);
 		game.screenFadeAndSwitch(SCREEN_LEVELS);
+		game.statSubmit(0);
 	}
 	else
 	{
@@ -68,6 +72,7 @@ ScreenLevel.prototype.tick = function(game)
 		{
 			// pause
 			game.screenFadeAndSwitch(SCREEN_MENU);
+			game.statSubmit(0);
 		}
 		
 		if (game.inputHandler.isKeyActive(IH_KEY_UP))
