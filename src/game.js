@@ -623,7 +623,14 @@ Game.prototype.redraw = function()
 
 Game.prototype.loadFinished = function()
 {
-	this.setWaitForKeypress(SCREEN_INTRO);
+	if (this.firstRun)
+	{
+		this.setWaitForKeypress(SCREEN_INTRO);
+	}
+	else
+	{
+		this.setWaitForKeypress(SCREEN_MENU);
+	}
 }
 
 Game.prototype.assetLoadFinished = function()

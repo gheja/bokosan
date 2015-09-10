@@ -16,7 +16,14 @@ ScreenIntro.prototype.init = function(game)
 {
 	this.scrollerPosition = 0;
 	game.synth.playSong(0);
-	game.setWaitForKeypress(SCREEN_MENU);
+	if (game.firstRun)
+	{
+		game.setWaitForKeypress(SCREEN_HOWTO);
+	}
+	else
+	{
+		game.setWaitForKeypress(SCREEN_MENU);
+	}
 }
 
 ScreenIntro.prototype.tick = function(game)
