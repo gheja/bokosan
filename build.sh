@@ -123,7 +123,7 @@ if [ "$do_stage1" == "y" ]; then
 	tmp=`cat ./src/tileset.png | base64 -w 0`
 	cat ./build/stage1/merged.js | sed -e "s!./tileset.png!data:image/png;base64,${tmp}!g" > ./build/stage1/merged2.js
 	
-	_message "Running Closure Compiler (advanced optimizations, pretty print)..."
+	_message "Client: running Closure Compiler (advanced optimizations, pretty print)..."
 	try java -jar ./build/compiler/compiler.jar \
 		--compilation_level ADVANCED_OPTIMIZATIONS \
 		--use_types_for_optimization \
@@ -137,6 +137,9 @@ if [ "$do_stage1" == "y" ]; then
 		--formatting PRETTY_PRINT \
 		--formatting SINGLE_QUOTES \
 		--summary_detail_level 3
+	
+	# not running Closure Compiler...
+	try cp -v ./build/stage1/server.js ./build/stage1/server.min1.js
 fi
 
 if [ "$do_stage2" == "y" ]; then
@@ -146,13 +149,22 @@ if [ "$do_stage2" == "y" ]; then
 	try mkdir -vp ./build/stage2
 	
 	_message "Copying files..."
-	try cp -v ./build/stage1/package.json ./build/stage1/server.js ./build/stage1/game.json ./build/stage2
+	try cp -v ./build/stage1/package.json ./build/stage1/game.json ./build/stage2
 	
-	_message "Running Closure Compiler (whitespace removal)..."
+	_message "Client: running Closure Compiler (whitespace removal)..."
 	try java -jar ./build/compiler/compiler.jar \
 		--compilation_level WHITESPACE_ONLY \
 		--js ./build/stage1/merged2.min1.js \
 		--js_output_file ./build/stage2/merged2.min2.js \
+		--logging_level FINEST \
+		--warning_level VERBOSE \
+		--summary_detail_level 3
+	
+	_message "Server: running Closure Compiler (whitespace removal)..."
+	try java -jar ./build/compiler/compiler.jar \
+		--compilation_level WHITESPACE_ONLY \
+		--js ./build/stage1/server.min1.js \
+		--js_output_file ./build/stage2/server.min2.js \
 		--logging_level FINEST \
 		--warning_level VERBOSE \
 		--summary_detail_level 3
@@ -188,7 +200,7 @@ if [ "$do_stage3" == "y" ]; then
 	_message "Copying files..."
 	try cp -v ./build/stage2/index3.html  ./build/stage3/game/index.html
 	try cp -v ./build/stage2/package.json ./build/stage3/game/
-	try cp -v ./build/stage2/server.js  ./build/stage3/game/
+	try cp -v ./build/stage2/server.min2.js  ./build/stage3/game/server.js
 	try cp -v ./build/stage2/game.json ./build/stage3/
 	
 	try cd ./build
