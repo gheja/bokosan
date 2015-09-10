@@ -174,10 +174,11 @@ if [ "$do_stage3" == "y" ]; then
 	rm -rfv ./build/stage3 || /bin/true
 	
 	try mkdir -vp ./build/stage3
+	try mkdir -vp ./build/stage3/game
 	
 	_message "Copying files..."
-	try cp -v ./build/stage2/index3.html  ./build/stage3/index.html
-	try cp -v ./build/stage2/package.json ./build/stage3/
+	try cp -v ./build/stage2/index3.html  ./build/stage3/game/index.html
+	try cp -v ./build/stage2/package.json ./build/stage3/game/
 	
 	try cd ./build
 	
