@@ -97,11 +97,7 @@ if [ "$do_stage1" == "y" ]; then
 	files=`cat ./src/index.html | grep -vE '<!--' | grep -E '<script.* src="([^"]+)"' | grep -Eo 'src=\".*\"' | cut -d \" -f 2 | grep -vE '/socket.io'`
 	
 	_message "Copying files..."
-	# try cp -v ./src/index.html ./src/style.css ./src/server/server.js ./src/server/package.json ./src/server/game.json ./build/stage1/
-	try cp -v ./src/index.html ./src/style.css ./src/server/package.json ./src/server/game.json ./build/stage1/
-	
-	# don't add the real server.js yet
-	touch ./build/stage1/server.js
+	try cp -v ./src/index.html ./src/style.css ./src/server/server.js ./src/server/package.json ./src/server/game.json ./build/stage1/
 	
 	_message "Removing debug sections, merging files and renaming some variables..."
 	
@@ -179,6 +175,8 @@ if [ "$do_stage3" == "y" ]; then
 	_message "Copying files..."
 	try cp -v ./build/stage2/index3.html  ./build/stage3/game/index.html
 	try cp -v ./build/stage2/package.json ./build/stage3/game/
+	try cp -v ./build/stage2/server.js  ./build/stage3/game/
+	try cp -v ./build/stage2/game.json ./build/stage3/
 	
 	try cd ./build
 	
