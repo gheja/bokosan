@@ -371,7 +371,7 @@ Game.prototype.drawHeader = function()
 
 Game.prototype.setColor = function(index)
 {
-	this.player.colors[index] = [ Math.floor(Math.random() * 4) * 63, Math.floor(Math.random() * 4) * 63, Math.floor(Math.random() * 4) * 63 ];
+	this.player.colors[index] = [ Math.floor(Math.random() * 5) * 63, Math.floor(Math.random() * 5) * 63, Math.floor(Math.random() * 5) * 63 ];
 }
 
 Game.prototype.onResize = function()
