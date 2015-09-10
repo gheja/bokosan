@@ -95,3 +95,12 @@
 /** @const @type {string} */ var STORAGE_HIGHSCORES_TIME_PREFIX = 'ha';
 /** @const @type {string} */ var STORAGE_HIGHSCORES_MOVES_PREFIX = 'hb';
 /** @const @type {string} */ var STORAGE_HIGHSCORES_PULLS_PREFIX = 'hc';
+
+/** @const @type {string} */ var NET_MESSAGE_GET_NEW_UID = 'a';
+/** @const @type {string} */ var NET_MESSAGE_SET_UID = 'b';
+/** @const @type {string} */ var NET_MESSAGE_GET_SERVER_STATS = 'c';
+/** @const @type {string} */ var NET_MESSAGE_SERVER_STATS = 'd';
+/** @const @type {string} */ var NET_MESSAGE_PLAYER_STATS = 'e';
+
+/** @const @type {string} */ var SERVER_DB_KEY_STATS = 's';
+/** @const @type {string} */ var SERVER_DB_KEY_SCORES = 't';
