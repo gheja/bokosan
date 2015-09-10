@@ -726,7 +726,7 @@ Game.prototype.init = function(window)
 		{
 			this.netSend(NET_MESSAGE_GET_NEW_UID, 0);
 		}
-		window.setInterval(this.getServerStats.bind(this), 1000);
+		window.setInterval(this.getServerStats.bind(this), 60000);
 		this.getServerStats();
 	}
 	catch (err)
