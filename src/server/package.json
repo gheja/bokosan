@@ -3,5 +3,5 @@
   "description": "Bokosan - a reverse Sokoban for js13kGames 2015",
   "author": "Gabor Heja (gheja), Zsolt Heja",
   "homepage": "https://github.com/gheja/bokosan",
-  "main": "./server.js"
+  "main": "server.js"
 }
