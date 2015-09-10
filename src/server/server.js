@@ -1,66 +1,93 @@
-var app = require('http').createServer(handler),
-	io = require('socket.io').listen(app),
-	fs = require('fs');
+'use strict';
 
-// DEBUG BEGIN
-function _log(socket, s)
-{
-	console.log("[" + (new Date()).getTime() + "] [" + socket.id + "] " + s);
-}
-// DEBUG END
+/*
+	NET_MESSAGE_GET_NEW_UID = 'a'
+	NET_MESSAGE_SET_UID = 'b'
+	NET_MESSAGE_GET_SERVER_STATS = 'c'
+	NET_MESSAGE_SERVER_STATS = 'd'
+	NET_MESSAGE_PLAYER_STATS = 'e'
+	
+	SERVER_DB_KEY_STATS = 's'
+	SERVER_DB_KEY_SCORES = 't'
+*/
 
-function handler(request, response)
+var io = require('sandbox-io');
+var players = [];
+
+var stats = db(SERVER_DB_KEY_STATS) || [ 0, 0, 0, 0, 0, 0 ];
+var scores = db(SERVER_DB_KEY_SCORES) || [ [], [], [], [], [], [] ];
+var stats1 = [];
+var stats2 = [];
+
+/** @constructor */
+var Player = function(socket)
 {
-	_log({}, "http request: " + request.url);
+	log.debug('Connected.', socket.id);
 	
-	if (request.url != "/" && request.url.indexOf("/?") != 0)
-	{
-		response.writeHead(302, { "Location": "/" } );
-		response.end();
-		return;
-	}
-	
-	fs.readFile("index.html", function(error, data) {
-		if (!error)
+	socket.emit2 = function(a, b){
+		try
 		{
-			_log({}, "  serving index.html");
-			response.writeHead(200);
-			return response.end(data);
+			this.emit(a, b);
 		}
-	});
+		catch (err)
+		{
+		}
+	};
+	socket.on('disconnect', this.onDisconnect.bind(this));
+	socket.on(NET_MESSAGE_PLAYER_STATS, this.onStat.bind(this));
+	socket.on(NET_MESSAGE_GET_NEW_UID, this.onGetNewUid.bind(this));
+	socket.on(NET_MESSAGE_GET_SERVER_STATS, this.onGetServerStats.bind(this));
+	
+	this.socket = socket;
 }
 
-function sortAndTrimArray(array, key, size)
+Player.prototype.onDisconnect = function()
 {
-	array.sort(function(a, b) { return a[key] - b[key]; }).splice(size, 999);
-	
-	return array;
+	log.debug('Disconnected.', this.socket.id);
 }
 
-var _currentPlayerCount = 0;
+Player.prototype.onStat = function(data)
+{
+	log.debug('onStat(): ', data);
+	
+	stats[0] += data[0][0]; // frames
+	stats[1] += data[0][1]; // moves
+	stats[2] += data[0][2]; // pulls
+	stats[3] += 0; // players
+	stats[4] += 1; // started levels
+	stats[5] += data[1]; // finished levels (0: fail, 1: success)
+	
+	db(SERVER_DB_KEY_STATS, stats);
+}
 
-io.sockets.on("connection", function(socket) {
-	_log(socket, "connected");
-	_currentPlayerCount++;
-	_log({}, "current player count: " + _currentPlayerCount);
+Player.prototype.onGetNewUid = function()
+{
+	log.debug('new player');
 	
-	socket.on("disconnect", function() {
-		_log(socket, "disconnected");
-		_currentPlayerCount--;
-		_log({}, "current player count: " + _currentPlayerCount);
-	});
+	this.socket.emit2(NET_MESSAGE_SET_UID, Math.random());
 	
-	socket.on("stat", function() {
-		_log(socket, "< stat");
-	});
+	stats[3]++; // players
+	db(SERVER_DB_KEY_STATS, stats);
+}
+
+Player.prototype.onGetServerStats = function()
+{
+	this.socket.emit2(NET_MESSAGE_SERVER_STATS, [ stats1, stats2 ]);
+}
+
+function statUpdate()
+{
+	stats1 = stats2.slice();
+	stats2 = stats.slice();
 	
-	socket.on("getstat", function() {
-		_log(socket, "< getstat");
-	});
-	
-	socket.on("finished", function(data) {
-		_log(socket, "< finished");
-	});
+	log.debug('statUpdate()', stats);
+}
+
+io.on('connection', function(socket) {
+	log.debug('New connection', socket.id);
+	players.push(new Player(socket));
 });
 
-app.listen(8080);
+statUpdate();
+statUpdate();
+setInterval(statUpdate, 60000);
