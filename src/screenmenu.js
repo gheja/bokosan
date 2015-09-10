@@ -59,14 +59,19 @@ ScreenMenu.prototype.draw = function(game)
 	}
 	
 	game.drawHeader();
-	game.drawSmallText(8, 40, "TOTAL TIME PLAYED");
-	game.drawBigText(40, 50, game.pad(game.timePad(game.statGetLocalStorageValue(STAT_FRAMES) * 1/12), 10, ' '));
-	game.drawSmallText(8, 80, "TOTAL MOVES");
-	game.drawBigText(40, 90, game.pad(game.thousandPad(game.statGetLocalStorageValue(STAT_MOVES)), 10, ' '));
-	game.drawSmallText(8, 120, "TOTAL PULLS");
-	game.drawBigText(40, 130, game.pad(game.thousandPad(game.statGetLocalStorageValue(STAT_PULLS)), 10, ' '));
+	game.drawSmallText(8, 40,
+		"TOTAL TIME PLAYED\n\n\n\n" +
+		"TOTAL MOVES\n\n\n\n" +
+		"TOTAL PULLS"
+	);
+	game.drawBigText(40, 50,
+		game.pad(game.timePad(game.statGetValue(STAT_FRAMES) * 1/12), 10, ' ') + "\n\n" +
+		game.pad(game.thousandPad(game.statGetValue(STAT_MOVES)), 10, ' ') + "\n\n" +
+		game.pad(game.thousandPad(game.statGetValue(STAT_PULLS)), 10, ' ')
+	);
 	
-	if (game.serverStatsTime != 0)
+	
+	if (game.serverStatsTime != 0) // == isConnected
 	{
 		t = ((new Date()).getTime() - game.serverStatsTime) / 60000;
 		
