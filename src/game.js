@@ -133,6 +133,7 @@ var Game = function()
 	this.inputHandler = null;
 	this.touchHandler = null;
 	this.synth = null;
+	this.socket = null;
 }
 
 Game.prototype.fixCanvasContextSmoothing = function(ctx)
@@ -675,6 +676,15 @@ Game.prototype.init = function(window)
 	
 	this.storage = window.localStorage;
 	this.player = new PlayerObj(this, 0, 0);
+	
+	try
+	{
+		this.socket = io(document.location.href);
+	}
+	catch (err)
+	{
+		// no hard feelings
+	}
 	
 	window.addEventListener('resize', this.onResize.bind(this));
 	this.onResize();
