@@ -35,16 +35,12 @@ Synth.prototype.setSongs = function(songs)
 	this.songs = songs;
 }
 
-/*
-Synth.prototype.getFrequency = function(note, finetune)
-{
-	var period = 10*12*16*4 - note * 16*4 - finetune / 2;
-	return 8363 * Math.pow(2, (6*12*16*4 - period) / (12*16*4));
-}
-*/
 Synth.prototype.getFrequencyFromNoteNumber = function(note)
 {
-	var period = 10*12*16*4 - note * 16*4;
+	var period;
+	
+	period = 10*12*16*4 - note * 16*4;
+	
 	return 8363 * Math.pow(2, (6*12*16*4 - period) / (12*16*4));
 }
 
