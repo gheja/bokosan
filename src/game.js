@@ -232,17 +232,17 @@ Game.prototype.saveScoreToLocalStorage = function(key, value, limit)
 
 Game.prototype.saveScores = function()
 {
-	this.saveScoreToLocalStorage('ha' + this.currentLevelIndex, this.currentStats[STAT_FRAMES], 3);
-	this.saveScoreToLocalStorage('hb' + this.currentLevelIndex, this.currentStats[STAT_MOVES], 3);
-	this.saveScoreToLocalStorage('hc' + this.currentLevelIndex, this.currentStats[STAT_PULLS], 3);
+	this.saveScoreToLocalStorage(STORAGE_HIGHSCORES_TIME_PREFIX + this.currentLevelIndex, this.currentStats[STAT_FRAMES], 3);
+	this.saveScoreToLocalStorage(STORAGE_HIGHSCORES_MOVES_PREFIX + this.currentLevelIndex, this.currentStats[STAT_MOVES], 3);
+	this.saveScoreToLocalStorage(STORAGE_HIGHSCORES_PULLS_PREFIX + this.currentLevelIndex, this.currentStats[STAT_PULLS], 3);
 }
 
 Game.prototype.getScores = function(index)
 {
 	return [
-		this.getLocalStorageArray('ha' + index, []),
-		this.getLocalStorageArray('hb' + index, []),
-		this.getLocalStorageArray('hc' + index, [])
+		this.getLocalStorageArray(STORAGE_HIGHSCORES_TIME_PREFIX + index, []),
+		this.getLocalStorageArray(STORAGE_HIGHSCORES_MOVES_PREFIX + index, []),
+		this.getLocalStorageArray(STORAGE_HIGHSCORES_PULLS_PREFIX + index, [])
 	]
 }
 
@@ -372,7 +372,7 @@ Game.prototype.drawHeader = function()
 Game.prototype.setColor = function(index)
 {
 	this.player.colors[index] = [ Math.floor(Math.random() * 5) * 63, Math.floor(Math.random() * 5) * 63, Math.floor(Math.random() * 5) * 63 ];
-	this.setLocalStorageArray('c' + index, this.player.colors[index]);
+	this.setLocalStorageArray(STORAGE_PLAYER_COLOR_PREFIX + index, this.player.colors[index]);
 }
 
 Game.prototype.onResize = function()

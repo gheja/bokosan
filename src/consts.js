@@ -88,3 +88,10 @@
 /** @const @type {number} */ var SONG_CHANNEL_DATA_SAMPLE_ID = 0;
 /** @const @type {number} */ var SONG_CHANNEL_DATA_BASE_NOTE = 1;
 /** @const @type {number} */ var SONG_CHANNEL_DATA_NOTES = 2;
+
+/** @const @type {string} */ var STORAGE_PLAYER_COLOR_PREFIX = 'c';
+/** @const @type {string} */ var STORAGE_PLAYER_UID = 'u';
+/** @const @type {string} */ var STORAGE_PLAYER_NAME = 'n';
+/** @const @type {string} */ var STORAGE_HIGHSCORES_TIME_PREFIX = 'ha';
+/** @const @type {string} */ var STORAGE_HIGHSCORES_MOVES_PREFIX = 'hb';
+/** @const @type {string} */ var STORAGE_HIGHSCORES_PULLS_PREFIX = 'hc';

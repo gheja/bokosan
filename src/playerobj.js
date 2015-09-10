@@ -17,12 +17,12 @@ var PlayerObj = function(game, x, y)
 	this.grabbedBox = null;
 	this.walkStepSoundCounter = 0;
 	
-	this.uid = game.storage.getItem('u') || 0;
-	this.name = game.storage.getItem('n') || 'BOB';
+	this.uid = game.storage.getItem(STORAGE_PLAYER_UID) || 0;
+	this.name = game.storage.getItem(STORAGE_PLAYER_NAME) || 'BOB';
 	this.colors = [
-		game.getLocalStorageArray('c0', [ 255, 255, 0 ] ),
-		game.getLocalStorageArray('c1', [ 0, 128, 192 ] ),
-		game.getLocalStorageArray('c2', [ 255, 128, 0 ] )
+		game.getLocalStorageArray(STORAGE_PLAYER_COLOR_PREFIX + '0', [ 255, 255, 0 ] ),
+		game.getLocalStorageArray(STORAGE_PLAYER_COLOR_PREFIX + '1', [ 0, 128, 192 ] ),
+		game.getLocalStorageArray(STORAGE_PLAYER_COLOR_PREFIX + '2', [ 255, 128, 0 ] )
 	];
 	
 	
