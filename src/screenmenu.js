@@ -46,7 +46,17 @@ ScreenMenu.prototype.tick = function(game)
 
 ScreenMenu.prototype.draw = function(game)
 {
-	var i;
+	var t;
+	
+	function lerp(a, b, t)
+	{
+		return Math.floor(a + (b - a) * t);
+	}
+	
+	function stat(index, t)
+	{
+		return lerp(game.serverStatsPrevious[index], game.serverStatsLatest[index], t);
+	}
 	
 	game.drawHeader();
 	game.drawSmallText(8, 40, "TOTAL TIME PLAYED");
@@ -56,14 +66,19 @@ ScreenMenu.prototype.draw = function(game)
 	game.drawSmallText(8, 120, "TOTAL PULLS");
 	game.drawBigText(40, 130, game.pad(game.thousandPad(game.statGetLocalStorageValue(STAT_PULLS)), 10, ' '));
 	
-	game.drawSmallText(8, 190,
-		"GLOBAL STATISTICS\n" +
-		" TIME PLAYED    12:34:56\n" +
-		" MOVES         1,212,323\n" +
-		" PULLS            78,117\n" +
-		" PLAYERS           1,312\n" +
-		" LEVELS STARTED  134,111\n" +
-		" LEVELS FINISHED  27,178");
+	if (game.serverStatsTime != 0)
+	{
+		t = ((new Date()).getTime() - game.serverStatsTime) / 60000;
+		
+		game.drawSmallText(8, 190,
+			"GLOBAL STATISTICS\n" +
+			" TIME PLAYED" + game.pad(game.timePad(stat(0, t) * 1/12), 12, ' ') + "\n" +
+			" MOVES      " + game.pad(game.thousandPad(stat(1, t)), 12, ' ') + "\n" +
+			" PULLS      " + game.pad(game.thousandPad(stat(2, t)), 12, ' ') + "\n" +
+			" PLAYERS SEEN" + game.pad(game.thousandPad(stat(3, t)), 11, ' ') + "\n" +
+			" LEVELS STARTED" + game.pad(game.thousandPad(stat(4, t)),  9, ' ') + "\n" +
+			" LEVELS FINISHED" + game.pad(game.thousandPad(stat(5, t)), 8, ' '));
+	}
 	
 	game.ctx.fillStyle = "#474747";
 	
