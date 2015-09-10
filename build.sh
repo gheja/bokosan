@@ -2,13 +2,47 @@
 
 name="bokosan"
 
+if [ $TERM == "xterm" ] || [ $TERM == "screen" ]; then
+	color_error='\033[1;31m'
+	color_message='\033[1;38m'
+	color_default='\033[0m'
+else
+	color_error=''
+	color_message=''
+	color_default=''
+fi
+
+_message()
+{
+	echo ""
+	if [ $TERM == "xterm" ]; then
+		echo -ne "${color_message}"
+		echo "$@"
+		echo -ne "${color_default}"
+	else
+		echo "$@"
+	fi
+}
+
+_error()
+{
+	echo ""
+	if [ $TERM == "xterm" ]; then
+		echo -ne "${color_error}"
+		echo "$@"
+		echo -ne "${color_default}"
+	else
+		echo "$@"
+	fi
+}
+
 try()
 {
 	$@
 	
 	result=$?
 	if [ $result != 0 ]; then
-		echo "\"$@\" failed with exit code $result."
+		_error "ERROR: \"$@\" failed with exit code $result."
 		exit 1
 	fi
 }
@@ -17,82 +51,78 @@ do_stage1="y"
 do_stage2="y"
 do_stage3="y"
 
-[ -d build ] || try mkdir -p -m 700 build
-[ -d build/compiler ] || try mkdir -p -m 700 build/compiler
-[ -d build/tmp ] || try mkdir -p -m 700 build/tmp
-[ -d build/game ] || try mkdir -p -m 700 build/game
+[ -d ./build ] || try mkdir -vp ./build
+[ -d ./build/compiler ] || try mkdir -vp ./build/compiler
 
+_message "Checking dependencies..."
 which java 2>/dev/null >/dev/null
 if [ $? != 0 ]; then
-	echo "\"java\" not found in PATH, probably is not installed."
+	_error "ERROR: \"java\" not found in PATH, probably is not installed."
 	exit 1
 fi
 
 which zip 2>/dev/null >/dev/null
 if [ $? != 0 ]; then
-	echo "\"zip\" not found in PATH, probably is not installed."
+	_error "ERROR: \"zip\" not found in PATH, probably is not installed."
 	exit 1
 fi
 
 which base64 2>/dev/null >/dev/null
 if [ $? != 0 ]; then
-	echo "\"base64\" not found in PATH, probably is not installed."
+	_error "ERROR: \"base64\" not found in PATH, probably is not installed."
 	exit 1
 fi
 
-if [ ! -e build/compiler/compiler.jar ]; then
-	echo "* Closure Compiler not found."
+if [ ! -e ./build/compiler/compiler.jar ]; then
+	_message "Closure Compiler not found."
 	
-	try cd build/compiler
+	try cd ./build/compiler
 	
 	if [ ! -e compiler-latest.zip ]; then
-		echo "* Downloading Closure Compiler..."
+		_message "Downloading Closure Compiler..."
 		try wget http://dl.google.com/closure-compiler/compiler-latest.zip
 	fi
 	
-	echo "* Unzipping Closure Compiler... "
+	_message "Unzipping Closure Compiler... "
 	try unzip compiler-latest.zip
 	
 	try cd ../..
 fi
-echo "* Closure Compiler seems to be good."
 
 if [ "$do_stage1" == "y" ]; then
-	echo "* Cleaning up build directories for stage 1..."
-	rm -v build/tmp/* || /bin/true
+	_message "Cleaning up build directories for stage 1..."
+	rm -rfv ./build/stage1 || /bin/true
+	try mkdir -vp ./build/stage1
 	
-	files=`cat ./src/index.html | grep -vE '<!--' | grep -E '<script.* src="([^"]+)"' | grep -Eo 'src=\".*\"' | cut -d \" -f 2`
+	files=`cat ./src/index.html | grep -vE '<!--' | grep -E '<script.* src="([^"]+)"' | grep -Eo 'src=\".*\"' | cut -d \" -f 2 | grep -vE '/socket.io'`
 	
-	echo "* Copying files..."
-	try cp -v ./src/index.html ./src/server/package.json ./src/tileset.png ./src/style.css ./build/tmp/
+	_message "Copying files..."
+	# try cp -v ./src/index.html ./src/style.css ./src/server/server.js ./src/server/package.json ./src/server/game.json ./build/stage1/
+	try cp -v ./src/index.html ./src/style.css ./src/server/package.json ./src/server/game.json ./build/stage1/
 	
+	# don't add the real server.js yet
+	touch ./build/stage1/server.js
+	
+	_message "Removing debug sections, merging files and renaming some variables..."
+	
+	echo "\"use strict\";" > ./build/stage1/merged.js
 	for i in $files; do
-		try cp -v ./src/$i ./build/tmp/
+		cat ./src/$i | sed -e '/DEBUG BEGIN/,/\DEBUG END/{d}' | grep -vE '^\"use strict\";$' >> ./build/stage1/merged.js
 	done
 	
-	echo "* Creating base64 encoded tileset..."
-	tmp=`cat ./build/tmp/tileset.png | base64 -w 0`
-	tileset="data:image/png;base64,$tmp"
+	_message "Embedding tileset.png into js..."
+	tmp=`cat ./src/tileset.png | base64 -w 0`
+	cat ./build/stage1/merged.js | sed -e "s!./tileset.png!data:image/png;base64,${tmp}!g" > ./build/stage1/merged2.js
 	
-	echo "* Removing debug sections, merging files and renaming some variables..."
-	
-	echo "\"use strict\";" > ./build/tmp/merged.js
-	for i in $files; do
-		cat ./build/tmp/$i | sed -e '/DEBUG BEGIN/,/\DEBUG END/{d}' | grep -vE '^\"use strict\";$' >> ./build/tmp/merged.js
-	done
-	
-	echo "* Embedding tileset.png into js..."
-	cat ./build/tmp/merged.js | sed -e "s!./tileset.png!${tileset}!g" > ./build/tmp/merged2.js
-	
-	echo "* Running Closure Compiler (advanced optimizations, pretty print)..."
+	_message "Running Closure Compiler (advanced optimizations, pretty print)..."
 	try java -jar ./build/compiler/compiler.jar \
 		--compilation_level ADVANCED_OPTIMIZATIONS \
 		--use_types_for_optimization \
 		--externs ./src/externs.js \
-		--js ./build/tmp/merged2.js \
-		--js_output_file ./build/tmp/merged.min1.js \
-		--create_source_map ./build/tmp/merged.min1.js.map \
-		--variable_renaming_report ./build/tmp/merged.min1.js.vars \
+		--js ./build/stage1/merged2.js \
+		--js_output_file ./build/stage1/merged2.min1.js \
+		--create_source_map ./build/stage1/merged2.min1.js.map \
+		--variable_renaming_report ./build/stage1/merged2.min1.js.vars \
 		--logging_level FINEST \
 		--warning_level VERBOSE \
 		--formatting PRETTY_PRINT \
@@ -101,43 +131,53 @@ if [ "$do_stage1" == "y" ]; then
 fi
 
 if [ "$do_stage2" == "y" ]; then
-	echo "* Cleaning up build directories for stage 2..."
-	rm -v build/game/* || /bin/true
+	_message "Cleaning up build directories for stage 2..."
+	rm -rfv ./build/stage2 || /bin/true
 	
-	echo "* Running Closure Compiler (whitespace removal)..."
+	try mkdir -vp ./build/stage2
+	
+	_message "Copying files..."
+	try cp -v ./build/stage1/package.json ./build/stage1/server.js ./build/stage1/game.json ./build/stage2
+	
+	_message "Running Closure Compiler (whitespace removal)..."
 	try java -jar ./build/compiler/compiler.jar \
 		--compilation_level WHITESPACE_ONLY \
-		--js ./build/tmp/merged.min1.js \
-		--js_output_file ./build/tmp/merged.min2.js \
+		--js ./build/stage1/merged2.min1.js \
+		--js_output_file ./build/stage2/merged2.min2.js \
 		--logging_level FINEST \
 		--warning_level VERBOSE \
 		--summary_detail_level 3
 	
-	echo "* Optimizing style.css..."
-	cat ./build/tmp/style.css | sed -r 's/^\s+//g' | sed -r 's/:\s+/:/g' | tr -d '\r' | tr -d '\n' | sed -e 's/;\}/\}/g' > ./build/tmp/style2.css
+	_message "Optimizing style.css..."
+	cat ./build/stage1/style.css | sed -r 's/^\s+//g' | sed -r 's/:\s+/:/g' | tr -d '\r' | tr -d '\n' | sed -e 's/;\}/\}/g' > ./build/stage2/style2.css
 	
-	echo "* Embedding js and css into index.html..."
-	cat ./build/tmp/index.html | sed -E 's,<script[^>]+></script>,,gi' | sed -E 's,<link type=\"text/css\"[^>]+>,,gi'| sed \
+	_message "Embedding js and css into index.html..."
+	cat ./build/stage1/index.html | sed -E 's,<script[^>]+></script>,,gi' | sed -E 's,<link type=\"text/css\"[^>]+>,,gi'| sed \
 		-e '/<!-- insert minified javascript here -->/{' \
 		-e 'i <script>' \
-		-e 'r ./build/tmp/merged.min2.js' \
+		-e 'r ./build/stage2/merged2.min2.js' \
 		-e 'a </script>' \
 		-e 'd}' \
 		-e '/<!-- insert minified css here -->/{' \
 		-e 'i <style>' \
-		-e 'r ./build/tmp/style2.css' \
+		-e 'r ./build/stage2/style2.css' \
 		-e 'a </style>' \
 		-e 'd}' \
-		> ./build/tmp/index2.html
+		> ./build/stage2/index2.html
 	
-	echo "* Optimizing index.html..."
-	cat ./build/tmp/index2.html | grep -Ev '^\s+$' | sed -r 's/^\s+//g' | tr -d '\r' | tr '\n' ' ' | sed -e 's/> </></g' > ./build/tmp/index3.html
+	_message "Optimizing index.html..."
+	cat ./build/stage2/index2.html | grep -Ev '^\s+$' | sed -r 's/^\s+//g' | tr -d '\r' | tr '\n' ' ' | sed -e 's/> </></g' > ./build/stage2/index3.html
 fi
 
 if [ "$do_stage3" == "y" ]; then
-	echo "* Creating package..."
-	try cp -v ./build/tmp/index3.html  ./build/game/index.html
-	try cp -v ./build/tmp/package.json ./build/game/
+	_message "Cleaning up build directories for stage 3..."
+	rm -rfv ./build/stage3 || /bin/true
+	
+	try mkdir -vp ./build/stage3
+	
+	_message "Copying files..."
+	try cp -v ./build/stage2/index3.html  ./build/stage3/index.html
+	try cp -v ./build/stage2/package.json ./build/stage3/
 	
 	try cd ./build
 	
@@ -153,26 +193,24 @@ if [ "$do_stage3" == "y" ]; then
 	fi
 	zip_file="${name}_${now}_${git_id}.zip"
 	
-	echo "* Creating new archive ${zip_file} ..."
-	try cd ./game
+	try cd ..
+	
+	_message "Creating new archive ${zip_file} ..."
+	try cd ./build/stage3
 	try zip ../${zip_file} -r -9 .
 	try cd ../..
 	
-	echo "Done."
+	_message "Build finished."
 	
-	echo ""
-	
-	du -b ./src ./build/game ./build/${zip_file}
-	
-	echo ""
+	du -b ./src ./build/stage1 ./build/stage2 ./build/stage3 ./build/${zip_file}
 	
 	size=`du -b ./build/${zip_file} | awk '{ print $1; }'`
 	if [ $size -gt 13312 ]; then
-		echo "ERROR: Zipped file is larger thank 13 kB, build failed."
+		_error "ERROR: Zipped file is larger thank 13 kB, build failed."
 		exit 1
 	fi
 	
-	echo "Zipped file is smaller than 13 kB, build finished successfully."
+	_message "Great success, zipped file is smaller than 13 kB."
 fi
 
 exit 0
