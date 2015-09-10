@@ -24,11 +24,6 @@ Synth.prototype.addSamples = function(a)
 	}
 }
 
-Synth.prototype.getFrequencyFromNoteNumber = function(note)
-{
-	
-}
-
 // song:
 //   - time between notes (number)
 //   - channels (Array)
