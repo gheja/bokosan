@@ -204,7 +204,7 @@ ScreenLevels.prototype.tick = function(game)
 		if (this.selection <= this.unlockedCount)
 		{
 			this.go(game);
-			game.synth.playSound(SOUND_NEXT);
+			game.synth.playSound(SOUND_HELLO);
 		}
 	}
 	else if (game.inputHandler.isKeyActive(IH_KEY_CANCEL))
