@@ -37,7 +37,7 @@ ScreenIntro.prototype.draw = function(game)
 	var s;
 	
 	//   1234567890123456789012345678901234567890123456789012
-	if (this.scrollerPosition < 50)
+	if (this.scrollerPosition < 70)
 	{
 		s = "MONDAY, 07:50\n"+
 			"\n" +
@@ -54,10 +54,10 @@ ScreenIntro.prototype.draw = function(game)
 			"  LAST 30 YEARS TO PUT EVERYTHING IN PLACE BUT ASDFG\n" +
 			"  THAT WAS A HUGE MISTAKE AND...\n";
 		
-		game.drawSmallText(0, 150, s.substr(0, (this.scrollerPosition - 50) * 3));
+		game.drawSmallText(0, 150, s.substr(0, (this.scrollerPosition - 70) * 3));
 	}
 	
-	if (this.scrollerPosition > 110)
+	if (this.scrollerPosition > 140)
 	{
 		game.drawTouchToContinue(96, 270);
 	}
