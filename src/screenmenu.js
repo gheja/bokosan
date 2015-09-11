@@ -32,7 +32,7 @@ ScreenMenu.prototype.tick = function(game)
 	else if (game.inputHandler.isKeyActive(IH_KEY_ACTION) || game.inputHandler.isKeyActive(IH_KEY_RIGHT))
 	{
 		game.currentMenu.go();
-		game.synth.playSound(SOUND_NEXT);
+		game.synth.playSound(SOUND_MENU);
 	}
 	else if (game.inputHandler.isKeyActive(IH_KEY_CANCEL) || game.inputHandler.isKeyActive(IH_KEY_LEFT))
 	{
