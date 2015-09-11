@@ -9,3 +9,4 @@
   - remove PlayerObj.isStuck() check
   - remove alternative buttons (WASD, menu right/left)
   - optimize color replacement
+  - remove 'use strict' from server.min1.js
