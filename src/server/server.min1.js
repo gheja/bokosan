@@ -11,64 +11,49 @@
 */
 
 var io = require('sandbox-io'),
-	p = [],
 	s = db('s') || [ 0, 0, 0, 0, 0, 0 ],
 	t = db('t') || [ [], [], [], [], [], [] ],
-	s1 = [],
-	s2 = [];
+	u = [],
+	v = [];
 
-/** @constructor */
-var P = function(x)
+function r()
 {
-	x.e = function(a, b){
+	u = v.slice();
+	v = s.slice();
+}
+
+io.on('connection', function(y) {
+	
+	// NET_MESSAGE_PLAYER_STATS
+	y.on('e', function(d) {
+		s[0] += d[0][0]; // frames
+		s[1] += d[0][1]; // moves
+		s[2] += d[0][2]; // pulls
+		s[4] += 1; // started levels
+		s[5] += d[1]; // finished levels (0: fail, 1: success)
+		
+		db('s', s);
+	});
+	
+	// NET_MESSAGE_NEW_BOB
+	y.on('b', function() {
+		s[3]++; // players
+		db('s', s);
+	});
+	
+	// NET_MESSAGE_GET_SERVER_STATS
+	y.on('c', function(){
 		try
 		{
-			this.emit(a, b);
+			// NET_MESSAGE_SERVER_STATS
+			this.emit('d', [ u, v ]);
 		}
 		catch (e)
 		{
 		}
-	};
-	x.on('e', this.A.bind(this));
-	x.on('b', this.B.bind(this));
-	x.on('c', this.C.bind(this));
-	
-	this.x = x;
-}
-
-P.prototype.A = function(d)
-{
-	s[0] += d[0][0]; // frames
-	s[1] += d[0][1]; // moves
-	s[2] += d[0][2]; // pulls
-	s[3] += 0; // players
-	s[4] += 1; // started levels
-	s[5] += d[1]; // finished levels (0: fail, 1: success)
-	
-	db('s', s);
-}
-
-P.prototype.B = function()
-{
-	s[3]++; // players
-	db('s', s);
-}
-
-P.prototype.C = function()
-{
-	this.x.e('d', [ s1, s2 ]);
-}
-
-function S()
-{
-	s1 = s2.slice();
-	s2 = s.slice();
-}
-
-io.on('connection', function(x) {
-	p.push(new P(x));
+	});
 });
 
-S();
-S();
-setInterval(S, 60000);
+r();
+r();
+setInterval(r, 60000);
