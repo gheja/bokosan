@@ -45,7 +45,10 @@ ScreenIntro.prototype.draw = function(game)
 			"JOB AS A WAREHOUSE KEEPER.\n";
 			
 		game.drawSmallText(0, 150, s.substr(0, this.scrollerPosition * 3));
-	
+		if (this.scrollerPosition < 35)
+		{
+			game.synth.playSound(SOUND_TEXT);
+		}
 	}
 	else // if (this.scrollerPosition < 60)
 	{
@@ -55,6 +58,11 @@ ScreenIntro.prototype.draw = function(game)
 			"  THAT WAS A HUGE MISTAKE AND...\n";
 		
 		game.drawSmallText(0, 150, s.substr(0, (this.scrollerPosition - 70) * 3));
+		
+		if (this.scrollerPosition < 120)
+		{
+			game.synth.playSound(SOUND_TEXT);
+		}
 	}
 	
 	if (this.scrollerPosition > 140)
