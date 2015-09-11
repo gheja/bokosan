@@ -521,7 +521,7 @@ Game.prototype.isLevelFinished = function()
 	
 	for (i in this.objects)
 	{
-		if (this.objects[i] instanceof BoxObj && this.objects[i].getNeighbourTile(0, 0) != '.')
+		if (this.objects[i] instanceof BoxObj && (this.objects[i].getNeighbourTile(0, 0) != '.' && this.objects[i].getNeighbourTile(0, 0) != 'P'))
 		{
 			return false;
 		}
