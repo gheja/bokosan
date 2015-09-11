@@ -279,4 +279,5 @@ PlayerObj.prototype.reset = function()
 	this.status = OBJ_STATUS_STANDING;
 	this.orientation = OBJ_ORIENTATION_SOUTH;
 	this.grabbedBox = null;
+	this.moveStepLeft = 0;
 }
