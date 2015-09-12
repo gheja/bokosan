@@ -16,6 +16,7 @@ ScreenLevels.prototype = new Screen2();
 
 ScreenLevels.prototype.go = function(game)
 {
+	game.playLevelMusic();
 	game.gameMode = GAME_MODE_LOCAL;
 	game.nextLevelIndex = this.selection - 1;
 	game.screenFadeAndSwitch(SCREEN_GAME);
@@ -222,6 +223,7 @@ ScreenLevels.prototype.init = function(game)
 				this.unlockedCount++;
 			}
 	}
+	game.playMenuMusic();
 }
 
 ScreenLevels.prototype.tick = function(game)

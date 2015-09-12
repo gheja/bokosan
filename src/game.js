@@ -516,6 +516,16 @@ Game.prototype.onResize = function()
 	
 }
 
+Game.prototype.playMenuMusic = function()
+{
+	this.synth.playSong(1);
+}
+
+Game.prototype.playLevelMusic = function()
+{
+	this.synth.playSong(0);
+}
+
 Game.prototype.loadLevel = function()
 {
 	var x, y, a, b;

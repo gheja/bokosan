@@ -41,6 +41,8 @@ ScreenChallenges.prototype.init = function(game)
 			}
 		}
 	}
+	
+	game.playMenuMusic();
 }
 
 ScreenChallenges.prototype.go = function(game)
