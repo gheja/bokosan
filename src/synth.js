@@ -67,12 +67,11 @@ Synth.prototype.playNextBar = function()
 			continue;
 		}
 		
-		if (this.channelSounds[i])
+		if (this.channelSounds[i] || note == 97)
 		{
 			this.channelSounds[i].stop();
 		}
 		
-		// NOTE: no "key off" handling!
 		source = this.ctx.createBufferSource();
 		source.connect(this.ctx.destination);
 		source.buffer = this.samples[channels[i][SONG_CHANNEL_DATA_SAMPLE_ID]];
