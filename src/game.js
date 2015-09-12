@@ -116,6 +116,7 @@ var Game = function()
 	this.currentChallengeId = null;
 	this.currentChallengeMoves = 0;
 	this.currentChallengeLevelIndex = 0;
+	this.challengeScores = [];
 	
 	this.screens = [
 		new ScreenTitle(),
@@ -684,6 +685,11 @@ Game.prototype.onServerStats = function(data)
 	this.serverStatsLatest = data[1];
 }
 
+Game.prototype.onServerChallengeStats = function(data)
+{
+	this.challengeScores = data;
+}
+
 Game.prototype.init = function(window)
 {
 	var i, j, a, dpr, bsr;
@@ -782,6 +788,7 @@ Game.prototype.init = function(window)
 	{
 		this.socket = io(document.location.href);
 		this.socket.on(NET_MESSAGE_SERVER_STATS, this.onServerStats.bind(this));
+		this.socket.on(NET_MESSAGE_SERVER_CHALLENGE_STATS, this.onServerChallengeStats.bind(this));
 		if (this.firstRun)
 		{
 			this.netSend(NET_MESSAGE_NEW_BOB, 0);

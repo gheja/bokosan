@@ -76,7 +76,7 @@ ScreenChallenges.prototype.drawPreview = function(game, j, p1, p2)
 
 ScreenChallenges.prototype.drawStats = function()
 {
-	var a, s, i;
+	var a, s, i, j;
 	
 	// game.drawBigText(232, 35, "CHALLENGE " + game.pad(this.selection, 2, '0'));
 	game.drawBigText(232, 35, "CHALLENGE " + this.selection);
@@ -93,27 +93,14 @@ ScreenChallenges.prototype.drawStats = function()
 		return;
 	}
 	
+	j = 0;
 	s = "";
-	s += "a xSANYIKA123    4,432\n";
-	s += "b xLEKAN         4,518\n";
-	s += "c xKIAIJOW       4,771\n";
-	s += "c xASAWWWAA      4,771\n";
-	s += "  xVMSJJRSOL     4,833\n";
-	s += "  xNAKG KA KO    5,701\n";
-	s += "  xQUII         11,379\n";
-	s += "  xJAJAJ        13,832\n";
-	s += "  xIYIG         18,841\n";
-	s += "  xKBXVA        19,166\n";
-	s += "  xQUII         23,371\n";
-	s += "  xJAJAJ        24,822\n";
-	s += "  xQUII         28,124\n";
-	s += "  xJAJAJ        44,785\n";
-	s += "  xQUII         45,877\n";
-	s += "  xJAJAJ        45,966\n";
-	s += "  xQUII         49,169\n";
-	s += "  xJAJAJ        51,353\n";
-	s += "  xIYIG         52,845\n";
-	s += "  xKBXVA        54,464\n";
+	a = game.challengeScores[this.selection - 1];
+	for (i=0; i<a.length; i++)
+	{
+		// [challenge id] => [ challenge id, moves, player uid, player name, colors[3][3] ]
+		s += "  x" + a[i][3] + " " + a[i][1] + "\n";
+	}
 	
 	game.drawSmallText(232, 65, s);
 }

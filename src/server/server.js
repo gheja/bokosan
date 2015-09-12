@@ -4,6 +4,8 @@
 	NET_MESSAGE_GET_SERVER_STATS = 'c'
 	NET_MESSAGE_SERVER_STATS = 'd'
 	NET_MESSAGE_PLAYER_STATS = 'e'
+	NET_MESSAGE_PLAYER_CHALLENGE_STATS = 'f'
+	NET_MESSAGE_SERVER_CHALLENGE_STATS = 'g'
 	
 	SERVER_DB_KEY_STATS = 's'
 	SERVER_DB_KEY_SCORES = 't'
@@ -83,16 +85,27 @@ io.on('connection', function(socket) {
 			if (arr[i][2] == data[2])
 			{
 				log.debug("found, #" + i);
+				
+				// if found but previous score is better
+				if (arr[i][1] < data[2])
+				{
+					i = -1;
+				}
 				break;
 			}
 		}
 		
 		// if not found then "i" will be arr.length
 		
-		arr[i] = data;
+		if (i > -1)
+		{
+			arr[i] = data;
+			
+			arr.sort(function(a, b) { return a[1] - b[1]; });
+			arr.splice(20, 999);
+		}
 		
-		arr.sort(function(a, b) { return a[1] - b[1]; });
-		arr.splice(20, 999);
+		this.emit2(NET_MESSAGE_SERVER_CHALLENGE_STATS, scores);
 		
 		db(SERVER_DB_KEY_SCORES, scores);
 	});
@@ -102,6 +115,7 @@ io.on('connection', function(socket) {
 		log.debug('seding server stats');
 		
 		this.emit2(NET_MESSAGE_SERVER_STATS, [ stats1, stats2 ]);
+		this.emit2(NET_MESSAGE_SERVER_CHALLENGE_STATS, scores);
 	});
 });
 

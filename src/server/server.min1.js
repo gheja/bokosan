@@ -5,6 +5,8 @@
 	NET_MESSAGE_GET_SERVER_STATS = 'c'
 	NET_MESSAGE_SERVER_STATS = 'd'
 	NET_MESSAGE_PLAYER_STATS = 'e'
+	NET_MESSAGE_PLAYER_CHALLENGE_STATS = 'f'
+	NET_MESSAGE_SERVER_CHALLENGE_STATS = 'g'
 	
 	SERVER_DB_KEY_STATS = 's'
 	SERVER_DB_KEY_SCORES = 't'
@@ -23,6 +25,16 @@ function r()
 }
 
 io.on('connection', function(y) {
+	y.e = function(a, b)
+	{
+		try
+		{
+			this.emit(a, b);
+		}
+		catch (e)
+		{
+		}
+	};
 	
 	// NET_MESSAGE_PLAYER_STATS
 	y.on('e', function(d) {
@@ -41,16 +53,43 @@ io.on('connection', function(y) {
 		db('s', s);
 	});
 	
+	// NET_MESSAGE_PLAYER_CHALLENGE_STATS
+	y.on('f', function(d)
+	{
+		var a, i;
+		
+		a = t[d[0]];
+		
+		for (i=0; i<a.length; i++)
+		{
+			if (a[i][2] == d[2])
+			{
+				if (a[i][1] < d[1])
+				{
+				
+					i = -1;
+				}
+				break;
+			}
+		}
+		
+		if (i > -1)
+		{
+			a[i] = d;
+			a.sort(function(a, b) { return a[1] - b[1]; });
+			a.splice(20, 999);
+		}
+		
+		this.e('g', t);
+		
+		db('t', t);
+	});
+	
 	// NET_MESSAGE_GET_SERVER_STATS
 	y.on('c', function(){
-		try
-		{
-			// NET_MESSAGE_SERVER_STATS
-			this.emit('d', [ u, v ]);
-		}
-		catch (e)
-		{
-		}
+		// NET_MESSAGE_SERVER_STATS
+		this.e('d', [ u, v ]);
+		this.e('g', t);
 	});
 });
 
