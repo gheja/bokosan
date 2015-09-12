@@ -99,7 +99,9 @@ ScreenChallenges.prototype.drawStats = function()
 	for (i=0; i<a.length; i++)
 	{
 		// [challenge id] => [ challenge id, moves, player uid, player name, colors[3][3] ]
-		s += "  x" + a[i][3] + " " + a[i][1] + "\n";
+		s += "a  " + a[i][3] + " " + a[i][1] + "\n";
+		
+		game.drawImageAdvanced(game._asset, game.ctx, 107, 38, 10, 9, 244, 65 + i * 10, 10, 9, 0, 0, a[i][4]);
 	}
 	
 	game.drawSmallText(232, 65, s);
