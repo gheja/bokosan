@@ -84,26 +84,21 @@ io.on('connection', function(socket) {
 		{
 			if (arr[i][2] == data[2])
 			{
-				log.debug("found, #" + i);
+				log.debug("found, index: " + i + ", old: " + arr[i][1] + ", new: " + data[1]);
 				
 				// if found but previous score is better
-				if (arr[i][1] < data[2])
+				if (arr[i][1] < data[1])
 				{
-					i = -1;
+					return;
 				}
 				break;
 			}
 		}
 		
-		// if not found then "i" will be arr.length
+		arr[i] = data;
 		
-		if (i > -1)
-		{
-			arr[i] = data;
-			
-			arr.sort(function(a, b) { return a[1] - b[1]; });
-			arr.splice(20, 999);
-		}
+		arr.sort(function(a, b) { return a[1] - b[1]; });
+		arr.splice(20, 999);
 		
 		this.emit2(NET_MESSAGE_SERVER_CHALLENGE_STATS, scores);
 		
