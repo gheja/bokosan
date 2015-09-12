@@ -199,10 +199,19 @@ ScreenLevels.prototype.drawStats = function()
 
 ScreenLevels.prototype.init = function(game)
 {
-	// this.max = game.levels.length;
-	this.max = 20;
-	this.unlockedCount = 3;
+	var i, a;
+	
+	this.max = game.levels.length;
+	this.unlockedCount = 2;
 	this.selection = game.currentLevelIndex + 1;
+	for (i=0; i<this.max; i++)
+	{
+			a = game.getScores(i);
+			if (a[1][0])
+			{
+				this.unlockedCount++;
+			}
+	}
 }
 
 ScreenLevels.prototype.tick = function(game)
