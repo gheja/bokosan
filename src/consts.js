@@ -101,6 +101,9 @@
 /** @const @type {string} */ var NET_MESSAGE_GET_SERVER_STATS = 'c';
 /** @const @type {string} */ var NET_MESSAGE_SERVER_STATS = 'd';
 /** @const @type {string} */ var NET_MESSAGE_PLAYER_STATS = 'e';
+/** @const @type {string} */ var NET_MESSAGE_PLAYER_CHALLENGE_STATS = 'f';
+/** @const @type {string} */ var NET_MESSAGE_GET_SERVER_CHALLENGE_STATS = 'g';
+/** @const @type {string} */ var NET_MESSAGE_SERVER_CHALLENGE_STATS = 'h';
 
 /** @const @type {string} */ var SERVER_DB_KEY_STATS = 's';
 /** @const @type {string} */ var SERVER_DB_KEY_SCORES = 't';
