@@ -189,6 +189,20 @@ Game.prototype.pad = function(i, length, padder)
 	return s;
 }
 
+Game.prototype.rpad = function(i, length, padder)
+{
+	var s;
+	
+	s = i.toString();
+	
+	while (s.length < length)
+	{
+		s += padder;
+	}
+	
+	return s;
+}
+
 Game.prototype.thousandPad = function(num)
 {
 	// thx Elias Zamaria @ http://stackoverflow.com/a/2901298
