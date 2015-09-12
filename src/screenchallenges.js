@@ -56,12 +56,6 @@ ScreenChallenges.prototype.go = function(game)
 	game.screenFadeAndSwitch(SCREEN_GAME);
 }
 
-ScreenChallenges.prototype.drawSelectionBox = function()
-{
-	game.ctx.fillStyle = '#000';
-	game.ctx.fillRect((((this.selection - 1) % 6) % 2) * 110 + 16, Math.floor(((this.selection - 1) % 6) / 2) * 80 + 46, 96, 72);
-}
-
 ScreenChallenges.prototype.drawPreview = function(game, j, p1, p2)
 {
 	var s, i;

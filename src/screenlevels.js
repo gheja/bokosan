@@ -204,7 +204,6 @@ ScreenLevels.prototype.drawStats = function()
 		s += "YOU HAVE NOT COMPLETED\nTHIS LEVEL YET";
 	}
 	
-	
 	game.drawSmallText(240, 65, s);
 }
 
