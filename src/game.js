@@ -729,7 +729,7 @@ Game.prototype.init = function(window)
 	this._asset.src = "./tileset.png";
 	
 	this.inputHandler = new InputHandler(window);
-	this.touchHandler = new TouchHandler(this.inputHandler, 200, 200, window);
+	this.touchHandler = new TouchHandler(this.inputHandler, 100, 100, window);
 	
 	this.switchScreen(SCREEN_TITLE);
 	this.fadeMode = FADE_MODE_IN;
