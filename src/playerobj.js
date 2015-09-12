@@ -256,7 +256,7 @@ PlayerObj.prototype.isInHole = function()
 	{
 		a = this.getNeighbourTile(0, 0);
 		
-		if (a == 'a' || a == 'b' || a == 'c' || a == 'd')
+		if (a == 'a' || a == 'b' || a == 'c' || a == 'd' || a == 'f' || a == 'g' || a == 'h')
 		{
 			return true;
 		}

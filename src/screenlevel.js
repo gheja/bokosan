@@ -183,6 +183,18 @@ ScreenLevel.prototype.draw = function(game)
 						game.drawTile(a, b, 8, 0, 0, 0);
 					}
 				break;
+				
+				case "f": // hole
+					game.drawTile(a, b, 19, 0, 0, 0);
+				break;
+				
+				case "g": // hole
+					game.drawTile(a, b, 20, 0, 0, 0);
+				break;
+				
+				case "h": // hole
+					game.drawTile(a, b, 21, 0, 0, 0);
+				break;
 			}
 			
 			

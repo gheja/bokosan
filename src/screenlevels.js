@@ -54,6 +54,7 @@ ScreenLevels.prototype.drawPreview = function(game, j, p1, p2)
 				break;
 				
 				case "B":
+				case "E":
 					color = "#eee";
 				break;
 				
@@ -62,16 +63,32 @@ ScreenLevels.prototype.drawPreview = function(game, j, p1, p2)
 					color = "#333";
 				break;
 				
+/*
 				case "a":
 				case "b":
 				case "c":
 				case "d":
 				case "e":
+				case "f":
+				case "g":
+				case "h":
 					color = "#000";
 				break;
 				
 				default:
 					continue;
+				break;
+*/
+				case " ":
+					continue;
+				break;
+				
+				case "e":
+					color = "#222";
+				break;
+				
+				default:
+					color = "#000";
 				break;
 			}
 			
