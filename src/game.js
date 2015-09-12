@@ -52,12 +52,6 @@ var Game = function()
 			[ "BACK TO MENU", ACTION_OPEN_MENU, MENU_MAIN ]
 		]),
 		
-		// MENU_PAUSED
-		new Menu(this, [
-			[ "CONTINUE", ACTION_CHANGE_SCREEN, SCREEN_GAME ],
-			[ "BACK TO MENU", ACTION_OPEN_MENU, MENU_MAIN ]
-		]),
-		
 		// MENU_CUSTOMIZE
 		new Menu(this, [
 			[ "NAME", ACTION_CUSTOM, function(){} ],

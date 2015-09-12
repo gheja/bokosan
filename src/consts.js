@@ -22,8 +22,7 @@
 /** @const @type {number} */ var MENU_MAIN = 0;
 /** @const @type {number} */ var MENU_PLAY = 1;
 /** @const @type {number} */ var MENU_OPTIONS = 2;
-/** @const @type {number} */ var MENU_PAUSED = 3;
-/** @const @type {number} */ var MENU_CUSTOMIZE = 4;
+/** @const @type {number} */ var MENU_CUSTOMIZE = 3;
 
 /** @const @type {number} */ var ACTION_OPEN_MENU = 0;
 /** @const @type {number} */ var ACTION_CHANGE_SCREEN = 1;
