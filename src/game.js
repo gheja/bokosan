@@ -735,10 +735,10 @@ Game.prototype.init = function(window)
 	if (!this.player.uid)
 	{
 		this.firstRun = true;
-		this.player.uid = Math.random();
-		this.player.name = "BOB " + this.pad(Math.floor(this.player.uid * 1000000), 6, '0');
-		this.storage.setItem(STORAGE_PLAYER_UID, this.player.uid);
-		this.storage.setItem(STORAGE_PLAYER_NAME, this.player.name);
+		this.player.uid = Math.floor(Math.random() * 1000000);
+		this.player.name = "BOB " + this.pad(this.player.uid, 6, '0');
+		this.setLocalStorageInt(STORAGE_PLAYER_UID, this.player.uid);
+		this.setLocalStorageString(STORAGE_PLAYER_NAME, this.player.name);
 	}
 	
 	this._asset = new Image();

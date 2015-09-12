@@ -17,8 +17,8 @@ var PlayerObj = function(game, x, y)
 	this.grabbedBox = null;
 	this.walkStepSoundCounter = 0;
 	
-	this.uid = game.storage.getItem(STORAGE_PLAYER_UID) || 0;
-	this.name = game.storage.getItem(STORAGE_PLAYER_NAME) || 'BOB';
+	this.uid = game.getLocalStorageInt(STORAGE_PLAYER_UID, 0);
+	this.name = game.getLocalStorageString(STORAGE_PLAYER_NAME);
 	this.colors = [
 		game.getLocalStorageArray(STORAGE_PLAYER_COLOR_PREFIX + '0', [ 255, 255, 0 ] ),
 		game.getLocalStorageArray(STORAGE_PLAYER_COLOR_PREFIX + '1', [ 0, 128, 192 ] ),
