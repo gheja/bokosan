@@ -419,7 +419,6 @@ Game.prototype.drawTile = function(posX, posY, tileNumber, rotated, mirrored, fl
 {
 	if (!floorOnly)
 	{
-		// this.drawImageAdvanced(this._asset, c, tileNumber * 28, 11, 27, 25, posX, posY, 27, 25, rotated, mirrored);
 		this.ctx.drawImage(this._asset, tileNumber * 28, 11, 27, 25, posX, posY, 27, 25);
 	}
 	else
@@ -471,19 +470,15 @@ Game.prototype.onResize = function()
 	w = WIDTH * this.zoomLevel;
 	h = HEIGHT * this.zoomLevel;
 	
-	// this check does not work on mobile. what.
-	// if (tmp != this.zoomLevel)
-	{
-		// I just _really_ love the hiDPI display hacks...
-		this.realCanvas.width = w * this.pixelRatio;
-		this.realCanvas.height = h * this.pixelRatio;
-		
-		// these are reset to true on resize
-		this.fixCanvasContextSmoothing(this.realCtx);
-		
-		this.realCanvas.style.width = w;
-		this.realCanvas.style.height = h;
-	}
+	// I just _really_ love the hiDPI display hacks...
+	this.realCanvas.width = w * this.pixelRatio;
+	this.realCanvas.height = h * this.pixelRatio;
+	
+	// these are reset to true on resize
+	this.fixCanvasContextSmoothing(this.realCtx);
+	
+	this.realCanvas.style.width = w;
+	this.realCanvas.style.height = h;
 	
 	this.realCanvas.style.left = (window.innerWidth - w) / 2;
 	this.realCanvas.style.top = (window.innerHeight - h) / 2;
@@ -493,18 +488,6 @@ Game.prototype.onResize = function()
 Game.prototype.loadLevel = function()
 {
 	var x, y, a, b;
-	
-/*
-	if (this.gameMode == GAME_MODE_CHALLENGE)
-	{
-		// in case of user is falling to the previous level
-		// this value is set - do not change it
-		if (this.nextLevelIndex != null)
-		{
-			this.currentLevel = this.currentChallenge[this.currentChallengeLevelIndex];
-		}
-	}
-*/
 	
 	this.statReset();
 	this.statIncrease(STAT_LEVELS_STARTED);
