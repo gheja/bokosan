@@ -47,9 +47,8 @@ var Game = function()
 		
 		// MENU_OPTIONS
 		new Menu(this, [
-			[ "MUSIC:      ON", ACTION_CUSTOM, function(){} ],
-			[ "SOUND:      ON", ACTION_CUSTOM, function(){} ],
-			[ "SEND STATS: ON", ACTION_CUSTOM, function(){} ],
+			[ "TOGGLE MUSIC", ACTION_CUSTOM, this.toggleMusic.bind(this) ],
+			[ "TOGGLE SOUND", ACTION_CUSTOM, this.toggleSound.bind(this) ],
 			[ "BACK TO MENU", ACTION_OPEN_MENU, MENU_MAIN ]
 		]),
 		
@@ -151,7 +150,20 @@ var Game = function()
 	this.serverStatsPrevious = [];
 	this.serverStatsLatest = [];
 	
+	this.musicEnabled = true;
+	this.soundEnabled = true;
+	
 	this.firstRun = false;
+}
+
+Game.prototype.toggleSound = function()
+{
+	this.soundEnabled = !this.soundEnabled;
+}
+
+Game.prototype.toggleMusic = function()
+{
+	this.musicEnabled = !this.musicEnabled;
 }
 
 Game.prototype.fixCanvasContextSmoothing = function(ctx)
@@ -726,7 +738,7 @@ Game.prototype.init = function(window)
 	this.fadeMode = FADE_MODE_IN;
 	this.fadePercent = 0;
 	
-	this.synth = new Synth();
+	this.synth = new Synth(this);
 	this.synth.addSamples([
 		[,,0.2,0.03,0.5,0.65,,,,,,0.42,0.54,,,,,,1,-1,,,-1,0.4], // SOUND_HELLO
 		[,0.01,0.01,0.1,0.05,0.65,,,,,,,,,,,,,1,-1,,,-1,0.5], // SOUND_MENU

@@ -3,8 +3,9 @@
 /**
  * @constructor
  */
-var Synth = function()
+var Synth = function(game)
 {
+	this.game = game;
 	this.ctx = new (window.AudioContext || window.webkitAudioContext)();
 	/** @type {Array<AudioBuffer>} */ this.samples = [];
 	/** @type {Array<Array>} */ this.songs = [];
@@ -48,6 +49,11 @@ Synth.prototype.playNextBar = function()
 {
 	var source, i, channels, note;
 	
+	if (!this.game.musicEnabled)
+	{
+		return;
+	}
+	
 	channels = this.currentSong[SONG_DATA_CHANNELS];
 	
 	for (i in channels)
@@ -82,6 +88,11 @@ Synth.prototype.playNextBar = function()
 Synth.prototype.playSound = function(id)
 {
 	var source;
+	
+	if (!this.game.soundEnabled)
+	{
+		return;
+	}
 	
 	source = this.ctx.createBufferSource();
 	source.connect(this.ctx.destination);
