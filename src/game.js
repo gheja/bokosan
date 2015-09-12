@@ -507,7 +507,7 @@ Game.prototype.loadLevel = function()
 	this.currentLevel = this.levels[this.currentLevelIndex];
 	
 	this.levelPadX = Math.floor((WIDTH - this.currentLevel[LEVEL_DATA_WIDTH] * 20 - 10) / 2);
-	this.levelPadY = Math.floor((HEIGHT - this.currentLevel[LEVEL_DATA_HEIGHT] * 18 - 9) / 2);
+	this.levelPadY = Math.floor((HEIGHT - this.currentLevel[LEVEL_DATA_HEIGHT] * 18 - 27) / 2);
 	
 	this.objects.length = 0;
 	this.objects.push(this.player);

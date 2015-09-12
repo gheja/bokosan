@@ -34,14 +34,14 @@ ScreenLevels.prototype.drawPreview = function(game, j, p1, p2)
 	l = game.levels[j - 1];
 	
 	padX = Math.floor((22 - l[LEVEL_DATA_WIDTH]) / 2);
-	padY = Math.floor((15- l[LEVEL_DATA_HEIGHT]) / 2);
+	padY = Math.floor((15 - l[LEVEL_DATA_HEIGHT]) / 2);
 	
 	for (y=0; y<l[LEVEL_DATA_HEIGHT]; y++)
 	{
 		for (x=0; x<l[LEVEL_DATA_WIDTH]; x++)
 		{
-			a = p1 + (x + padX) * 4;
-			b = p2 + (y + padY) * 4;
+			a = p1 + (x + padX) * 4 + 2;
+			b = p2 + (y + padY) * 4 + 2;
 			
 			switch (l[LEVEL_DATA_TILES][y * l[LEVEL_DATA_WIDTH] + x])
 			{
