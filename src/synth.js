@@ -67,9 +67,15 @@ Synth.prototype.playNextBar = function()
 			continue;
 		}
 		
-		if (this.channelSounds[i] || note == 97)
+		if (this.channelSounds[i])
 		{
 			this.channelSounds[i].stop();
+		}
+		
+		// key off
+		if (note == 97)
+		{
+			continue;
 		}
 		
 		source = this.ctx.createBufferSource();
