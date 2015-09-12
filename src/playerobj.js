@@ -130,6 +130,7 @@ PlayerObj.prototype.checkCollisionAndGo = function(dx, dy, steps, speed, fx, fy)
 	{
 		this.setStatus(OBJ_STATUS_WALKING);
 	}
+	this.game.currentChallengeMoves++;
 	this.game.statIncrease(STAT_MOVES);
 }
 

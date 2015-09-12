@@ -68,6 +68,35 @@ io.on('connection', function(socket) {
 		db(SERVER_DB_KEY_STATS, stats);
 	});
 	
+	socket.on(NET_MESSAGE_PLAYER_CHALLENGE_STATS, function(data)
+	{
+		var arr, i;
+		
+		// data is [ challenge id, moves, player uid, player name, colors[3][3] ]
+		
+		log.debug('received challenge stats', data);
+		
+		arr = scores[data[0]];
+		
+		for (i=0; i<arr.length; i++)
+		{
+			if (arr[i][2] == data[2])
+			{
+				log.debug("found, #" + i);
+				break;
+			}
+		}
+		
+		// if not found then "i" will be arr.length
+		
+		arr[i] = data;
+		
+		arr.sort(function(a, b) { return a[1] - b[1]; });
+		arr.splice(20, 999);
+		
+		db(SERVER_DB_KEY_SCORES, scores);
+	});
+	
 	socket.on(NET_MESSAGE_GET_SERVER_STATS, function()
 	{
 		log.debug('seding server stats');

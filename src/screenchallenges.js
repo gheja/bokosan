@@ -12,17 +12,45 @@ ScreenChallenges.prototype = new ScreenLevels();
 
 ScreenChallenges.prototype.init = function(game)
 {
-	this.offline = 1;
-	this.selection = 1;
+	var i, j, ok, a;
+	
 	this.min = 1;
-	this.max = 1;
-	this.unlockedCount = 1;
+	this.max = 6;
+	this.unlockedCount = 0;
+	
+	if (!game.isOffline)
+	{
+		for (i=0; i<game.challenges.length; i++)
+		{
+			ok = true;
+			for (j=0; j<game.challenges[i].length; j++)
+			{
+				// check if level was solved earlier
+				a = game.getScores(game.challenges[i][j]);
+				
+				if (!a[1][0])
+				{
+					ok = false;
+				}
+			}
+			
+			if (ok)
+			{
+				// NOTE: unlocking must be done in order!
+				this.unlockedCount = i + 1;
+			}
+		}
+	}
 }
 
 ScreenChallenges.prototype.go = function(game)
 {
-	game.gameMode = GAME_MODE_LOCAL;
-	game.nextLevelIndex = this.selection - 1;
+	game.gameMode = GAME_MODE_CHALLENGE;
+	game.currentChallengeId = this.selection - 1;
+	game.currentChallenge = game.challenges[game.currentChallengeId];
+	game.currentChallengeLevelIndex = 0;
+	game.currentChallengeMoves = 0;
+	game.nextLevelIndex = game.currentChallenge[0];
 	game.screenFadeAndSwitch(SCREEN_GAME);
 }
 

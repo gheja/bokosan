@@ -28,9 +28,26 @@ ScreenLevel.prototype.tick = function(game)
 		// congratulate the user, update highscores, etc.
 		// yes, the player can win even if stuck
 		game.statIncrease(STAT_LEVELS_FINISHED);
-		game.screenFadeAndSwitch(SCREEN_LEVELS);
 		game.saveScores();
 		game.statSubmit(1);
+		if (game.gameMode == GAME_MODE_LOCAL)
+		{
+			game.screenFadeAndSwitch(SCREEN_LEVELS);
+		}
+		else // GAME_MODE_CHALLENGE
+		{
+			game.currentChallengeLevelIndex++;
+			if (game.currentChallengeLevelIndex < game.currentChallenge.length)
+			{
+				game.nextLevelIndex = game.currentChallenge[game.currentChallengeLevelIndex];
+				game.screenFadeAndSwitch(SCREEN_GAME);
+			}
+			else
+			{
+				game.statSubmitChallenge();
+				game.screenFadeAndSwitch(SCREEN_CHALLENGES);
+			}
+		}
 	}
 	else if (game.player.isStuck())
 	{
@@ -187,8 +204,9 @@ ScreenLevel.prototype.draw = function(game)
 		}
 	}
 	
+	if (game.gameMode == GAME_MODE_CHALLENGE)
+	{
+		game.drawSmallText(0, 0, "CHALLENGE MODE   MOVES " + game.pad(game.currentChallengeMoves, 5, '0') + "            LEVEL " + (game.currentChallengeLevelIndex + 1) + " OF " + (game.currentChallenge.length));
+	}
 	game.drawSmallText(0, 270, "TIME " + game.timePad(game.currentStats[STAT_FRAMES] * 1/12) + "   MOVES " + game.pad(game.currentStats[STAT_MOVES], 5, '0') + "   PULLS " + game.pad(game.currentStats[STAT_PULLS], 5, '0') + "  LEVEL 1-" + game.pad(game.currentLevelIndex + 1, 2, '0'));
 }
-
-
-

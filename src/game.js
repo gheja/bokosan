@@ -112,6 +112,18 @@ var Game = function()
 		]
 	];
 	
+	this.challenges = [
+		[ 0, 1 ],
+		[ 6, 7, 8, 9 ],
+		[ 10, 11, 12, 13 ],
+		[ 14, 15, 16, 17 ],
+		[ 18, 19, 20 ]
+	];
+	this.currentChallenge = null;
+	this.currentChallengeId = null;
+	this.currentChallengeMoves = 0;
+	this.currentChallengeLevelIndex = 0;
+	
 	this.screens = [
 		new ScreenTitle(),
 		new ScreenIntro(),
@@ -134,6 +146,7 @@ var Game = function()
 	this.touchHandler = null;
 	this.synth = null;
 	this.socket = null;
+	this.isOffline = true;
 	this.serverStatsTime = 0;
 	this.serverStatsPrevious = [];
 	this.serverStatsLatest = [];
@@ -208,6 +221,11 @@ Game.prototype.netSend = function(message, data)
 Game.prototype.statSubmit = function(completed)
 {
 	this.netSend(NET_MESSAGE_PLAYER_STATS, [ this.currentStats, completed ]);
+}
+
+Game.prototype.statSubmitChallenge = function()
+{
+	this.netSend(NET_MESSAGE_PLAYER_CHALLENGE_STATS, [ this.currentChallengeId, this.currentChallengeMoves, this.player.uid, this.player.name, this.player.colors ]);
 }
 
 Game.prototype.getServerStats = function()
@@ -469,11 +487,19 @@ Game.prototype.loadLevel = function()
 {
 	var x, y, a, b;
 	
-	if (this.gameMode == GAME_MODE_LOCAL)
+/*
+	if (this.gameMode == GAME_MODE_CHALLENGE)
 	{
-		this.statReset();
+		// in case of user is falling to the previous level
+		// this value is set - do not change it
+		if (this.nextLevelIndex != null)
+		{
+			this.currentLevel = this.currentChallenge[this.currentChallengeLevelIndex];
+		}
 	}
+*/
 	
+	this.statReset();
 	this.statIncrease(STAT_LEVELS_STARTED);
 	
 	this.currentLevelIndex = this.nextLevelIndex;
@@ -646,6 +672,7 @@ Game.prototype.renderFrame = function()
 
 Game.prototype.onServerStats = function(data)
 {
+	this.isOffline = false;
 	this.serverStatsTime = (new Date()).getTime();
 	this.serverStatsPrevious = data[0];
 	this.serverStatsLatest = data[1];

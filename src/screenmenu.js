@@ -71,7 +71,7 @@ ScreenMenu.prototype.draw = function(game)
 	);
 	
 	
-	if (game.serverStatsTime != 0) // == isConnected
+	if (!game.isOffline)
 	{
 		t = ((new Date()).getTime() - game.serverStatsTime) / 60000;
 		
