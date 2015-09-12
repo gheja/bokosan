@@ -24,7 +24,7 @@ ScreenLevels.prototype.go = function(game)
 ScreenLevels.prototype.drawSelectionBox = function()
 {
 	game.ctx.fillStyle = '#000';
-	game.ctx.fillRect((((this.selection - 1) % 6) % 2) * 110 + 16, Math.floor(((this.selection - 1) % 6) / 2) * 80 + 46, 96, 72);
+	game.ctx.fillRect((((this.selection - 1) % 6) % 2) * 110 + 16, Math.floor(((this.selection - 1) % 6) / 2) * 76 + 46, 96, 72);
 }
 
 ScreenLevels.prototype.drawPreview = function(game, j, p1, p2)
@@ -114,7 +114,7 @@ ScreenLevels.prototype.drawSelectionOptions = function()
 		}
 		
 		p1 = ((i - 1) % 2) * 110 + 20;
-		p2 = Math.floor((i - 1) / 2) * 80 + 50;
+		p2 = Math.floor((i - 1) / 2) * 76 + 50;
 		
 		game.ctx.fillStyle = "#444";
 		game.ctx.fillRect(p1, p2, 88, 64);
@@ -143,6 +143,16 @@ ScreenLevels.prototype.drawSelectionOptions = function()
 				}
 			}
 		}
+	}
+	
+	if (page != 0)
+	{
+		game.drawSmallTextBlinking(115, 35, "u");
+	}
+	
+	if (page != Math.floor((this.max - 1) / 6))
+	{
+		game.drawSmallTextBlinking(115, 270, "d");
 	}
 }
 
