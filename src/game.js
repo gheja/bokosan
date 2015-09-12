@@ -54,7 +54,7 @@ var Game = function()
 		
 		// MENU_CUSTOMIZE
 		new Menu(this, [
-			[ "NAME", ACTION_CUSTOM, function(){} ],
+			[ "NAME", ACTION_CUSTOM, this.inputPlayerName.bind(this) ],
 			[ "HARD HAT COLOR", ACTION_CUSTOM, this.setColor.bind(this, 0) ],
 			[ "SHIRT COLOR", ACTION_CUSTOM, this.setColor.bind(this, 1) ],
 			[ "PANTS COLOR", ACTION_CUSTOM, this.setColor.bind(this, 2) ],
@@ -149,6 +149,23 @@ var Game = function()
 	this.soundEnabled = true;
 	
 	this.firstRun = false;
+}
+
+Game.prototype.inputPlayerName = function()
+{
+	var a;
+	
+	a = window.prompt('Player name:' , this.player.name);
+	
+	if (a != null)
+	{
+		a = a.toUpperCase().replace(/[^A-Z0-9_@ ]/g, '').trim().substr(0, 10);
+		if (a != "")
+		{
+			this.player.name = a;
+			this.setLocalStorageString(STORAGE_PLAYER_NAME, a);
+		}
+	}
 }
 
 Game.prototype.toggleSound = function()
