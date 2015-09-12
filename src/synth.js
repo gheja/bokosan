@@ -12,6 +12,7 @@ var Synth = function(game)
 	this.timeout = null;
 	/** @type {Array} */ this.currentSong = null;
 	this.currentSongBar = 0;
+	this.currentSongPatternIndex = 0;
 	this.channelSounds = [];
 }
 
@@ -31,6 +32,8 @@ Synth.prototype.addSamples = function(a)
 //     - sample number (number)
 //     - sample base note (number, C-4: ...)
 //     - notes (Array)
+//   - play pattern
+//   - play pattern loop start
 Synth.prototype.setSongs = function(songs)
 {
 	this.songs = songs;
@@ -58,6 +61,10 @@ Synth.prototype.playNextBar = function()
 	
 	for (i in channels)
 	{
+		if (this.currentSong[SONG_DATA_PATTERNS][this.currentSongPatternIndex][i] != 1)
+		{
+			continue;
+		}
 		// notes are 1..96 (1 is C-0, 96 is B-7) and 97 which is key off
 		note = channels[i][SONG_CHANNEL_DATA_NOTES][this.currentSongBar] || 0;
 		
@@ -80,14 +87,26 @@ Synth.prototype.playNextBar = function()
 		
 		source = this.ctx.createBufferSource();
 		source.connect(this.ctx.destination);
-		source.buffer = this.samples[channels[i][SONG_CHANNEL_DATA_SAMPLE_ID]];
+		source.buffer = this.samples[SOUND_FIRST_SONG_SAMPLE + channels[i][SONG_CHANNEL_DATA_SAMPLE_ID]];
 		source.playbackRate.value = this.getFrequencyFromNoteNumber(note) / this.getFrequencyFromNoteNumber(channels[i][SONG_CHANNEL_DATA_BASE_NOTE]);
 		source.start(0);
 		
 		this.channelSounds[i] = source;
 	}
 	
-	this.currentSongBar = (this.currentSongBar + 1) % channels[0][SONG_CHANNEL_DATA_NOTES].length;
+	this.currentSongBar++
+	
+	if (this.currentSongBar == channels[0][SONG_CHANNEL_DATA_NOTES].length)
+	{
+		this.currentSongBar = 0;
+
+		this.currentSongPatternIndex++;
+		
+		if (this.currentSongPatternIndex == this.currentSong[SONG_DATA_PATTERNS].length)
+		{
+			this.currentSongPatternIndex = this.currentSong[SONG_DATA_PATTERN_LOOP_START];
+		}
+	}
 }
 
 Synth.prototype.playSound = function(id)
@@ -114,6 +133,8 @@ Synth.prototype.playSong = function(id)
 	}
 	
 	this.currentSongBar = 0;
+	this.currentSongPatternIndex = 0;
+	
 	this.currentSong = this.songs[id];
 	if (this.timeout)
 	{
