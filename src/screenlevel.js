@@ -19,6 +19,18 @@ ScreenLevel.prototype.init = function(game)
 	}
 }
 
+ScreenLevel.prototype.back = function(game)
+{
+	if (game.gameMode == GAME_MODE_LOCAL)
+	{
+		game.screenFadeAndSwitch(SCREEN_LEVELS);
+	}
+	else
+	{
+		game.screenFadeAndSwitch(SCREEN_CHALLENGES);
+	}
+}
+
 ScreenLevel.prototype.tick = function(game)
 {
 	var i;
@@ -32,7 +44,7 @@ ScreenLevel.prototype.tick = function(game)
 		game.statSubmit(1);
 		if (game.gameMode == GAME_MODE_LOCAL)
 		{
-			game.screenFadeAndSwitch(SCREEN_LEVELS);
+			this.back(game);
 		}
 		else // GAME_MODE_CHALLENGE
 		{
@@ -45,14 +57,14 @@ ScreenLevel.prototype.tick = function(game)
 			else
 			{
 				game.statSubmitChallenge();
-				game.screenFadeAndSwitch(SCREEN_CHALLENGES);
+				this.back(game);
 			}
 		}
 	}
 	else if (game.player.isStuck())
 	{
-		game.screenFadeAndSwitch(SCREEN_LEVELS);
 		game.statSubmit(0);
+		this.back(game);
 	}
 	else if (game.player.isInHole())
 	{
@@ -68,8 +80,8 @@ ScreenLevel.prototype.tick = function(game)
 	else if (game.player.isOnSpikes())
 	{
 		game.synth.playSound(SOUND_SPIKE);
-		game.screenFadeAndSwitch(SCREEN_LEVELS);
 		game.statSubmit(0);
+		this.back(game);
 	}
 	else
 	{
@@ -87,9 +99,8 @@ ScreenLevel.prototype.tick = function(game)
 		
 		if (game.inputHandler.isKeyActive(IH_KEY_CANCEL))
 		{
-			// pause
-			game.screenFadeAndSwitch(SCREEN_MENU);
 			game.statSubmit(0);
+			this.back(game);
 		}
 		
 		if (game.inputHandler.isKeyActive(IH_KEY_UP))
