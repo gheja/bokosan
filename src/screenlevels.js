@@ -16,16 +16,15 @@ ScreenLevels.prototype = new Screen2();
 
 ScreenLevels.prototype.go = function(game)
 {
-	game.playLevelMusic();
 	game.gameMode = GAME_MODE_LOCAL;
 	game.nextLevelIndex = this.selection - 1;
 	game.screenFadeAndSwitch(SCREEN_GAME);
 }
 
-ScreenLevels.prototype.drawSelectionBox = function()
+ScreenLevels.prototype.drawSelectionBox = function(game)
 {
-	game.ctx.fillStyle = '#000';
-	game.ctx.fillRect((((this.selection - 1) % 6) % 2) * 110 + 16, Math.floor(((this.selection - 1) % 6) / 2) * 76 + 46, 96, 72);
+	game.c.fillStyle = '#000';
+	game.c.fillRect((((this.selection - 1) % 6) % 2) * 110 + 16, ~~(((this.selection - 1) % 6) / 2) * 76 + 46, 96, 72);
 }
 
 ScreenLevels.prototype.drawPreview = function(game, j, p1, p2)
@@ -34,8 +33,8 @@ ScreenLevels.prototype.drawPreview = function(game, j, p1, p2)
 	
 	l = game.levels[j - 1];
 	
-	padX = Math.floor((22 - l[LEVEL_DATA_WIDTH]) / 2);
-	padY = Math.floor((15 - l[LEVEL_DATA_HEIGHT]) / 2);
+	padX = ~~((22 - l[LEVEL_DATA_WIDTH]) / 2);
+	padY = ~~((15 - l[LEVEL_DATA_HEIGHT]) / 2);
 	
 	for (y=0; y<l[LEVEL_DATA_HEIGHT]; y++)
 	{
@@ -64,22 +63,6 @@ ScreenLevels.prototype.drawPreview = function(game, j, p1, p2)
 					color = "#333";
 				break;
 				
-/*
-				case "a":
-				case "b":
-				case "c":
-				case "d":
-				case "e":
-				case "f":
-				case "g":
-				case "h":
-					color = "#000";
-				break;
-				
-				default:
-					continue;
-				break;
-*/
 				case " ":
 					continue;
 				break;
@@ -93,17 +76,17 @@ ScreenLevels.prototype.drawPreview = function(game, j, p1, p2)
 				break;
 			}
 			
-			game.ctx.fillStyle = color;
-			game.ctx.fillRect(a, b, 4, 4);
+			game.c.fillStyle = color;
+			game.c.fillRect(a, b, 4, 4);
 		}
 	}
 }
 
-ScreenLevels.prototype.drawSelectionOptions = function()
+ScreenLevels.prototype.drawSelectionOptions = function(game)
 {
 	var i, j, p1, p2, page, a;
 	
-	page = Math.floor((this.selection - 1) / 6);
+	page = ~~((this.selection - 1) / 6);
 	
 	for (i=1; i<=6; i++)
 	{
@@ -115,10 +98,10 @@ ScreenLevels.prototype.drawSelectionOptions = function()
 		}
 		
 		p1 = ((i - 1) % 2) * 110 + 20;
-		p2 = Math.floor((i - 1) / 2) * 76 + 50;
+		p2 = ~~((i - 1) / 2) * 76 + 50;
 		
-		game.ctx.fillStyle = "#444";
-		game.ctx.fillRect(p1, p2, 88, 64);
+		game.c.fillStyle = "#444";
+		game.c.fillRect(p1, p2, 88, 64);
 		
 		if (this.unlockedCount < j)
 		{
@@ -134,14 +117,7 @@ ScreenLevels.prototype.drawSelectionOptions = function()
 			a = game.getScores(j - 1);
 			if (a[1][0])
 			{
-				if (a[1][0] <= game.levels[j - 1][LEVEL_DATA_APLUS])
-				{
-					game.ctx.drawImage(game._asset, 83, 38, 12, 9, p1 + 80, p2 - 4, 12, 9);
-				}
-				else
-				{
-					game.ctx.drawImage(game._asset, 95, 38, 12, 9, p1 + 80, p2 - 4, 12, 9);
-				}
+				game.c.drawImage(game.a, (a[1][0] <= game.levels[j - 1][LEVEL_DATA_APLUS]) ? 83 : 95, 38, 12, 9, p1 + 80, p2 - 4, 12, 9);
 			}
 		}
 	}
@@ -151,20 +127,20 @@ ScreenLevels.prototype.drawSelectionOptions = function()
 		game.drawSmallTextBlinking(115, 35, "u");
 	}
 	
-	if (page != Math.floor((this.max - 1) / 6))
+	if (page != ~~((this.max - 1) / 6))
 	{
 		game.drawSmallTextBlinking(115, 270, "d");
 	}
 }
 
-ScreenLevels.prototype.drawStats = function()
+ScreenLevels.prototype.drawStats = function(game)
 {
 	var a, b, s, i;
 	
 	// stats
 	a = game.getScores(this.selection - 1);
 	
-	game.drawBigText(240, 35, "LEVEL 1-" + game.pad(this.selection, 2, '0'));
+	game.drawBigText(240, 35, "LEVEL 1-" + _pad(this.selection, 2, '0'));
 	
 	if (this.selection > this.unlockedCount)
 	{
@@ -180,7 +156,7 @@ ScreenLevels.prototype.drawStats = function()
 		
 		if (b > 0)
 		{
-			s += "ONLY " + b + " MOVES AWAY\nFROM A+ RANK\n\n";
+			s += "ONLY " + b + " MOVES\nFROM A+ RANK\n\n";
 		}
 		else
 		{
@@ -192,7 +168,7 @@ ScreenLevels.prototype.drawStats = function()
 		
 		for (i in a[0])
 		{
-			s += "  " + game.timePad(a[0][i] * 1/12) + "\n";
+			s += "  " + _timePad(a[0][i] * 1/12) + "\n";
 		}
 		s += "\n";
 		
@@ -222,7 +198,6 @@ ScreenLevels.prototype.init = function(game)
 				this.unlockedCount++;
 			}
 	}
-	game.playMenuMusic();
 }
 
 ScreenLevels.prototype.tick = function(game)
@@ -273,7 +248,7 @@ ScreenLevels.prototype.tick = function(game)
 ScreenLevels.prototype.draw = function(game)
 {
 	game.drawHeader();
-	this.drawSelectionBox();
-	this.drawSelectionOptions();
-	this.drawStats();
+	this.drawSelectionBox(game);
+	this.drawSelectionOptions(game);
+	this.drawStats(game);
 }

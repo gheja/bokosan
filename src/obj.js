@@ -1,5 +1,6 @@
 "use strict";
 
+
 /** @constructor */
 var Obj = function(game, x, y)
 {
@@ -12,23 +13,23 @@ var Obj = function(game, x, y)
 	this.moveStepX = 0;
 	this.moveStepY = 0;
 	this.moveStepLeft = 0;
-	this.renderNeeded = false;
+	this.renderNeeded = 0;
 	this.renderOrder = 0;
 	this.tickCount = 0;
 	this.tileNumber = 0;
 	this.tileRotated = 0;
 	this.tileMirrored = 0;
-	this.floorOnly = false;
+	this.floorOnly = 0;
+	this.animationFrameNumber = 0;
 	this.orientation = OBJ_ORIENTATION_NORTH;
 	this.status = OBJ_STATUS_STANDING;
-	this.animationFrameNumber = 0;
 	/** @type {Array} */ this.colors = null;
 }
 
 Obj.prototype.draw = function()
 {
 	this.game.drawTile(this.x + this.game.levelPadX, this.y + this.game.levelPadY, this.tileNumber, this.tileRotated, this.tileMirrored, this.floorOnly, this.colors);
-	this.renderNeeded = false;
+	this.renderNeeded = 0;
 }
 
 Obj.prototype.tryStop = function()
@@ -40,7 +41,7 @@ Obj.prototype.getNeighbourTile = function(dx, dy)
 {
 	var p;
 	
-	p = (Math.floor(this.y / 18) + dy) * this.game.currentLevel[LEVEL_DATA_WIDTH] + (Math.floor(this.x / 20) + dx);
+	p = (~~(this.y / 18) + dy) * this.game.currentLevel[LEVEL_DATA_WIDTH] + (~~(this.x / 20) + dx);
 	
 	return this.game.currentLevel[LEVEL_DATA_TILES][p];
 },

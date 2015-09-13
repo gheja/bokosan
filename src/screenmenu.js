@@ -4,16 +4,12 @@
  * @constructor
  * @extends {Screen}
  */
-var ScreenMenu = function()
-{
-	this.tickCount = 0;
-}
+var ScreenMenu = function() { }
 
 ScreenMenu.prototype = new Screen2();
 
 ScreenMenu.prototype.init = function(game)
 {
-	game.synth.playSong(1);
 	game.openMenu(MENU_MAIN);
 }
 
@@ -29,19 +25,17 @@ ScreenMenu.prototype.tick = function(game)
 		game.currentMenu.step(1);
 		game.synth.playSound(SOUND_MENU);
 	}
-	else if (game.inputHandler.isKeyActive(IH_KEY_ACTION) || game.inputHandler.isKeyActive(IH_KEY_RIGHT))
+	else if (game.inputHandler.isKeyActive(IH_KEY_ACTION))
 	{
 		game.currentMenu.go();
 		game.synth.playSound(SOUND_MENU);
 	}
-	else if (game.inputHandler.isKeyActive(IH_KEY_CANCEL) || game.inputHandler.isKeyActive(IH_KEY_LEFT))
+	else if (game.inputHandler.isKeyActive(IH_KEY_CANCEL))
 	{
 		game.openMenu(MENU_MAIN);
-		game.synth.playSound(SOUND_MENU);
 	}
 	
 	game.inputHandler.clearKeys();
-	// game.inputHandler.clearReleasedKeys();
 }
 
 ScreenMenu.prototype.draw = function(game)
@@ -50,7 +44,7 @@ ScreenMenu.prototype.draw = function(game)
 	
 	function lerp(a, b, t)
 	{
-		return Math.floor(a + (b - a) * t);
+		return ~~(a + (b - a) * t);
 	}
 	
 	function stat(index, t)
@@ -65,9 +59,9 @@ ScreenMenu.prototype.draw = function(game)
 		"TOTAL PULLS"
 	);
 	game.drawBigText(40, 50,
-		game.pad(game.timePad(game.statGetValue(STAT_FRAMES) * 1/12), 10, ' ') + "\n\n" +
-		game.pad(game.thousandPad(game.statGetValue(STAT_MOVES)), 10, ' ') + "\n\n" +
-		game.pad(game.thousandPad(game.statGetValue(STAT_PULLS)), 10, ' ')
+		_pad(_timePad(game.statGetValue(STAT_FRAMES) * 1/12), 10, ' ') + "\n\n" +
+		_pad(_thousandPad(game.statGetValue(STAT_MOVES)), 10, ' ') + "\n\n" +
+		_pad(_thousandPad(game.statGetValue(STAT_PULLS)), 10, ' ')
 	);
 	
 	
@@ -77,18 +71,18 @@ ScreenMenu.prototype.draw = function(game)
 		
 		game.drawSmallText(8, 190,
 			"GLOBAL STATISTICS\n" +
-			" TIME PLAYED" + game.pad(game.timePad(stat(0, t) * 1/12), 12, ' ') + "\n" +
-			" MOVES      " + game.pad(game.thousandPad(stat(1, t)), 12, ' ') + "\n" +
-			" PULLS      " + game.pad(game.thousandPad(stat(2, t)), 12, ' ') + "\n" +
-			" PLAYERS SEEN" + game.pad(game.thousandPad(stat(3, t)), 11, ' ') + "\n" +
-			" LEVELS STARTED" + game.pad(game.thousandPad(stat(4, t)),  9, ' ') + "\n" +
-			" LEVELS FINISHED" + game.pad(game.thousandPad(stat(5, t)), 8, ' '));
+			" TIME PLAYED" + _pad(_timePad(stat(0, t) * 1/12), 12, ' ') + "\n" +
+			" MOVES      " + _pad(_thousandPad(stat(1, t)), 12, ' ') + "\n" +
+			" PULLS      " + _pad(_thousandPad(stat(2, t)), 12, ' ') + "\n" +
+			" PLAYERS SEEN" + _pad(_thousandPad(stat(3, t)), 11, ' ') + "\n" +
+			" LEVELS STARTED" + _pad(_thousandPad(stat(4, t)),  9, ' ') + "\n" +
+			" LEVELS FINISHED" + _pad(_thousandPad(stat(5, t)), 8, ' '));
 	}
 	
-	game.ctx.fillStyle = "#474747";
+	game.c.fillStyle = "#474747";
 	
-	game.ctx.fillRect(230, 40, 176, 210);
-	game.drawImageAdvanced(game._asset, game.ctx, 376, 22, 10, 8, 300, 50, 10 * 4, 8 * 4, 0, 0, game.player.colors);
+	game.c.fillRect(230, 40, 176, 210);
+	game.drawImageAdvanced(376, 22, 10, 8, 300, 50, 10 * 4, 8 * 4, 0, 0, game.player.colors);
 	game.drawBigText(240, 100, game.player.name);
 	
 	for (i=0; i<game.currentMenu.items.length; i++)
@@ -96,5 +90,5 @@ ScreenMenu.prototype.draw = function(game)
 		game.drawSmallText(240, 150 + i * 20, (game.currentMenu.selection == i ? "> " : "  ") + game.currentMenu.items[i][0]);
 	}
 	
-	game.drawSmallText(0, 270, "WWW.BOKOSAN.NET             GITHUB.COM/GHEJA/BOKOSAN");
+	game.drawSmallText(292, 270, "WWW.BOKOSAN.NET");
 }

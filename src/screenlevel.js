@@ -4,9 +4,7 @@
  * @constructor
  * @extends {Screen}
  */
-var ScreenLevel = function()
-{
-}
+var ScreenLevel = function() { }
 
 ScreenLevel.prototype = new Screen2();
 
@@ -29,16 +27,33 @@ ScreenLevel.prototype.back = function(game)
 	{
 		game.screenFadeAndSwitch(SCREEN_CHALLENGES);
 	}
+	game.playMenuMusic();
 }
 
 ScreenLevel.prototype.tick = function(game)
 {
 	var i;
 	
-	if (game.isLevelFinished())
+	if (game.player.isOnSpikes())
+	{
+		game.synth.playSound(SOUND_SPIKE);
+		game.statSubmit(0);
+		this.back(game);
+	}
+	else if (game.player.isInHole())
+	{
+		if (game.player.status != OBJ_STATUS_FALLING)
+		{
+			game.nextLevelIndex = game.currentLevelIndex - 1;
+			game.synth.playSound(SOUND_FALLING);
+			game.player.setStatus(OBJ_STATUS_FALLING);
+			game.screenFadeAndSwitch(SCREEN_GAME);
+			game.statSubmit(0);
+		}
+	}
+	else if (game.isLevelFinished())
 	{
 		// congratulate the user, update highscores, etc.
-		// yes, the player can win even if stuck
 		game.statIncrease(STAT_LEVELS_FINISHED);
 		game.saveScores();
 		game.statSubmit(1);
@@ -60,28 +75,6 @@ ScreenLevel.prototype.tick = function(game)
 				this.back(game);
 			}
 		}
-	}
-	else if (game.player.isStuck())
-	{
-		game.statSubmit(0);
-		this.back(game);
-	}
-	else if (game.player.isInHole())
-	{
-		if (game.player.status != OBJ_STATUS_FALLING)
-		{
-			game.nextLevelIndex = game.currentLevelIndex - 1;
-			game.synth.playSound(SOUND_FALLING);
-			game.player.setStatus(OBJ_STATUS_FALLING);
-			game.screenFadeAndSwitch(SCREEN_GAME);
-			game.statSubmit(0);
-		}
-	}
-	else if (game.player.isOnSpikes())
-	{
-		game.synth.playSound(SOUND_SPIKE);
-		game.statSubmit(0);
-		this.back(game);
 	}
 	else
 	{
@@ -138,7 +131,7 @@ ScreenLevel.prototype.draw = function(game)
 	
 	for (i=0; i<game.objects.length; i++)
 	{
-		game.objects[i].renderNeeded = true;
+		game.objects[i].renderNeeded = 1;
 	}
 	
 	for (y=0; y<game.currentLevel[LEVEL_DATA_HEIGHT]; y++)
@@ -152,59 +145,51 @@ ScreenLevel.prototype.draw = function(game)
 			switch (c)
 			{
 				case "w": // wall
-					game.drawTile(a, b, 0, 0, 0, 0);
+					game.drawTile(a, b, 0);
 				break;
 				
 				case ".": // floor
 				case "P": // floor (below the player)
-					game.drawTile(a, b, 2, 0, 0, 0);
+					game.drawTile(a, b, 2);
 				break;
 				
 				case "/": // keep-clear floor
 				case "B": // keep-clear floor (below the box)
-					game.drawTile(a, b, 3, 0, 0, 0);
+					game.drawTile(a, b, 3);
 				break;
 				
 				case "a": // hole
-					game.drawTile(a, b, 4, 0, 0, 0);
+					game.drawTile(a, b, 4);
 				break;
 				
 				case "b": // hole
-					game.drawTile(a, b, 5, 0, 0, 0);
+					game.drawTile(a, b, 5);
 				break;
 				
 				case "c": // hole
-					game.drawTile(a, b, 6, 0, 0, 0);
+					game.drawTile(a, b, 6);
 				break;
 				
 				case "d": // hole
-					game.drawTile(a, b, 7, 0, 0, 0);
+					game.drawTile(a, b, 7);
 				break;
 				
 				case "e": // spike
 				case "E": // spike (below the box)
-					if (game.player.x == x * 20 && game.player.y == y * 18)
-					{
-						// triggered spike
-						game.drawTile(a, b, 9, 0, 0, 0);
-					}
-					else
-					{
-						// normal spike
-						game.drawTile(a, b, 8, 0, 0, 0);
-					}
+					// triggered or normal spike
+					game.drawTile(a, b, (game.player.x == x * 20 && game.player.y == y * 18) ? 9 : 8);
 				break;
 				
 				case "f": // hole
-					game.drawTile(a, b, 19, 0, 0, 0);
+					game.drawTile(a, b, 19);
 				break;
 				
 				case "g": // hole
-					game.drawTile(a, b, 20, 0, 0, 0);
+					game.drawTile(a, b, 20);
 				break;
 				
 				case "h": // hole
-					game.drawTile(a, b, 21, 0, 0, 0);
+					game.drawTile(a, b, 21);
 				break;
 			}
 			
@@ -229,7 +214,7 @@ ScreenLevel.prototype.draw = function(game)
 	
 	if (game.gameMode == GAME_MODE_CHALLENGE)
 	{
-		game.drawSmallText(0, 0, "CHALLENGE MODE   MOVES " + game.pad(game.currentChallengeMoves, 5, '0') + "            LEVEL " + (game.currentChallengeLevelIndex + 1) + " OF " + (game.currentChallenge.length));
+		game.drawSmallText(0, 0, "CHALLENGE MODE   MOVES " + _pad(game.currentChallengeMoves, 5, '0') + "            LEVEL " + (game.currentChallengeLevelIndex + 1) + " OF " + (game.currentChallenge.length));
 	}
-	game.drawSmallText(0, 270, "TIME " + game.timePad(game.currentStats[STAT_FRAMES] * 1/12) + "   MOVES " + game.pad(game.currentStats[STAT_MOVES], 5, '0') + "   PULLS " + game.pad(game.currentStats[STAT_PULLS], 5, '0') + "  LEVEL 1-" + game.pad(game.currentLevelIndex + 1, 2, '0'));
+	game.drawSmallText(0, 270, "TIME " + _timePad(game.currentStats[STAT_FRAMES] * 1/12) + "   MOVES " + _pad(game.currentStats[STAT_MOVES], 5, '0') + "   PULLS " + _pad(game.currentStats[STAT_PULLS], 5, '0') + "  LEVEL 1-" + _pad(game.currentLevelIndex + 1, 2, '0'));
 }

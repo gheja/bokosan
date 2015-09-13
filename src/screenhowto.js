@@ -4,9 +4,7 @@
  * @constructor
  * @extends {Screen}
  */
-var ScreenHowto = function()
-{
-}
+var ScreenHowto = function() { }
 
 ScreenHowto.prototype = new Screen2();
 
@@ -15,32 +13,30 @@ ScreenHowto.prototype.init = function(game)
 	game.setWaitForKeypress(SCREEN_MENU);
 }
 
-ScreenHowto.prototype.tick = function(game)
-{
-}
-
 ScreenHowto.prototype.draw = function(game)
 {
+/*
 	game.drawHeader();
-	game.drawBigText(0, 50, "KEYBOARD");
+	game.drawBigText(0, 50, "KEYBOARD\n\n\n\n\nTOUCH DEVICE");
 	game.drawSmallText(24, 70,
-		" u  W  MOVE UP\n" +
-		" d  S  MOVE DOWN\n" +
-		" <  A  MOVE LEFT\n" +
-		" >  D  MOVE RIGHT\n" +
-		"SHIFT  ACCEPT/NEXT/GRAB\n" +
-		"  ESC  CANCEL/BACK"
-	);
-	game.drawBigText(0, 150, "TOUCH DEVICE");
-	game.drawSmallText(24, 170,
-		"SWIPE ON THE RIGHT HALF OF THE SCREEN:\n" +
-		"  MOVE IN SWIPE DIRECTION\n" +
+		"  u    MOVE UP\n" +
+		"  d    MOVE DOWN\n" +
+		"  <    MOVE LEFT\n" +
+		"  >    MOVE RIGHT\n" +
+		"SHIFT  NEXT/GRAB\n" +
+		"  ESC  BACK\n" +
+		"\n" +
+		"\n" +
+		"\n" +
+		"\n" +
+		"SWIPE ON RIGHT HALF OF THE SCREEN:\n" +
+		"  MOVE\n" +
 		"\n" +
 		"TOUCH BOTTOM LEFT CORNER:\n" +
-		"  ACCEPT/NEXT/GRAB\n" +
+		"  NEXT/GRAB\n" +
 		"\n" +
 		"TOUCH TOP LEFT CORNER:\n" +
-		"  CANCEL/BACK"
-	);
+		"  BACK");
 	game.drawTouchToContinue(96, 270);
+*/
 }

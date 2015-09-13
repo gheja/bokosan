@@ -5,14 +5,14 @@
  */
 var InputHandler = function(obj)
 {
-	this.keyPressed = false;
+	this.keyPressed = 0;
 	this.keys = [
-		{ keyCodes: [ 38, 87 ], status: IH_KEY_STAUTS_RESET }, // IH_KEY_UP
-		{ keyCodes: [ 39, 68 ], status: IH_KEY_STAUTS_RESET }, // IH_KEY_RIGHT
-		{ keyCodes: [ 40, 83 ], status: IH_KEY_STAUTS_RESET }, // IH_KEY_DOWN
-		{ keyCodes: [ 37, 65 ], status: IH_KEY_STAUTS_RESET }, // IH_KEY_LEFT
-		{ keyCodes: [ 16, 32, 13 ], status: IH_KEY_STAUTS_RESET }, // IH_KEY_ACTION
-		{ keyCodes: [ 27 ], status: IH_KEY_STAUTS_RESET } // IH_KEY_CANCEL
+		{ keyCode: 38, s: IH_KEY_STAUTS_RESET }, // IH_KEY_UP
+		{ keyCode: 39, s: IH_KEY_STAUTS_RESET }, // IH_KEY_RIGHT
+		{ keyCode: 40, s: IH_KEY_STAUTS_RESET }, // IH_KEY_DOWN
+		{ keyCode: 37, s: IH_KEY_STAUTS_RESET }, // IH_KEY_LEFT
+		{ keyCode: 16, s: IH_KEY_STAUTS_RESET }, // IH_KEY_ACTION
+		{ keyCode: 27, s: IH_KEY_STAUTS_RESET } // IH_KEY_CANCEL
 	];
 	
 	this.bind(obj);
@@ -26,18 +26,13 @@ InputHandler.prototype.setKeyStatus = function(keyCode, statusFrom, statusTo)
 	
 	for (i in this.keys)
 	{
-		for (j=0; j<this.keys[i].keyCodes.length; j++)
+		if (this.keys[i].keyCode == keyCode || (keyCode == -1))
 		{
-			if (this.keys[i].keyCodes[j] == keyCode || keyCode == -1)
+			if (this.keys[i].s == statusFrom || statusFrom == -1)
 			{
-				if (this.keys[i].status == statusFrom || statusFrom == -1)
-				{
-					this.keys[i].status = statusTo;
-				}
-				
-				// no return here as the case keyCode == -1 needs to update all keys
-				break;
+				this.keys[i].s = statusTo;
 			}
+			// no return here as the case keyCode == -1 needs to update all keys
 		}
 	}
 /*
@@ -53,25 +48,25 @@ InputHandler.prototype.setKeyStatus = function(keyCode, statusFrom, statusTo)
 
 InputHandler.prototype.isKeyStatus = function(key, status)
 {
-	if (this.keys[key].status == status)
+	if (this.keys[key].s == status)
 	{
-		return true;
+		return 1;
 	}
 	else
 	{
-		return false;
+		return 0;
 	}
 }
 
 InputHandler.prototype.isKeyActive = function(key)
 {
-	if (this.keys[key].status == IH_KEY_STAUTS_PRESSED || this.keys[key].status == IH_KEY_STAUTS_RELEASED)
+	if (this.keys[key].s == IH_KEY_STAUTS_PRESSED || this.keys[key].s == IH_KEY_STAUTS_RELEASED)
 	{
-		return true;
+		return 1;
 	}
 	else
 	{
-		return false;
+		return 0;
 	}
 }
 
@@ -83,7 +78,7 @@ InputHandler.prototype.onKeyDown = function(e)
 	
 	this.setKeyStatus(keyCode, -1, IH_KEY_STAUTS_PRESSED);
 	
-	this.keyPressed = true;
+	this.keyPressed = 1;
 }
 
 InputHandler.prototype.onKeyUp = function(e)
@@ -97,23 +92,23 @@ InputHandler.prototype.onKeyUp = function(e)
 
 InputHandler.prototype.onTouch = function()
 {
-	this.keyPressed = true;
+	this.keyPressed = 1;
 }
 
 InputHandler.prototype.checkIfKeyPressedAndClear = function()
 {
 	if (this.keyPressed)
 	{
-		this.keyPressed = false;
-		return true;
+		this.keyPressed = 0;
+		return 1;
 	}
 	
-	return false;
+	return 0;
 }
 
 InputHandler.prototype.clearKeys = function()
 {
-	this.keyPressed = false;
+	this.keyPressed = 0;
 	this.setKeyStatus(-1, -1, IH_KEY_STAUTS_RESET);
 }
 

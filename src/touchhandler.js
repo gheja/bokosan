@@ -11,10 +11,10 @@ var TouchHandler = function(inputHandler, leftRightTreshold, upDownTreshold, obj
 {
 	var i;
 	
-	obj.addEventListener("touchstart", this.onTouchStart.bind(this), true);
-	obj.addEventListener("touchmove", this.onTouchMove.bind(this), true);
-	obj.addEventListener("touchend", this.onTouchEnd.bind(this), true);
-	obj.addEventListener("touchcancel", this.onTouchEnd.bind(this), true);
+	obj.addEventListener("touchstart", this.onTouchStart.bind(this), 1);
+	obj.addEventListener("touchmove", this.onTouchMove.bind(this), 1);
+	obj.addEventListener("touchend", this.onTouchEnd.bind(this), 1);
+	obj.addEventListener("touchcancel", this.onTouchEnd.bind(this), 1);
 	
 	this.touches = [];
 	

@@ -15,4 +15,4 @@ var BoxObj = function(game, x, y)
 	this.tileNumber = 1;
 }
 
-BoxObj.prototype = new Obj(0, 0, 0);
+BoxObj.prototype = new Obj();

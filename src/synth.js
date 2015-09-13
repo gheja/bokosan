@@ -30,7 +30,6 @@ Synth.prototype.addSamples = function(a)
 //   - time between notes (number)
 //   - channels (Array)
 //     - sample number (number)
-//     - sample base note (number, C-4: ...)
 //     - notes (Array)
 //   - play pattern
 //   - play pattern loop start
@@ -88,7 +87,7 @@ Synth.prototype.playNextBar = function()
 		source = this.ctx.createBufferSource();
 		source.connect(this.ctx.destination);
 		source.buffer = this.samples[SOUND_FIRST_SONG_SAMPLE + channels[i][SONG_CHANNEL_DATA_SAMPLE_ID]];
-		source.playbackRate.value = this.getFrequencyFromNoteNumber(note) / this.getFrequencyFromNoteNumber(channels[i][SONG_CHANNEL_DATA_BASE_NOTE]);
+		source.playbackRate.value = this.getFrequencyFromNoteNumber(note) / this.getFrequencyFromNoteNumber(49);
 		source.start(0);
 		
 		this.channelSounds[i] = source;

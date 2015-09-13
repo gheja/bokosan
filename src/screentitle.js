@@ -10,14 +10,6 @@ var ScreenTitle = function()
 
 ScreenTitle.prototype = new Screen2();
 
-ScreenTitle.prototype.init = function(game)
-{
-}
-
-ScreenTitle.prototype.tick = function(game)
-{
-}
-
 ScreenTitle.prototype.draw = function(game)
 {
 	game.drawBigText(146, 80, "BOKOSAN");

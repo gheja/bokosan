@@ -1,7 +1,7 @@
-var imageSmoothingEnabled = false;
-var mozImageSmoothingEnabled = false;
-var webkitImageSmoothingEnabled = false;
-var msImageSmoothingEnabled = false;
+var imageSmoothingEnabled = 0;
+var mozImageSmoothingEnabled = 0;
+var webkitImageSmoothingEnabled = 0;
+var msImageSmoothingEnabled = 0;
 
 var io = {};
 io.connect = function(a){};

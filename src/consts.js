@@ -8,13 +8,12 @@
 /** @const @type {number} */ var FADE_MODE_OUT = 2;
 
 /** @const @type {number} */ var SCREEN_TITLE = 0;
-/** @const @type {number} */ var SCREEN_INTRO = 1;
-/** @const @type {number} */ var SCREEN_MENU = 2;
-/** @const @type {number} */ var SCREEN_GAME = 3;
-/** @const @type {number} */ var SCREEN_LEVELS = 4;
-/** @const @type {number} */ var SCREEN_CHALLENGES = 5;
-/** @const @type {number} */ var SCREEN_ABOUT = 6;
-/** @const @type {number} */ var SCREEN_HOWTO = 7;
+/** @const @type {number} */ var SCREEN_MENU = 1;
+/** @const @type {number} */ var SCREEN_GAME = 2;
+/** @const @type {number} */ var SCREEN_LEVELS = 3;
+/** @const @type {number} */ var SCREEN_CHALLENGES = 4;
+/** @const @type {number} */ var SCREEN_ABOUT = 5;
+// /** @const @type {number} */ var SCREEN_HOWTO = 6;
 
 /** @const @type {number} */ var GAME_MODE_LOCAL = 0;
 /** @const @type {number} */ var GAME_MODE_CHALLENGE = 1;
@@ -64,13 +63,11 @@
 /** @const @type {number} */ var SOUND_STEP1 = 2;
 /** @const @type {number} */ var SOUND_STEP2 = 3;
 /** @const @type {number} */ var SOUND_BOX_GRAB = 4;
-/** @const @type {number} */ var SOUND_BOX_RELEASE = 5;
-/** @const @type {number} */ var SOUND_BOX_PULL = 6;
-/** @const @type {number} */ var SOUND_TEXT = 7;
-/** @const @type {number} */ var SOUND_NEXT = 8;
-/** @const @type {number} */ var SOUND_SPIKE = 9;
-/** @const @type {number} */ var SOUND_FALLING = 10;
-/** @const @type {number} */ var SOUND_FIRST_SONG_SAMPLE = 11;
+/** @const @type {number} */ var SOUND_BOX_PULL = 5;
+/** @const @type {number} */ var SOUND_NEXT = 6;
+/** @const @type {number} */ var SOUND_SPIKE = 7;
+/** @const @type {number} */ var SOUND_FALLING = 8;
+/** @const @type {number} */ var SOUND_FIRST_SONG_SAMPLE = 9;
 
 /** @const @type {number} */ var TOUCH_TRESHOLD = 40;
 /** @const @type {number} */ var TOUCH_MODE_CANCEL = 0;
@@ -88,8 +85,7 @@
 /** @const @type {number} */ var SONG_DATA_PATTERN_LOOP_START = 3;
 
 /** @const @type {number} */ var SONG_CHANNEL_DATA_SAMPLE_ID = 0;
-/** @const @type {number} */ var SONG_CHANNEL_DATA_BASE_NOTE = 1;
-/** @const @type {number} */ var SONG_CHANNEL_DATA_NOTES = 2;
+/** @const @type {number} */ var SONG_CHANNEL_DATA_NOTES = 1;
 
 /** @const @type {string} */ var STORAGE_PLAYER_COLOR_PREFIX = 'c';
 /** @const @type {string} */ var STORAGE_PLAYER_UID = 'u';

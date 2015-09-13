@@ -13,11 +13,11 @@ var PlayerObj = function(game, x, y)
 	this.x = x;
 	this.y = y;
 	this.tileNumber = 13;
-	this.floorOnly = true;
+	this.floorOnly = 1;
 	this.grabbedBox = null;
 	this.walkStepSoundCounter = 0;
 	
-	this.uid = game.getLocalStorageInt(STORAGE_PLAYER_UID, 0);
+	this.uid = game.getLocalStorageInt(STORAGE_PLAYER_UID);
 	this.name = game.getLocalStorageString(STORAGE_PLAYER_NAME);
 	this.colors = [
 		game.getLocalStorageArray(STORAGE_PLAYER_COLOR_PREFIX + '0', [ 255, 255, 0 ] ),
@@ -55,7 +55,7 @@ var PlayerObj = function(game, x, y)
 	];
 }
 
-PlayerObj.prototype = new Obj(0, 0, 0);
+PlayerObj.prototype = new Obj();
 
 PlayerObj.prototype.tick = function()
 {
@@ -175,14 +175,7 @@ PlayerObj.prototype.tryWalk = function(orientation)
 
 PlayerObj.prototype.tryStop = function()
 {
-	if (this.grabbedBox === null)
-	{
-		this.setStatus(OBJ_STATUS_STANDING);
-	}
-	else
-	{
-		this.setStatus(OBJ_STATUS_GRAB);
-	}
+	this.setStatus(this.grabbedBox === null ? OBJ_STATUS_STANDING : OBJ_STATUS_GRAB);
 }
 
 PlayerObj.prototype.tryGrab = function()
@@ -225,54 +218,18 @@ PlayerObj.prototype.tryGrab = function()
 
 PlayerObj.prototype.tryRelease = function()
 {
-	if (this.grabbedBox != null)
-	{
-		this.game.synth.playSound(SOUND_BOX_RELEASE);
-	}
 	this.setStatus(OBJ_STATUS_STANDING);
 	this.grabbedBox = null;
 }
 
-PlayerObj.prototype.isStuck = function()
-{
-	if (this.moveStepLeft != 0 ||
-		(this.getNeighbourTile( 0, -1) != 'w' && this.getNeighbourBox( 0, -1) === null) ||
-		(this.getNeighbourTile( 1,  0) != 'w' && this.getNeighbourBox( 1,  0) === null) ||
-		(this.getNeighbourTile( 0,  1) != 'w' && this.getNeighbourBox( 0,  1) === null) ||
-		(this.getNeighbourTile(-1,  0) != 'w' && this.getNeighbourBox(-1,  0) === null)
-	)
-	{
-		return false;
-	}
-	
-	return true;
-}
-
 PlayerObj.prototype.isInHole = function()
 {
-	var a;
-	
-	if (this.moveStepLeft == 0)
-	{
-		a = this.getNeighbourTile(0, 0);
-		
-		if (a == 'a' || a == 'b' || a == 'c' || a == 'd' || a == 'f' || a == 'g' || a == 'h')
-		{
-			return true;
-		}
-	}
-	
-	return false;
+	return (this.moveStepLeft == 0) && ('abcdfgh'.indexOf(this.getNeighbourTile(0, 0)) != -1);
 }
 
 PlayerObj.prototype.isOnSpikes = function()
 {
-	if (this.moveStepLeft == 0 && (this.getNeighbourTile(0, 0) == 'e' || this.getNeighbourTile(0, 0) == 'E'))
-	{
-		return true;
-	}
-	
-	return false;
+	return (this.moveStepLeft == 0 && (this.getNeighbourTile(0, 0) == 'e' || this.getNeighbourTile(0, 0) == 'E'));
 }
 
 PlayerObj.prototype.reset = function()

@@ -236,7 +236,7 @@ function Jsfxr(ctx, values)
 				_period = _maxPeriod;
 				if (_minFreqency > 0)
 				{
-					_finished = true;
+					_finished = 1;
 				}
 			}
 			
@@ -302,7 +302,7 @@ function Jsfxr(ctx, values)
 				
 				case 3:
 					_envelopeVolume = 0;
-					_finished = true;
+					_finished = 1;
 				break;
 			}
 			

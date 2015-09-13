@@ -5,19 +5,41 @@
  */
 var Game = function()
 {
-	this.realCanvas = null;
-	this.realCtx = null;
-	this.pixelRatio = 1;
-	this.zoomLevel = 1;
-	this.canvas = null;
-	this.ctx = null;
-	this._asset = null;
-	this._assetLoaded = false;
+	// this.r = null;
+	// this.q = null;
+	// this.d = null;
+	// this.c = null;
+	// this.a = null;
+	// this.s = null; // == window.localStorage
+	/** @type {Menu} */ this.currentMenu = null;
+	/** @type {PlayerObj} */ this.player = null;
+	this.currentChallenge = null;
+	this.currentChallengeId = null;
+	/** @type {Screen} */ this.currentScreen = null;
+	this.currentLevel = null;
+	this.inputHandler = null;
+	this.touchHandler = null;
+	this.synth = null;
+	this.socket = null;
 	this.gameMode = 0;
 	this.levelPadX = 0;
 	this.levelPadY = 0;
 	this.ticks = 0;
-	this.storage = null; // == window.localStorage
+	this.pixelRatio = 0;
+	this.zoomLevel = 0;
+	this.fadePercent = 0; // 0: faded/black ... 100: clear/game screen
+	this.waitingForKeypress = 0;
+	this.currentChallengeMoves = 0;
+	this.currentChallengeLevelIndex = 0;
+	this.currentLevelIndex = 0;
+	this.nextLevelIndex = 0;
+	this.serverStatsTime = 0;
+	this.fadeMode = FADE_MODE_NONE;
+	this.isOffline = 1;
+	this.musicEnabled = 1;
+	this.soundEnabled = 1;
+	/** @type {Array<Obj>} */ this.objects = [];
+	this.challengeScores = [];
 	this.currentStats = [
 		0, // STAT_FRAMES
 		0, // STAT_MOVES
@@ -25,15 +47,12 @@ var Game = function()
 		0, // STAT_LEVELS_STARTED
 		0  // STAT_LEVELS_FINISHED
 	];
-	this.waitingForKeypress = false;
-	/** @type {Menu} */ this.currentMenu = null;
 	/** @type {Array<Menu>} */this.menus = [
 		// MENU_MAIN
 		new Menu(this, [
 			[ "PLAY", ACTION_OPEN_MENU, MENU_PLAY ],
 			[ "OPTIONS", ACTION_OPEN_MENU, MENU_OPTIONS ],
-			[ "REPLAY INTRO", ACTION_CHANGE_SCREEN, SCREEN_INTRO ],
-			[ "CONTROLS", ACTION_CHANGE_SCREEN, SCREEN_HOWTO ],
+//			[ "CONTROLS", ACTION_CHANGE_SCREEN, SCREEN_HOWTO ],
 			[ "CREDITS", ACTION_CHANGE_SCREEN, SCREEN_ABOUT ]
 		]),
 		
@@ -42,74 +61,48 @@ var Game = function()
 			[ "SINGLE PLAYER", ACTION_CHANGE_SCREEN, SCREEN_LEVELS ],
 			[ "ONLINE CHALLENGE", ACTION_CHANGE_SCREEN, SCREEN_CHALLENGES ],
 			[ "CUSTOMIZE", ACTION_OPEN_MENU, MENU_CUSTOMIZE ],
-			[ "BACK TO MENU", ACTION_OPEN_MENU, MENU_MAIN ]
+			[ "BACK", ACTION_OPEN_MENU, MENU_MAIN ]
 		]),
 		
 		// MENU_OPTIONS
 		new Menu(this, [
 			[ "TOGGLE MUSIC", ACTION_CUSTOM, this.toggleMusic.bind(this) ],
 			[ "TOGGLE SOUND", ACTION_CUSTOM, this.toggleSound.bind(this) ],
-			[ "BACK TO MENU", ACTION_OPEN_MENU, MENU_MAIN ]
+			[ "BACK", ACTION_OPEN_MENU, MENU_MAIN ]
 		]),
 		
 		// MENU_CUSTOMIZE
 		new Menu(this, [
 			[ "NAME", ACTION_CUSTOM, this.inputPlayerName.bind(this) ],
-			[ "HARD HAT COLOR", ACTION_CUSTOM, this.setColor.bind(this, 0) ],
+			[ "HAT COLOR", ACTION_CUSTOM, this.setColor.bind(this, 0) ],
 			[ "SHIRT COLOR", ACTION_CUSTOM, this.setColor.bind(this, 1) ],
 			[ "PANTS COLOR", ACTION_CUSTOM, this.setColor.bind(this, 2) ],
-			[ "BACK TO MENU", ACTION_OPEN_MENU, MENU_PLAY ]
+			[ "BACK", ACTION_OPEN_MENU, MENU_PLAY ]
 		])
 	];
-	
-	/** @type {Array<Obj>} */ this.objects = [];
-	/** @type {PlayerObj} */ this.player = null;
 	/** @type {Array} */ this.levels = _levels;
 	/** @type {Array} */ this.challenges = _challenges;
-	this.currentChallenge = null;
-	this.currentChallengeId = null;
-	this.currentChallengeMoves = 0;
-	this.currentChallengeLevelIndex = 0;
-	this.challengeScores = [];
 	
 	this.screens = [
 		new ScreenTitle(),
-		new ScreenIntro(),
 		new ScreenMenu(),
 		new ScreenLevel(),
 		new ScreenLevels(),
 		new ScreenChallenges(),
-		new ScreenAbout(),
-		new ScreenHowto()
+		new ScreenAbout()
+//		new ScreenHowto()
 	];
-	/** @type {Screen} */ this.currentScreen = null;
-	this.currentLevel = null;
-	this.currentLevelIndex = 0;
-	this.nextLevelIndex = 0;
 	
-	this.fadeMode = FADE_MODE_NONE;
-	this.fadePercent = 0; // 0: faded/black ... 100: clear/game screen
 	this.validTextCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 .,:!?()x<>udr@/-_+*=\"'abc";
-	this.inputHandler = null;
-	this.touchHandler = null;
-	this.synth = null;
-	this.socket = null;
-	this.isOffline = true;
-	this.serverStatsTime = 0;
 	this.serverStatsPrevious = [];
 	this.serverStatsLatest = [];
-	
-	this.musicEnabled = true;
-	this.soundEnabled = true;
-	
-	this.firstRun = false;
 }
 
 Game.prototype.inputPlayerName = function()
 {
 	var a;
 	
-	a = window.prompt('Player name:' , this.player.name);
+	a = window.prompt('New name:' , this.player.name);
 	
 	if (a != null)
 	{
@@ -134,68 +127,22 @@ Game.prototype.toggleMusic = function()
 
 Game.prototype.fixCanvasContextSmoothing = function(ctx)
 {
-	ctx.imageSmoothingEnabled = false;
-	ctx.mozImageSmoothingEnabled = false;
-	ctx.webkitImageSmoothingEnabled = false;
-	ctx.msImageSmoothingEnabled = false;
+	ctx.imageSmoothingEnabled = 0;
+	ctx.mozImageSmoothingEnabled = 0;
+	ctx.webkitImageSmoothingEnabled = 0;
+	ctx.msImageSmoothingEnabled = 0;
 }
 
 Game.prototype.setWaitForKeypress = function(_nextScreen)
 {
-	this.waitingForKeypress = true;
+	this.waitingForKeypress = 1;
 	this.nextScreen = _nextScreen;
-}
-
-Game.prototype.pad = function(i, length, padder)
-{
-	var s;
-	
-	s = i.toString();
-	
-	while (s.length < length)
-	{
-		s = padder + s;
-	}
-	
-	return s;
-}
-
-Game.prototype.rpad = function(i, length, padder)
-{
-	var s;
-	
-	s = i.toString();
-	
-	while (s.length < length)
-	{
-		s += padder;
-	}
-	
-	return s;
-}
-
-Game.prototype.thousandPad = function(num)
-{
-	// thx Elias Zamaria @ http://stackoverflow.com/a/2901298
-	// NOTE: will work only for integers
-	return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-}
-
-Game.prototype.timePad = function(t)
-{
-	t = Math.floor(t);
-	return Math.floor(t / 3600) + ":" + this.pad(Math.floor((t % 3600) / 60), 2, '0') + ":"+ this.pad(t % 60, 2, '0');
 }
 
 	// thx David @ http://stackoverflow.com/a/15439809
 Game.prototype.isTouchAvailable = function()
 {
-	if (('ontouchstart' in window) || (navigator.msMaxTouchPoints > 0))
-	{
-		return true;
-	}
-	
-	return false;
+	return ('ontouchstart' in window) || (navigator.msMaxTouchPoints > 0);
 }
 
 Game.prototype.netSend = function(message, data)
@@ -236,39 +183,38 @@ Game.prototype.getLocalStorageString = function(key, defaultValue)
 {
 	var a;
 	
-	a = this.storage.getItem(key);
+	a = this.s.getItem(key);
 	
 	return a !== null ? a : defaultValue;
 }
 
 Game.prototype.setLocalStorageString = function(key, value)
 {
-	this.storage.setItem(key, value);
+	this.s.setItem(key, value);
 }
 
-Game.prototype.getLocalStorageInt = function(key, defaultValue)
+Game.prototype.getLocalStorageInt = function(key)
 {
-	return parseInt(this.storage.getItem(key) || defaultValue, 10);
-	// shorter but uglier: return this.storage.getItem(key) * 1;
+	return this.s.getItem(key) * 1;
 }
 
 Game.prototype.setLocalStorageInt = function(key, value)
 {
-	this.storage.setItem(key, value);
+	this.s.setItem(key, value);
 }
 
 Game.prototype.getLocalStorageArray = function(key, defaultValue)
 {
 	var a;
 	
-	a = this.storage.getItem(key);
+	a = this.s.getItem(key);
 	
 	return  a !== null ? a.split(',') : defaultValue;
 }
 
 Game.prototype.setLocalStorageArray = function(key, value)
 {
-	this.storage.setItem(key, value.join(','));
+	this.s.setItem(key, value.join(','));
 }
 
 Game.prototype.saveScoreToLocalStorage = function(key, value)
@@ -300,7 +246,7 @@ Game.prototype.getScores = function(index)
 
 Game.prototype.statGetValue = function(statKey)
 {
-	return this.getLocalStorageInt(STORAGE_STATS_PREFIX + statKey, 0);
+	return this.getLocalStorageInt(STORAGE_STATS_PREFIX + statKey);
 }
 
 Game.prototype.statIncrease = function(statKey)
@@ -329,8 +275,13 @@ Game.prototype.replaceColor = function(ctx, x, y, w, h, c1, c2)
 	ctx.putImageData(d, x, y);
 }
 
-Game.prototype.drawImageAdvanced = function(sctx, dctx, sx, sy, sw, sh, dx, dy, dw, dh, rotated, mirrored, colors)
+Game.prototype.drawImageAdvanced = function(sx, sy, sw, sh, dx, dy, dw, dh, rotated, mirrored, colors)
 {
+	var sctx, dctx;
+	
+	sctx = this.a;
+	dctx = this.c;
+	
 	dctx.save();
 	dctx.translate(dx, dy);
 	dctx.translate(dw / 2, dh / 2);
@@ -376,7 +327,7 @@ Game.prototype.drawText = function(posX, posY, content, scale)
 			continue;
 		}
 		
-		this.ctx.drawImage(this._asset, index * 7, 0, 7, 10, posX + x * 8 * scale, posY + y * 10 * scale, 7 * scale, 10 * scale);
+		this.c.drawImage(this.a, index * 7, 0, 7, 10, posX + x * 8 * scale, posY + y * 10 * scale, 7 * scale, 10 * scale);
 		
 		x++;
 	}
@@ -389,7 +340,7 @@ Game.prototype.drawSmallText = function(posX, posY, content)
 
 Game.prototype.drawSmallTextBlinking = function(posX, posY, content)
 {
-	if (Math.floor(this.ticks / 6) % 2 == 1)
+	if (~~(this.ticks / 6) % 2 == 1)
 	{
 		this.drawText(posX, posY, content, 1);
 	}
@@ -404,11 +355,11 @@ Game.prototype.drawTile = function(posX, posY, tileNumber, rotated, mirrored, fl
 {
 	if (!floorOnly)
 	{
-		this.ctx.drawImage(this._asset, tileNumber * 28, 11, 27, 25, posX, posY, 27, 25);
+		this.c.drawImage(this.a, tileNumber * 28, 11, 27, 25, posX, posY, 27, 25);
 	}
 	else
 	{
-		this.drawImageAdvanced(this._asset, this.ctx, tileNumber * 28 + 7, 11 + 7, 20, 18, posX + 7, posY + 7, 20, 18, rotated, mirrored, colors);
+		this.drawImageAdvanced(tileNumber * 28 + 7, 11 + 7, 20, 18, posX + 7, posY + 7, 20, 18, rotated, mirrored, colors);
 	}
 }
 
@@ -419,13 +370,13 @@ Game.prototype.drawTouchToContinue = function(x, y)
 
 Game.prototype.drawHeader = function()
 {
-	game.drawBigText(0, 0, "BOKOSAN");
-	game.drawSmallText(0, 20, "FOR JS13KGAMES 2015");
+	this.drawBigText(0, 0, "BOKOSAN");
+	this.drawSmallText(0, 20, "FOR JS13KGAMES 2015");
 }
 
 Game.prototype.setColor = function(index)
 {
-	this.player.colors[index] = [ Math.floor(Math.random() * 5) * 63, Math.floor(Math.random() * 5) * 63, Math.floor(Math.random() * 5) * 63 ];
+	this.player.colors[index] = [ ~~(Math.random() * 5) * 63, ~~(Math.random() * 5) * 63, ~~(Math.random() * 5) * 63 ];
 	this.setLocalStorageArray(STORAGE_PLAYER_COLOR_PREFIX + index, this.player.colors[index]);
 }
 
@@ -435,7 +386,7 @@ Game.prototype.onResize = function()
 	
 	tmp = this.zoomLevel;
 	
-	this.zoomLevel = Math.max(Math.min(Math.floor(window.innerWidth / WIDTH), Math.floor(window.innerHeight / HEIGHT)), 0.5);
+	this.zoomLevel = Math.max(Math.min(~~(window.innerWidth / WIDTH), ~~(window.innerHeight / HEIGHT)), 0.5);
 	
 	
 	if (this.zoomLevel * this.pixelRatio < 1)
@@ -456,28 +407,28 @@ Game.prototype.onResize = function()
 	h = HEIGHT * this.zoomLevel;
 	
 	// I just _really_ love the hiDPI display hacks...
-	this.realCanvas.width = w * this.pixelRatio;
-	this.realCanvas.height = h * this.pixelRatio;
+	this.r.width = w * this.pixelRatio;
+	this.r.height = h * this.pixelRatio;
 	
-	// these are reset to true on resize
-	this.fixCanvasContextSmoothing(this.realCtx);
+	// these are reset to 1 on resize
+	this.fixCanvasContextSmoothing(this.q);
 	
-	this.realCanvas.style.width = w;
-	this.realCanvas.style.height = h;
+	this.r.style.width = w;
+	this.r.style.height = h;
 	
-	this.realCanvas.style.left = (window.innerWidth - w) / 2;
-	this.realCanvas.style.top = (window.innerHeight - h) / 2;
+	this.r.style.left = (window.innerWidth - w) / 2;
+	this.r.style.top = (window.innerHeight - h) / 2;
 	
 }
 
 Game.prototype.playMenuMusic = function()
 {
-	this.synth.playSong(1);
+	this.synth.playSong(3);
 }
 
 Game.prototype.playLevelMusic = function()
 {
-	this.synth.playSong(0);
+	this.synth.playSong(this.currentLevelIndex % _songs.length);
 }
 
 Game.prototype.loadLevel = function()
@@ -491,8 +442,8 @@ Game.prototype.loadLevel = function()
 	this.nextLevelIndex = null;
 	this.currentLevel = this.levels[this.currentLevelIndex];
 	
-	this.levelPadX = Math.floor((WIDTH - this.currentLevel[LEVEL_DATA_WIDTH] * 20 - 10) / 2);
-	this.levelPadY = Math.floor((HEIGHT - this.currentLevel[LEVEL_DATA_HEIGHT] * 18 - 27) / 2);
+	this.levelPadX = ~~((WIDTH - this.currentLevel[LEVEL_DATA_WIDTH] * 20 - 10) / 2);
+	this.levelPadY = ~~((HEIGHT - this.currentLevel[LEVEL_DATA_HEIGHT] * 18 - 27) / 2);
 	
 	this.objects.length = 0;
 	this.objects.push(this.player);
@@ -513,12 +464,14 @@ Game.prototype.loadLevel = function()
 				
 				case "B": // a box
 				case "E": // a box (above the spike)
-					this.objects.push(new BoxObj(game, a, b));
+					this.objects.push(new BoxObj(this, a, b));
 				break;
 			}
 		}
 	}
 	this.player.reset();
+	
+	game.playLevelMusic();
 }
 
 Game.prototype.isLevelFinished = function()
@@ -527,18 +480,18 @@ Game.prototype.isLevelFinished = function()
 	
 	if (this.player.moveStepLeft != 0)
 	{
-		return false;
+		return 0;
 	}
 	
 	for (i in this.objects)
 	{
 		if (this.objects[i] instanceof BoxObj && (this.objects[i].getNeighbourTile(0, 0) != '.' && this.objects[i].getNeighbourTile(0, 0) != 'P'))
 		{
-			return false;
+			return 0;
 		}
 	}
 	
-	return true;
+	return 1;
 }
 
 Game.prototype.screenFadeAndSwitch = function(_new_screen)
@@ -551,6 +504,7 @@ Game.prototype.openMenu = function(id)
 {
 	this.currentMenu = this.menus[id];
 	this.currentMenu.selection = 0;
+	this.playMenuMusic();
 }
 
 Game.prototype.switchScreen = function(_new_screen)
@@ -573,16 +527,7 @@ Game.prototype.fadeTick = function()
 		this.fadeMode = FADE_MODE_IN;
 	}
 	
-	if (this.fadeMode == FADE_MODE_IN)
-	{
-		this.fadePercent += 34;
-	}
-	else if (this.fadeMode == FADE_MODE_OUT)
-	{
-		this.fadePercent -= 34;
-	}
-	
-	this.fadePercent = Math.min(Math.max(this.fadePercent, 0), 100);
+	this.fadePercent = Math.min(Math.max(this.fadePercent += (this.fadeMode == FADE_MODE_IN) ? 34 : -34, 0), 100);
 	
 	if (this.fadePercent == 100)
 	{
@@ -592,17 +537,12 @@ Game.prototype.fadeTick = function()
 
 Game.prototype.fadeApply = function(ctx, percent)
 {
-	ctx.fillStyle = "rgba(85, 85, 85, " + (1 - percent / 100) + ")";
-	ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+	ctx.fillStyle = "rgba(85,85,85," + (1 - percent / 100) + ")";
+	ctx.fillRect(0, 0, this.d.width, this.d.height);
 }
 
 Game.prototype.redraw = function()
 {
-	if (!this._assetLoaded)
-	{
-		return;
-	}
-	
 	this.fadeTick();
 	
 	if (this.fadeMode == FADE_MODE_NONE)
@@ -614,7 +554,7 @@ Game.prototype.redraw = function()
 			if (this.inputHandler.checkIfKeyPressedAndClear())
 			{
 				this.fadeMode = FADE_MODE_OUT;
-				this.waitingForKeypress = false;
+				this.waitingForKeypress = 0;
 				this.synth.playSound(SOUND_NEXT);
 			}
 		}
@@ -622,33 +562,16 @@ Game.prototype.redraw = function()
 		this.currentScreen.tick(this);
 	}
 	
-	this.ctx.fillStyle = "#555";
-	this.ctx.fillRect(0, 0, WIDTH, HEIGHT);
+	this.c.fillStyle = "#555";
+	this.c.fillRect(0, 0, WIDTH, HEIGHT);
 	
 	this.currentScreen.draw(this);
 	
-	this.fadeApply(this.ctx, this.fadePercent);
+	this.fadeApply(this.c, this.fadePercent);
 	
-	this.realCtx.drawImage(this.canvas, 0, 0, WIDTH, HEIGHT, 0, 0, WIDTH * this.pixelRatio * this.zoomLevel, HEIGHT * this.pixelRatio * this.zoomLevel);
+	this.q.drawImage(this.d, 0, 0, WIDTH, HEIGHT, 0, 0, WIDTH * this.pixelRatio * this.zoomLevel, HEIGHT * this.pixelRatio * this.zoomLevel);
 }
 
-Game.prototype.loadFinished = function()
-{
-	if (this.firstRun)
-	{
-		this.setWaitForKeypress(SCREEN_INTRO);
-	}
-	else
-	{
-		this.setWaitForKeypress(SCREEN_MENU);
-	}
-}
-
-Game.prototype.assetLoadFinished = function()
-{
-	this._assetLoaded = true;
-	this.loadFinished();
-}
 
 Game.prototype.renderFrame = function()
 {
@@ -657,7 +580,7 @@ Game.prototype.renderFrame = function()
 
 Game.prototype.onServerStats = function(data)
 {
-	this.isOffline = false;
+	this.isOffline = 0;
 	this.serverStatsTime = (new Date()).getTime();
 	this.serverStatsPrevious = data[0];
 	this.serverStatsLatest = data[1];
@@ -672,42 +595,54 @@ Game.prototype.init = function(window)
 {
 	var i, j, a, dpr, bsr;
 	
-	this.realCanvas = document.getElementById("c");
-	this.realCtx = this.realCanvas.getContext("2d");
+	this.r = document.getElementById("c");
+	this.q = this.r.getContext("2d");
 	
 	// I love the hiDPI display hacks
 	dpr = window.devicePixelRatio || 1;
 	
-	bsr = this.realCtx.webkitBackingStorePixelRatio ||
-		this.realCtx.mozBackingStorePixelRatio ||
-		this.realCtx.msBackingStorePixelRatio ||
-		this.realCtx.oBackingStorePixelRatio ||
-		this.realCtx.backingStorePixelRatio || 1;
+	bsr = this.q.webkitBackingStorePixelRatio ||
+		this.q.mozBackingStorePixelRatio ||
+		this.q.msBackingStorePixelRatio ||
+		this.q.oBackingStorePixelRatio ||
+		this.q.backingStorePixelRatio || 1;
 	
 	this.pixelRatio = dpr / bsr;
 	
-	this.canvas = document.createElement('canvas');
-	this.canvas.width = WIDTH;
-	this.canvas.height = HEIGHT;
+	this.d = document.createElement('canvas');
+	this.d.width = WIDTH;
+	this.d.height = HEIGHT;
 	
-	this.ctx = this.canvas.getContext("2d");
-	this.fixCanvasContextSmoothing(this.ctx);
+	this.c = this.d.getContext("2d");
+	this.fixCanvasContextSmoothing(this.c);
 	
-	this.storage = window.localStorage;
+	this.s = window.localStorage;
+	
+	try
+	{
+		this.socket = io(document.location.href);
+		this.socket.on(NET_MESSAGE_SERVER_STATS, this.onServerStats.bind(this));
+		this.socket.on(NET_MESSAGE_SERVER_CHALLENGE_STATS, this.onServerChallengeStats.bind(this));
+		window.setInterval(this.getServerStats.bind(this), 60000);
+		this.getServerStats();
+	}
+	catch (err)
+	{
+		// no hard feelings
+	}
 	
 	this.player = new PlayerObj(this, 0, 0);
 	if (!this.player.uid)
 	{
-		this.firstRun = true;
-		this.player.uid = Math.floor(Math.random() * 1000000);
-		this.player.name = "BOB " + this.pad(this.player.uid, 6, '0');
+		this.player.uid = ~~(Math.random() * 1000000);
+		this.player.name = "BOB " + _pad(this.player.uid, 6, '0');
 		this.setLocalStorageInt(STORAGE_PLAYER_UID, this.player.uid);
 		this.setLocalStorageString(STORAGE_PLAYER_NAME, this.player.name);
+		this.netSend(NET_MESSAGE_NEW_BOB, 0);
 	}
 	
-	this._asset = new Image();
-	this._asset.addEventListener('load', this.assetLoadFinished.bind(this));
-	this._asset.src = "./tileset.png";
+	this.a = new Image();
+	this.a.src = "./tileset.png";
 	
 	this.inputHandler = new InputHandler(window);
 	this.touchHandler = new TouchHandler(this.inputHandler, 100, 100, window);
@@ -720,24 +655,9 @@ Game.prototype.init = function(window)
 	this.synth.addSamples(_sound_samples);
 	this.synth.setSongs(_songs);
 	
-	try
-	{
-		this.socket = io(document.location.href);
-		this.socket.on(NET_MESSAGE_SERVER_STATS, this.onServerStats.bind(this));
-		this.socket.on(NET_MESSAGE_SERVER_CHALLENGE_STATS, this.onServerChallengeStats.bind(this));
-		if (this.firstRun)
-		{
-			this.netSend(NET_MESSAGE_NEW_BOB, 0);
-		}
-		window.setInterval(this.getServerStats.bind(this), 60000);
-		this.getServerStats();
-	}
-	catch (err)
-	{
-		// no hard feelings
-	}
-	
 	window.addEventListener('resize', this.onResize.bind(this));
 	this.onResize();
 	window.setInterval(this.renderFrame.bind(this), 1000 / 12);
+
+	this.setWaitForKeypress(SCREEN_MENU);
 }
