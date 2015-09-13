@@ -424,8 +424,8 @@ Game.prototype.drawTouchToContinue = function(x, y)
 
 Game.prototype.drawHeader = function()
 {
-	game.drawBigText(0, 0, "BOKOSAN");
-	game.drawSmallText(0, 20, "FOR JS13KGAMES 2015");
+	this.drawBigText(0, 0, "BOKOSAN");
+	this.drawSmallText(0, 20, "FOR JS13KGAMES 2015");
 }
 
 Game.prototype.setColor = function(index)
@@ -518,7 +518,7 @@ Game.prototype.loadLevel = function()
 				
 				case "B": // a box
 				case "E": // a box (above the spike)
-					this.objects.push(new BoxObj(game, a, b));
+					this.objects.push(new BoxObj(this, a, b));
 				break;
 			}
 		}
