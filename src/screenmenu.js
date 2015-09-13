@@ -88,7 +88,7 @@ ScreenMenu.prototype.draw = function(game)
 	game.ctx.fillStyle = "#474747";
 	
 	game.ctx.fillRect(230, 40, 176, 210);
-	game.drawImageAdvanced(game._asset, game.ctx, 376, 22, 10, 8, 300, 50, 10 * 4, 8 * 4, 0, 0, game.player.colors);
+	game.drawImageAdvanced(376, 22, 10, 8, 300, 50, 10 * 4, 8 * 4, 0, 0, game.player.colors);
 	game.drawBigText(240, 100, game.player.name);
 	
 	for (i=0; i<game.currentMenu.items.length; i++)

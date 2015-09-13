@@ -329,8 +329,13 @@ Game.prototype.replaceColor = function(ctx, x, y, w, h, c1, c2)
 	ctx.putImageData(d, x, y);
 }
 
-Game.prototype.drawImageAdvanced = function(sctx, dctx, sx, sy, sw, sh, dx, dy, dw, dh, rotated, mirrored, colors)
+Game.prototype.drawImageAdvanced = function(sx, sy, sw, sh, dx, dy, dw, dh, rotated, mirrored, colors)
 {
+	var sctx, dctx;
+	
+	sctx = this._asset;
+	dctx = this.ctx;
+	
 	dctx.save();
 	dctx.translate(dx, dy);
 	dctx.translate(dw / 2, dh / 2);
@@ -408,7 +413,7 @@ Game.prototype.drawTile = function(posX, posY, tileNumber, rotated, mirrored, fl
 	}
 	else
 	{
-		this.drawImageAdvanced(this._asset, this.ctx, tileNumber * 28 + 7, 11 + 7, 20, 18, posX + 7, posY + 7, 20, 18, rotated, mirrored, colors);
+		this.drawImageAdvanced(tileNumber * 28 + 7, 11 + 7, 20, 18, posX + 7, posY + 7, 20, 18, rotated, mirrored, colors);
 	}
 }
 

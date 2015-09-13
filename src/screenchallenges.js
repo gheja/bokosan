@@ -121,7 +121,7 @@ ScreenChallenges.prototype.drawStats = function()
 		
 		s += "  " + game.rpad(a[i][3], 10, ' ') + game.pad(game.thousandPad(a[i][1]), 9, ' ') + "\n";
 		
-		game.drawImageAdvanced(game._asset, game.ctx, 107, 38, 10, 9, 244, 65 + i * 10, 10, 9, 0, 0, a[i][4]);
+		game.drawImageAdvanced(107, 38, 10, 9, 244, 65 + i * 10, 10, 9, 0, 0, a[i][4]);
 	}
 	
 	game.drawSmallText(232, 65, s);
