@@ -224,6 +224,8 @@ if [ "$do_stage3" == "y" ]; then
 	try zip ../${zip_file} -r -9 .
 	try cd ../..
 	
+	zip -r -9 ./build/${zip_file}_build_dir.zip ./build/stage1 ./build/stage2 ./build/stage3 ./src
+	
 	_message "Build finished."
 	
 	du -b ./src ./build/stage1 ./build/stage2 ./build/stage3 ./build/${zip_file}
@@ -231,10 +233,11 @@ if [ "$do_stage3" == "y" ]; then
 	size=`du -b ./build/${zip_file} | awk '{ print $1; }'`
 	if [ $size -gt 13312 ]; then
 		_error "ERROR: Zipped file is larger thank 13 kB, build failed."
+		_error "ERROR: Over the limit with $((size - 13312)) bytes."
 		exit 1
 	fi
 	
-	_message "Great success, zipped file is smaller than 13 kB."
+	_message "Great success, zipped file is smaller than 13 kB, still have $((13312 - size)) bytes for fun."
 fi
 
 exit 0
