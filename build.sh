@@ -94,7 +94,7 @@ if [ "$do_stage1" == "y" ]; then
 	rm -rfv ./build/stage1 || /bin/true
 	try mkdir -vp ./build/stage1
 	
-	files=`cat ./src/index.html | grep -vE '<!--' | grep -E '<script.* src="([^"]+)"' | grep -Eo 'src=\".*\"' | cut -d \" -f 2 | grep -vE '/socket.io'`
+	files=`cat ./src/index.html | grep -vE '<!--' | grep -vE 'window.onerror' | grep -E '<script.* src="([^"]+)"' | grep -Eo 'src=\".*\"' | cut -d \" -f 2 | grep -vE '/socket.io'`
 	
 	if [ ! -e ./src/server/server.js ] || [ ! -e ./src/server/server.min1.js ]; then
 		_error "ERROR: checking server.js or server.min1.js failed."
