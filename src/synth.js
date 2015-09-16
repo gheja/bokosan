@@ -1,24 +1,45 @@
 "use strict";
 
+var SynthChannel = function()
+{
+	this.data = null;
+	this.position = 0;
+	this.playbackRate = 0;
+}
+
 /**
  * @constructor
  */
 var Synth = function(game)
 {
+	var i;
+	
 	this.game = game;
 	this.ctx = new (window.AudioContext || window.webkitAudioContext)();
 	/** @type {Array<AudioBuffer>} */ this.samples = [];
 	/** @type {Array<Array>} */ this.songs = [];
-	this.timeout = null;
 	/** @type {Array} */ this.currentSong = null;
-	this.currentSongBar = 0;
-	this.currentSongPatternIndex = 0;
-	this.channelSounds = [];
+	this.songBufferPosition = 0;
+	this.songCurrentBar = 0;
+	this.songCurrentPatternIndex = 0;
+	/** @type {Array<SynthChannel>} */ this.songSynthChannels = [];
+	
+	this.musicNode = this.ctx.createScriptProcessor(4096, 0, 1);
+	this.musicNode.onaudioprocess = this.fillAudioNodeBuffer.bind(this);
+	this.musicNode.connect(this.ctx.destination);
+	
+	this.samplesPerBar = 0; // should be filled using WebAudio data
+	
+	// initialize 24 channels for music
+	for (i=0; i<24; i++)
+	{
+		this.songSynthChannels[i] = new SynthChannel();
+	}
 }
 
 Synth.prototype.addSamples = function(a)
 {
-	var i, sample;
+	var i;
 	
 	for (i in a)
 	{
@@ -30,7 +51,7 @@ Synth.prototype.addSamples = function(a)
 //   - time between notes (number)
 //   - channels (Array)
 //     - sample number (number)
-//     - sample base note (number, C-4: ...)
+//     - sample base note (number, C-4: 49)
 //     - notes (Array)
 //   - play pattern
 //   - play pattern loop start
@@ -48,64 +69,95 @@ Synth.prototype.getFrequencyFromNoteNumber = function(note)
 	return 8363 * Math.pow(2, (6*12*16*4 - period) / (12*16*4));
 }
 
-Synth.prototype.playNextBar = function()
+Synth.prototype.fillAudioNodeBuffer = function(e)
 {
-	var source, i, channels, note;
+	var i, j, songChannels, note, buffer;
 	
-	if (!this.game.musicEnabled)
+	buffer = e.outputBuffer.getChannelData(0);
+	
+	for (i=0; i<buffer.length; i++)
+	{
+		buffer[i] = 0;
+	}
+	
+	if (!this.game.musicEnabled || !this.currentSong)
 	{
 		return;
 	}
 	
-	channels = this.currentSong[SONG_DATA_CHANNELS];
+	songChannels = this.currentSong[SONG_DATA_CHANNELS];
 	
-	for (i in channels)
+	for (i=0; i<buffer.length; i++)
 	{
-		if (this.currentSong[SONG_DATA_PATTERNS][this.currentSongPatternIndex][i] != 1)
+		if (this.songBufferPosition % this.samplesPerBar == 0)
 		{
-			continue;
+			// set up channels using the current notes
+			for (j in songChannels)
+			{
+				if (this.currentSong[SONG_DATA_PATTERNS][this.songCurrentPatternIndex][j] != 1)
+				{
+					continue;
+				}
+				
+				// notes are 1..96 (1 is C-0, 96 is B-7) and 97 which is key off
+				note = songChannels[j][SONG_CHANNEL_DATA_NOTES][this.songCurrentBar] || 0;
+				
+				// empty
+				if (note < 1)
+				{
+					continue;
+				}
+				
+				// key off
+				if (note == 97)
+				{
+					this.songSynthChannels[j].playbackRate = 0;
+					continue;
+				}
+				
+				this.songSynthChannels[j].data = this.samples[SOUND_FIRST_SONG_SAMPLE + songChannels[j][SONG_CHANNEL_DATA_SAMPLE_ID]].rawData;
+				this.songSynthChannels[j].position = 0;
+				this.songSynthChannels[j].playbackRate = this.getFrequencyFromNoteNumber(note) / this.getFrequencyFromNoteNumber(songChannels[j][SONG_CHANNEL_DATA_BASE_NOTE]);
+				
+				// when all channels are fixed to C-4 base note:
+				// this.songSynthChannels[j].playbackRate = this.getFrequencyFromNoteNumber(note) / this.getFrequencyFromNoteNumber(49);
+			}
+			
+			this.songCurrentBar++;
+			
+			if (this.songCurrentBar == songChannels[0][SONG_CHANNEL_DATA_NOTES].length)
+			{
+				this.songCurrentBar = 0;
+				
+				this.songCurrentPatternIndex++;
+				
+				if (this.songCurrentPatternIndex == this.currentSong[SONG_DATA_PATTERNS].length)
+				{
+					this.songCurrentPatternIndex = this.currentSong[SONG_DATA_PATTERN_LOOP_START];
+				}
+			}
 		}
-		// notes are 1..96 (1 is C-0, 96 is B-7) and 97 which is key off
-		note = channels[i][SONG_CHANNEL_DATA_NOTES][this.currentSongBar] || 0;
 		
-		// empty
-		if (note < 1)
+		// do the actual buffer rendering...
+		for (j in this.songSynthChannels)
 		{
-			continue;
+			if (this.songSynthChannels[j].playbackRate != 0)
+			{
+				// volume decreased here to prevent clipping
+				buffer[i] += this.songSynthChannels[j].data[Math.floor(this.songSynthChannels[j].position)] * 0.5;
+				
+				// playback rate is the rate which we should increase the pointer in the sample
+				// per render sample request
+				this.songSynthChannels[j].position += this.songSynthChannels[j].playbackRate;
+				
+				if (this.songSynthChannels[j].position >= this.songSynthChannels[j].data.length)
+				{
+					this.songSynthChannels[j].playbackRate = 0;
+				}
+			}
 		}
 		
-		if (this.channelSounds[i])
-		{
-			this.channelSounds[i].stop();
-		}
-		
-		// key off
-		if (note == 97)
-		{
-			continue;
-		}
-		
-		source = this.ctx.createBufferSource();
-		source.connect(this.ctx.destination);
-		source.buffer = this.samples[SOUND_FIRST_SONG_SAMPLE + channels[i][SONG_CHANNEL_DATA_SAMPLE_ID]];
-		source.playbackRate.value = this.getFrequencyFromNoteNumber(note) / this.getFrequencyFromNoteNumber(channels[i][SONG_CHANNEL_DATA_BASE_NOTE]);
-		source.start(0);
-		
-		this.channelSounds[i] = source;
-	}
-	
-	this.currentSongBar++
-	
-	if (this.currentSongBar == channels[0][SONG_CHANNEL_DATA_NOTES].length)
-	{
-		this.currentSongBar = 0;
-
-		this.currentSongPatternIndex++;
-		
-		if (this.currentSongPatternIndex == this.currentSong[SONG_DATA_PATTERNS].length)
-		{
-			this.currentSongPatternIndex = this.currentSong[SONG_DATA_PATTERN_LOOP_START];
-		}
+		this.songBufferPosition++;
 	}
 }
 
@@ -119,9 +171,8 @@ Synth.prototype.playSound = function(id)
 	}
 	
 	source = this.ctx.createBufferSource();
+	source.buffer = this.samples[id].buffer;
 	source.connect(this.ctx.destination);
-	source.buffer = this.samples[id];
-	source.playbackRate.value = 1;
 	source.start(0);
 }
 
@@ -132,13 +183,9 @@ Synth.prototype.playSong = function(id)
 		return;
 	}
 	
-	this.currentSongBar = 0;
-	this.currentSongPatternIndex = 0;
-	
+	this.songBufferPosition = 0;
+	this.songCurrentBar = 0;
+	this.songCurrentPatternIndex = 0;
 	this.currentSong = this.songs[id];
-	if (this.timeout)
-	{
-		window.clearTimeout(this.timeout);
-	}
-	this.timeout = window.setInterval(this.playNextBar.bind(this), this.currentSong[SONG_DATA_INTERVAL]);
+	this.samplesPerBar = this.ctx.sampleRate / (1000 / this.currentSong[SONG_DATA_INTERVAL]);
 }

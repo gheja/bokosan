@@ -433,13 +433,15 @@ function Jsfxr(ctx, values)
 	
 	
 	
-	var envelopeFullLength, buffer, data;
+	var envelopeFullLength, result, buffer;
 	
 	envelopeFullLength = totalReset();
 	
-	buffer = ctx.createBuffer(1, envelopeFullLength, 44100);
-	data = buffer.getChannelData(0);
-	synthWave(data, envelopeFullLength);
+	result = { buffer: null, rawData: new Float32Array(envelopeFullLength) };
+	synthWave(result.rawData, envelopeFullLength);
 	
-	return buffer;
+	result.buffer = ctx.createBuffer(1, envelopeFullLength, 44100);
+	result.buffer.copyToChannel(result.rawData, 0);
+	
+	return result;
 }
