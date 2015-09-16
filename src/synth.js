@@ -24,11 +24,12 @@ var Synth = function(game)
 	this.songCurrentPatternIndex = 0;
 	/** @type {Array<SynthChannel>} */ this.songSynthChannels = [];
 	
-	this.musicNode = this.ctx.createScriptProcessor(4096, 0, 1);
+	this.musicNode = this.ctx.createScriptProcessor(1024 * 8, 0, 1);
 	this.musicNode.onaudioprocess = this.fillAudioNodeBuffer.bind(this);
 	this.musicNode.connect(this.ctx.destination);
 	
 	this.samplesPerBar = 0; // should be filled using WebAudio data
+	this.sampleRatio = 1;
 	
 	// initialize 24 channels for music
 	for (i=0; i<24; i++)
@@ -71,7 +72,7 @@ Synth.prototype.getFrequencyFromNoteNumber = function(note)
 
 Synth.prototype.fillAudioNodeBuffer = function(e)
 {
-	var i, j, songChannels, note, buffer;
+	var i, j, songChannels, note, buffer, a;
 	
 	buffer = e.outputBuffer.getChannelData(0);
 	
@@ -117,7 +118,7 @@ Synth.prototype.fillAudioNodeBuffer = function(e)
 				
 				this.songSynthChannels[j].data = this.samples[SOUND_FIRST_SONG_SAMPLE + songChannels[j][SONG_CHANNEL_DATA_SAMPLE_ID]].rawData;
 				this.songSynthChannels[j].position = 0;
-				this.songSynthChannels[j].playbackRate = this.getFrequencyFromNoteNumber(note) / this.getFrequencyFromNoteNumber(songChannels[j][SONG_CHANNEL_DATA_BASE_NOTE]);
+				this.songSynthChannels[j].playbackRate = this.getFrequencyFromNoteNumber(note) / this.getFrequencyFromNoteNumber(songChannels[j][SONG_CHANNEL_DATA_BASE_NOTE]) * this.sampleRatio;
 				
 				// when all channels are fixed to C-4 base note:
 				// this.songSynthChannels[j].playbackRate = this.getFrequencyFromNoteNumber(note) / this.getFrequencyFromNoteNumber(49);
@@ -138,13 +139,14 @@ Synth.prototype.fillAudioNodeBuffer = function(e)
 			}
 		}
 		
+		a = 0;
+		
 		// do the actual buffer rendering...
 		for (j in this.songSynthChannels)
 		{
 			if (this.songSynthChannels[j].playbackRate != 0)
 			{
-				// volume decreased here to prevent clipping
-				buffer[i] += this.songSynthChannels[j].data[Math.floor(this.songSynthChannels[j].position)] * 0.5;
+				a += this.songSynthChannels[j].data[Math.floor(this.songSynthChannels[j].position)];
 				
 				// playback rate is the rate which we should increase the pointer in the sample
 				// per render sample request
@@ -156,6 +158,9 @@ Synth.prototype.fillAudioNodeBuffer = function(e)
 				}
 			}
 		}
+		
+		// volume decreased here to prevent clipping
+		buffer[i] = a * 0.5;
 		
 		this.songBufferPosition++;
 	}
@@ -188,4 +193,5 @@ Synth.prototype.playSong = function(id)
 	this.songCurrentPatternIndex = 0;
 	this.currentSong = this.songs[id];
 	this.samplesPerBar = this.ctx.sampleRate / (1000 / this.currentSong[SONG_DATA_INTERVAL]);
+	this.sampleRatio = 44100 / this.ctx.sampleRate;
 }
