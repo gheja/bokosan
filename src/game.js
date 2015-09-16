@@ -475,6 +475,11 @@ Game.prototype.onResize = function()
 	
 }
 
+Game.prototype.playIntroMusic = function()
+{
+	this.synth.playSong(0);
+}
+
 Game.prototype.playMenuMusic = function()
 {
 	this.synth.playSong(3);
