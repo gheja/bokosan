@@ -40,15 +40,6 @@ InputHandler.prototype.setKeyStatus = function(keyCode, statusFrom, statusTo)
 			}
 		}
 	}
-/*
-	var s;
-	s = "";
-	for (i in  this.keys)
-	{
-		s += "[" + i + ": " + this.keys[i].status + "] ";
-	}
-	console.log(s);
-*/
 }
 
 InputHandler.prototype.isKeyStatus = function(key, status)
