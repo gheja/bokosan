@@ -523,7 +523,9 @@ Game.prototype.loadLevel = function()
 			}
 		}
 	}
+	
 	this.player.reset();
+	this.playLevelMusic();
 }
 
 Game.prototype.isLevelFinished = function()
