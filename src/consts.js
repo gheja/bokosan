@@ -64,13 +64,12 @@
 /** @const @type {number} */ var SOUND_STEP1 = 2;
 /** @const @type {number} */ var SOUND_STEP2 = 3;
 /** @const @type {number} */ var SOUND_BOX_GRAB = 4;
-/** @const @type {number} */ var SOUND_BOX_RELEASE = 5;
-/** @const @type {number} */ var SOUND_BOX_PULL = 6;
-/** @const @type {number} */ var SOUND_TEXT = 7;
-/** @const @type {number} */ var SOUND_NEXT = 8;
-/** @const @type {number} */ var SOUND_SPIKE = 9;
-/** @const @type {number} */ var SOUND_FALLING = 10;
-/** @const @type {number} */ var SOUND_FIRST_SONG_SAMPLE = 11;
+/** @const @type {number} */ var SOUND_BOX_PULL = 5;
+/** @const @type {number} */ var SOUND_TEXT = 6;
+/** @const @type {number} */ var SOUND_NEXT = 7;
+/** @const @type {number} */ var SOUND_SPIKE = 8;
+/** @const @type {number} */ var SOUND_FALLING = 9;
+/** @const @type {number} */ var SOUND_FIRST_SONG_SAMPLE = 10;
 
 /** @const @type {number} */ var TOUCH_TRESHOLD = 40;
 /** @const @type {number} */ var TOUCH_MODE_CANCEL = 0;

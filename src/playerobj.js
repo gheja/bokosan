@@ -225,10 +225,6 @@ PlayerObj.prototype.tryGrab = function()
 
 PlayerObj.prototype.tryRelease = function()
 {
-	if (this.grabbedBox != null)
-	{
-		this.game.synth.playSound(SOUND_BOX_RELEASE);
-	}
 	this.setStatus(OBJ_STATUS_STANDING);
 	this.grabbedBox = null;
 }
