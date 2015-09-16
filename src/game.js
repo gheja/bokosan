@@ -542,7 +542,7 @@ Game.prototype.isLevelFinished = function()
 		return false;
 	}
 	
-	for (i in this.objects)
+	for (i=0; i<this.objects.length; i++)
 	{
 		if (this.objects[i] instanceof BoxObj && (this.objects[i].getNeighbourTile(0, 0) != '.' && this.objects[i].getNeighbourTile(0, 0) != 'P'))
 		{

@@ -24,7 +24,7 @@ InputHandler.prototype.setKeyStatus = function(keyCode, statusFrom, statusTo)
 	
 	// if keyCode == -1 then set status for all keys
 	
-	for (i in this.keys)
+	for (i=0; i<this.keys.length; i++)
 	{
 		for (j=0; j<this.keys[i].keyCodes.length; j++)
 		{

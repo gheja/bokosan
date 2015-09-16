@@ -49,7 +49,7 @@ Obj.prototype.getNeighbourBox = function(dx, dy)
 {
 	var i;
 	
-	for (i in this.game.objects)
+	for (i=0; i<this.game.objects.length; i++)
 	{
 		if (this.game.objects[i] instanceof BoxObj && this.game.objects[i].x == this.x + dx * 20 && this.game.objects[i].y == this.y + dy * 18)
 		{
