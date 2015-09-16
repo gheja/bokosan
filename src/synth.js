@@ -93,7 +93,7 @@ Synth.prototype.fillAudioNodeBuffer = function(e)
 		if (this.songBufferPosition % this.samplesPerBar == 0)
 		{
 			// set up channels using the current notes
-			for (j in songChannels)
+			for (j=0; j<songChannels.length; j++)
 			{
 				if (this.currentSong[SONG_DATA_PATTERNS][this.songCurrentPatternIndex][j] != 1)
 				{
@@ -142,7 +142,7 @@ Synth.prototype.fillAudioNodeBuffer = function(e)
 		a = 0;
 		
 		// do the actual buffer rendering...
-		for (j in this.songSynthChannels)
+		for (j=0; j<this.songSynthChannels.length; j++)
 		{
 			if (this.songSynthChannels[j].playbackRate != 0)
 			{
