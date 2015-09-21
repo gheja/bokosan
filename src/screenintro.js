@@ -37,35 +37,27 @@ ScreenIntro.prototype.draw = function(game)
 	var s;
 	
 	//   1234567890123456789012345678901234567890123456789012
-	if (this.scrollerPosition < 70)
+	s = "MONDAY, 18:50\n"+
+		"\n" +
+		"THIS IS YOUR FIRST NIGHT SHIFT AS A\n" +
+		"WAREHOUSE KEEPER.\n" +
+		"\n" +
+		"YOUR JOB IS TO PULL BACK ALL THE BOXES\n" +
+		"THAT WERE RESTLESSLY PUSHED INTO THE\n" +
+		"WRONG PLACES BY YOUR DAYTIME COLLEAGUES\n" +
+		"IN THE PAST 30 YEARS.\n" +
+		"\n" +
+		"YOUR BOSS SAID SOMETHING ABOUT UNUSUAL\n" +
+		"ROOMS BUT THAT DOES NOT MATTER. PROBABLY.";
+	
+	game.drawSmallText(0, 110, s.substr(0, this.scrollerPosition * 3));
+	
+	if (this.scrollerPosition < 97)
 	{
-		s = "MONDAY, 07:50\n"+
-			"\n" +
-			"IN 10 MINUTES YOUR FIST DAY WILL BEGIN OF YOUR NEW\n" +
-			"JOB AS A WAREHOUSE KEEPER.\n";
-			
-		game.drawSmallText(0, 150, s.substr(0, this.scrollerPosition * 3));
-		if (this.scrollerPosition < 35)
-		{
-			game.synth.playSound(SOUND_TEXT);
-		}
-	}
-	else // if (this.scrollerPosition < 60)
-	{
-		s = "MR BOSS:\n" +
-			"  LOREM IPSUM DOLOR SIT AMET PEOPLE WE HIRED IN THE\n" + 
-			"  LAST 30 YEARS TO PUT EVERYTHING IN PLACE BUT ASDFG\n" +
-			"  THAT WAS A HUGE MISTAKE AND...\n";
-		
-		game.drawSmallText(0, 150, s.substr(0, (this.scrollerPosition - 70) * 3));
-		
-		if (this.scrollerPosition < 120)
-		{
-			game.synth.playSound(SOUND_TEXT);
-		}
+		game.synth.playSound(SOUND_TEXT);
 	}
 	
-	if (this.scrollerPosition > 140)
+	if (this.scrollerPosition > 117)
 	{
 		game.drawTouchToContinue(96, 270);
 	}
