@@ -212,7 +212,7 @@ Game.prototype.netSend = function(message, data)
 
 Game.prototype.statSubmit = function(completed)
 {
-	this.netSend(NET_MESSAGE_PLAYER_STATS, [ this.currentStats, completed ]);
+	this.netSend(NET_MESSAGE_PLAYER_STATS, [ this.currentStats, completed, this.currentLevelIndex ]);
 }
 
 Game.prototype.statSubmitChallenge = function()
