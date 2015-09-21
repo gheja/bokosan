@@ -230,11 +230,11 @@ if [ "$do_stage3" == "y" ]; then
 	
 	size=`du -b ./build/${zip_file} | awk '{ print $1; }'`
 	if [ $size -gt 13312 ]; then
-		_error "ERROR: Zipped file is larger thank 13 kB, build failed."
+		_error "WARNING: Zipped file is over the 13 kB limit with $((size - 13312)) bytes."
 		exit 1
 	fi
 	
-	_message "Great success, zipped file is smaller than 13 kB."
+	_message "Great success, zipped file is smaller than 13 kB, still have $((13312 - size)) bytes for fun."
 fi
 
 exit 0
