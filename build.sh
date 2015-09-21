@@ -47,6 +47,7 @@ try()
 	fi
 }
 
+is_js13k="n"
 do_stage1="y"
 do_stage2="y"
 do_stage3="y"
@@ -229,12 +230,22 @@ if [ "$do_stage3" == "y" ]; then
 	du -b ./src ./build/stage1 ./build/stage2 ./build/stage3 ./build/${zip_file}
 	
 	size=`du -b ./build/${zip_file} | awk '{ print $1; }'`
-	if [ $size -gt 13312 ]; then
-		_error "WARNING: Zipped file is over the 13 kB limit with $((size - 13312)) bytes."
-		exit 1
+	if [ "$is_js13k" == "y" ]; then
+		if [ $size -gt 13312 ]; then
+			_error "ERROR: Zipped file is over the 13 kB limit with $((size - 13312)) bytes."
+			exit 1
+		elif [ $size == 13312 ]; then
+			_message "Great success, zipped file is EXACTLY 13 kB, don't touch it, SUBMIT NOW. :)"
+		else
+			_message "Great success, zipped file is smaller than 13 kB, still have $((13312 - size)) bytes for fun."
+		fi
+	else
+		if [ $size -gt 13312 ]; then
+			_message "Final size is ${size} bytes, $((size - 13312)) bytes over the js13k limit."
+		else
+			_message "Final size is ${size} bytes, $((13312 - size)) bytes left until the js13k limit."
+		fi
 	fi
-	
-	_message "Great success, zipped file is smaller than 13 kB, still have $((13312 - size)) bytes for fun."
 fi
 
 exit 0
