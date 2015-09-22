@@ -29,7 +29,7 @@ ScreenAbout.prototype.draw = function(game)
 	game.drawSmallText(80, 70,
 		"MUSIC AND LEVEL DESIGN\n" +
 		"@HEJAZS\n" +
-		"SOUNDCLOUD.COM/ABCDEFGH\n" +
+		"SOUNDCLOUD.COM/ZSOLTHEJA\n" +
 		"\n" +
 		"\n" +
 		"\n" +
@@ -44,7 +44,7 @@ ScreenAbout.prototype.draw = function(game)
 		"AND A BIG THANK YOU TO\n" +
 		"  MARKUS NEUBRAND (@MNEUBRAND) FOR JSFXR\n" +
 		"  RAY LARABIE (@TYPODERMIC) FOR THE JOYSTIX FONT\n" +
-		"  ANDRZEJ MAZUR (@END3R) FOR ORGANIZING JS13KGAMES"
+		"  ANDRZEJ MAZUR (@END3R) FOR JS13KGAMES"
 	);
 /*
 	game.drawSmallText(80, 60,
