@@ -1,0 +1,123 @@
+<html>
+	<head>
+		<title>Bokosan for js13kGames 2015</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui" />
+		<link type="text/css" rel="stylesheet" href="style.css" />
+		<script type="text/javascript"> /* thx Sam at http://stackoverflow.com/a/10556743 */ window.onerror = function(msg, url, line, col, error) { alert(msg + '\n\n' + url + ':' + line); return true; }; </script>
+		<script type="text/javascript" src="consts.js"></script>
+		<script type="text/javascript" src="data.js"></script>
+		<script type="text/javascript" src="inputhandler.js"></script>
+		<script type="text/javascript" src="obj.js"></script>
+		<script type="text/javascript" src="boxobj.js"></script>
+		<script type="text/javascript" src="playerobj.js"></script>
+		<script type="text/javascript" src="menu.js"></script>
+		<script type="text/javascript" src="jsfxr.js"></script>
+		<script type="text/javascript" src="synth.js"></script>
+		<script type="text/javascript" src="touchpos.js"></script>
+		<script type="text/javascript" src="touchhandler.js"></script>
+		<script type="text/javascript" src="screen.js"></script>
+		<script type="text/javascript" src="screenabout.js"></script>
+		<script type="text/javascript" src="screenlevels.js"></script>
+		<script type="text/javascript" src="screenchallenges.js"></script>
+		<script type="text/javascript" src="screenhowto.js"></script>
+		<script type="text/javascript" src="screenintro.js"></script>
+		<script type="text/javascript" src="screenlevel.js"></script>
+		<script type="text/javascript" src="screenmenu.js"></script>
+		<script type="text/javascript" src="screentitle.js"></script>
+		<script type="text/javascript" src="game.js"></script>
+		<script type="text/javascript" src="start.js"></script>
+		<script src="/socket.io/socket.io.js"></script>
+		<!-- insert minified css here -->
+		<!-- insert minified javascript here -->
+		<script type="text/javascript">
+			function a()
+			{
+				var s, a, i, rows, cols;
+				
+				s = document.getElementById('editor').value;
+				
+				if (s.indexOf('P') == -1)
+				{
+					alert('no player on level (use "P")');
+					return;
+				}
+				
+				a = s.split('\n');
+				a.splice(15, 999);
+				rows = a.length;
+				cols = 1;
+				
+				
+				for (i=0; i<rows; i++)
+				{
+					a[i] = a[i].replace(/ +$/, "").substr(0, 21);
+					cols = Math.max(cols, a[i].length);
+				}
+				
+				for (i=0; i<rows; i++)
+				{
+					while (a[i].length < cols)
+					{
+						a[i] += " ";
+					}
+				}
+				
+				document.getElementById('editor').value = a.join('\n');
+				
+				game.waitingForKeypress = false;
+				game.levels[1][0] = cols;
+				game.levels[1][1] = rows;
+				game.levels[1][3] = a.join('');
+				game.nextLevelIndex = 1;
+				game.screenFadeAndSwitch(SCREEN_GAME);
+				
+				window.localStorage.setItem('last_level', s);
+				
+				document.getElementById('c').focus();
+			}
+			
+			function b()
+			{
+				var s;
+				
+				s = window.localStorage.getItem('last_level');
+				
+				if (s != null)
+				{
+					document.getElementById('editor').value = s;
+				}
+				document.getElementById('editor').addEventListener('keydown', keydown);
+				document.getElementById('editor').addEventListener('keyup', keyup);
+			}
+			
+			function keydown(e)
+			{
+				e.stopPropagation();
+			}
+			
+			function keyup(e)
+			{
+				e.stopPropagation();
+				if (e.keyCode == 113)
+				{
+					a();
+				}
+			}
+			
+			window.addEventListener('load', b);
+		</script>
+	</head>
+	<body>
+		<canvas id="c" width="420px" height="280px">Canvas not supported :(</canvas>
+		<div style="position: fixed; top: 0; right: 0; width: 200px; padding: 4px; background: rgba(255, 255, 0, 0.2); font-family: Arial; font-size: 9pt;">
+			<textarea id="editor" style="background: rgba(255, 255, 255, 0.5); font-size: 9pt;" cols=20 rows=20>   wwwww 
+wwww.P.w 
+wBB/...ww
+wBB/....w
+wwww...ww
+   w...w 
+   wwwww </textarea><button onclick="a(); return false">Update</button>
+			<img src="editor_help.png" style="position: fixed; left: 0; top: 0;" />
+		</div>
+	</body>
+</html>
