@@ -16,3 +16,15 @@ var BoxObj = function(game, x, y)
 }
 
 BoxObj.prototype = new Obj(0, 0, 0);
+
+BoxObj.prototype.setSolvedStatus = function(status)
+{
+	if (status == true)
+	{
+		this.tileNumber = 22;
+	}
+	else
+	{
+		this.tileNumber = 1;
+	}
+}

@@ -535,22 +535,32 @@ Game.prototype.loadLevel = function()
 
 Game.prototype.isLevelFinished = function()
 {
-	var i;
+	var i, result;
 	
 	if (this.player.moveStepLeft != 0)
 	{
 		return false;
 	}
 	
+	result = true;
+	
 	for (i=0; i<this.objects.length; i++)
 	{
-		if (this.objects[i] instanceof BoxObj && (this.objects[i].getNeighbourTile(0, 0) != '.' && this.objects[i].getNeighbourTile(0, 0) != 'P'))
+		if (this.objects[i] instanceof BoxObj)
 		{
-			return false;
+			if (this.objects[i].getNeighbourTile(0, 0) != '.' && this.objects[i].getNeighbourTile(0, 0) != 'P')
+			{
+				this.objects[i].setSolvedStatus(false);
+				result = false;
+			}
+			else
+			{
+				this.objects[i].setSolvedStatus(true);
+			}
 		}
 	}
 	
-	return true;
+	return result;
 }
 
 Game.prototype.screenFadeAndSwitch = function(_new_screen)
